@@ -15,6 +15,7 @@ import Footer from './components/Footer';
 import FloatingTerminal from './components/FloatingTerminal';
 import ResumeModal from './components/ResumeModal';
 import { useAnalytics } from './hooks/useAnalytics';
+import './index.css';
 
 function App() {
   const [isDark, setIsDark] = useState(false);
