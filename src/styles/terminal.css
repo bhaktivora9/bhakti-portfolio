@@ -1,0 +1,468 @@
+/* Terminal Component Styles */
+.terminal-container {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 9999;
+  position: relative;
+}
+
+.terminal-container.light {
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.terminal-container.dark {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.terminal-container.restarting {
+  animation: terminalRestart 0.3s ease-out;
+}
+
+@keyframes terminalRestart {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.terminal-container {
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  transition: all 0.3s ease;
+}
+
+.terminal-container:hover {
+  transform: translateY(-2px);
+}
+
+.terminal-container.light:hover {
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.terminal-container.dark:hover {
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.terminal-container.minimized {
+  height: 40px;
+  overflow: hidden;
+}
+
+.terminal-container.maximized {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  max-width: none;
+  z-index: 10000;
+}
+
+/* Terminal Header */
+.terminal-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  user-select: none;
+  position: relative;
+  z-index: 10001;
+}
+
+.terminal-container.light .terminal-header {
+  background: rgba(240, 240, 240, 0.9);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.terminal-container.dark .terminal-header {
+  background: rgba(40, 40, 40, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.terminal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.terminal-dot:hover {
+  transform: scale(1.1);
+}
+
+.terminal-dot-red {
+  background: #ff5f56;
+}
+
+.terminal-dot-yellow {
+  background: #ffbd2e;
+}
+
+.terminal-dot-green {
+  background: #27ca3f;
+}
+
+.terminal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.terminal-container.light .terminal-title {
+  color: #374151;
+}
+
+.terminal-container.dark .terminal-title {
+  color: #e5e5e5;
+}
+
+.terminal-title-icon {
+  width: 16px;
+  height: 16px;
+  color: #4ade80;
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.terminal-control-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 10002;
+}
+
+.terminal-container.light .terminal-control-btn {
+  background: rgba(0, 0, 0, 0.1);
+  color: #6b7280;
+}
+
+.terminal-container.dark .terminal-control-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+.terminal-container.light .terminal-control-btn:hover {
+  background: rgba(0, 0, 0, 0.2);
+  color: #374151;
+  transform: scale(1.05);
+}
+
+.terminal-container.dark .terminal-control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.terminal-close-btn:hover {
+  background: #ef4444 !important;
+  color: white !important;
+}
+
+.terminal-control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.terminal-control-btn:disabled:hover {
+  transform: none;
+}
+
+/* Terminal Content */
+.terminal-content {
+  height: 400px;
+  overflow-y: auto;
+  padding: 16px;
+  position: relative;
+  z-index: 9999;
+}
+
+.terminal-container.light .terminal-content {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.terminal-container.dark .terminal-content {
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.terminal-container.minimized .terminal-content {
+  display: none;
+}
+
+.terminal-container.maximized .terminal-content {
+  height: calc(100vh - 120px);
+}
+
+.terminal-output {
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  direction: ltr;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+.terminal-container.light .terminal-output {
+  color: #374151;
+}
+
+.terminal-container.dark .terminal-output {
+  color: #e5e5e5;
+}
+
+.terminal-line {
+  margin-bottom: 2px;
+  word-wrap: break-word;
+  animation: terminalTyping 0.1s ease-out;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+@keyframes terminalTyping {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.terminal-command {
+  font-weight: 600;
+}
+
+.terminal-container.light .terminal-command {
+  color: #059669;
+}
+
+.terminal-container.dark .terminal-command {
+  color: #4ade80;
+}
+
+.terminal-command::before {
+  content: '❯ ';
+  margin-right: 4px;
+}
+
+.terminal-container.light .terminal-command::before {
+  color: #0891b2;
+}
+
+.terminal-container.dark .terminal-command::before {
+  color: #06b6d4;
+}
+
+.terminal-success {
+}
+
+.terminal-container.light .terminal-success {
+  color: #059669;
+}
+
+.terminal-container.dark .terminal-success {
+  color: #4ade80;
+}
+
+.terminal-info {
+}
+
+.terminal-container.light .terminal-info {
+  color: #2563eb;
+}
+
+.terminal-container.dark .terminal-info {
+  color: #60a5fa;
+}
+
+.terminal-error {
+}
+
+.terminal-container.light .terminal-error {
+  color: #dc2626;
+}
+
+.terminal-container.dark .terminal-error {
+  color: #f87171;
+}
+
+.terminal-text {
+}
+
+.terminal-container.light .terminal-text {
+  color: #374151;
+}
+
+.terminal-container.dark .terminal-text {
+  color: #e5e5e5;
+}
+
+.terminal-cursor {
+  animation: terminalBlink 1s infinite;
+  margin-left: 2px;
+}
+
+.terminal-container.light .terminal-cursor {
+  color: #059669;
+}
+
+.terminal-container.dark .terminal-cursor {
+  color: #4ade80;
+}
+
+@keyframes terminalBlink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Terminal Status */
+.terminal-status {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-size: 11px;
+  color: #9ca3af;
+  position: relative;
+  z-index: 10001;
+}
+
+.terminal-container.light .terminal-status {
+  background: rgba(229, 231, 235, 0.9);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  color: #6b7280;
+}
+
+.terminal-container.dark .terminal-status {
+  background: rgba(30, 30, 30, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+.terminal-container.minimized .terminal-status {
+  display: none;
+}
+
+.terminal-status-left,
+.terminal-status-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-status-indicator {
+  font-size: 8px;
+  transition: color 0.3s ease;
+}
+
+.terminal-status-indicator.running {
+  color: #4ade80;
+  animation: terminalPulse 2s infinite;
+}
+
+.terminal-status-indicator.stopped {
+  color: #6b7280;
+}
+
+@keyframes terminalPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.terminal-status-text {
+  font-weight: 500;
+}
+
+/* Scrollbar Styling */
+.terminal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.terminal-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.terminal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .terminal-container {
+    max-width: 100%;
+    margin: 0 16px;
+  }
+  
+  .terminal-content {
+    height: 300px;
+    padding: 12px;
+  }
+  
+  .terminal-output {
+    font-size: 12px;
+  }
+  
+  .terminal-title span {
+    display: none;
+  }
+}
