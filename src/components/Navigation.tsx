@@ -1,6 +1,5 @@
 import React from 'react';
 import { Server, Github, Linkedin, Mail, Download, Sun, Moon, User, Briefcase, Award } from 'lucide-react';
-import { downloadPDFResume } from '../utils/resumeGenerator';
 import profile from '../data/profile.json';
 
 interface NavigationProps {
@@ -9,9 +8,15 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ isDark, toggleTheme }) => {
-  const handleDownloadResume = () => {
-    downloadPDFResume();
-  };
+  const downloadResume = () => {
+    // Create a temporary link to download the resume
+    const link = document.createElement('a');
+    link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}`;
+    link.download = 'BhaktiVoraresume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }; 
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -26,7 +31,7 @@ const Navigation: React.FC<NavigationProps> = ({ isDark, toggleTheme }) => {
         ? 'bg-black/90 border-gray-700' 
         : 'bg-white/90 border-gray-300'
     } backdrop-blur-md shadow-sm border-b`}>
-<div className="w-full px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 w-full">
 
           {/* LEFT - Brand */}
@@ -67,15 +72,27 @@ const Navigation: React.FC<NavigationProps> = ({ isDark, toggleTheme }) => {
 
           {/* CENTER - Navigation */}
           <div className="hidden md:flex items-center space-x-6 mx-auto">
-            <button onClick={() => scrollToSection('about')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}><User className="w-4 h-4" />About</button>
-            <button onClick={() => scrollToSection('experience')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}><Briefcase className="w-4 h-4" />Experience</button>
-            <button onClick={() => scrollToSection('skills')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}><Award className="w-4 h-4" />Skills</button>
-            <button onClick={() => scrollToSection('contact')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}><Mail className="w-4 h-4" />Contact</button>
+            <button onClick={() => scrollToSection('about')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}>
+              <User className="w-4 h-4" />About
+            </button>
+            <button onClick={() => scrollToSection('experience')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}>
+              <Briefcase className="w-4 h-4" />Experience
+            </button>
+            <button onClick={() => scrollToSection('skills')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}>
+              <Award className="w-4 h-4" />Skills
+            </button>
+            <button onClick={() => scrollToSection('contact')} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 nav-highlighter ${isDark ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}>
+              <Mail className="w-4 h-4" />Contact
+            </button>
           </div>
 
           {/* RIGHT - Actions */}
           <div className="flex items-center space-x-4 ml-auto">
-            <button onClick={handleDownloadResume} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 button-highlighter glow-highlighter ${isDark ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'} shadow-md hover:shadow-lg hover:scale-105`} title="Download Resume">
+            <button 
+              onClick={downloadResume} 
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 button-highlighter glow-highlighter ${isDark ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'} shadow-md hover:shadow-lg hover:scale-105`} 
+              title="Download Resume"
+            >
               <Download className="w-4 h-4" />
               <span className="hidden sm:inline">Resume</span>
             </button>

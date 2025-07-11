@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Terminal as TerminalIcon, Github, Linkedin, Mail } from 'lucide-react';
 import profile from '../data/profile.json';
-import { downloadPDFResume } from '../utils/resumeGenerator';
 
 interface TerminalProps {
   isDark: boolean;
@@ -12,6 +11,17 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
   const [currentCommand, setCurrentCommand] = useState('');
   const [output, setOutput] = useState<string[]>([]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
+
+
+    const downloadResume = () => {
+    // Create a temporary link to download the resume
+    const link = document.createElement('a');
+    link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}`;
+    link.download = 'BhaktiVoraresume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const commands = {
     help: 'Available commands: about, skills, projects, experience, git, linkedin, email, clear, exit',
@@ -77,7 +87,7 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
     if (command === 'resume' || command === 'download') {
       setOutput(prev => [...prev, `$ ${cmd}`, 'Downloading PDF resume...', '']);
       setTimeout(() => {
-        downloadPDFResume();
+        downloadResume();
       }, 500);
       return;
     }

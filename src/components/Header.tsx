@@ -39,8 +39,8 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
     const downloadResume = () => {
     // Create a temporary link to download the resume
     const link = document.createElement('a');
-    link.href = '/resume.pdf';
-    link.download = 'resume.pdf';
+    link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}` ;
+    link.download = 'BhaktiVoraresume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
