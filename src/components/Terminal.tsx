@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Terminal as TerminalIcon, Github, Linkedin, Mail } from 'lucide-react';
 import profile from '../data/profile.json';
 
@@ -11,10 +11,9 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
   const [currentCommand, setCurrentCommand] = useState('');
   const [output, setOutput] = useState<string[]>([]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
 
-
-    const downloadResume = () => {
-    // Create a temporary link to download the resume
+  const downloadResume = () => {
     const link = document.createElement('a');
     link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}`;
     link.download = 'BhaktiVoraresume.pdf';
@@ -53,42 +52,44 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
   const handleCommand = (cmd: string) => {
     const command = cmd.toLowerCase().trim();
     const response = commands[command as keyof typeof commands];
-    
+
     if (response === 'CLEAR_SCREEN') {
       setOutput(['']);
+      setCommandHistory(prev => [...prev, cmd]);
+      setHistoryIndex(null);
       return;
     }
 
     // Handle special commands that open external links
     if (command === 'git' || command === 'github') {
       setOutput(prev => [...prev, `$ ${cmd}`, 'Opening GitHub profile...', '']);
-      setTimeout(() => {
-        window.open(profile.github, '_blank');
-      }, 500);
+      setCommandHistory(prev => [...prev, cmd]);
+      setHistoryIndex(null);
+      setTimeout(() => window.open(profile.github, '_blank'), 500);
       return;
     }
 
     if (command === 'linkedin') {
       setOutput(prev => [...prev, `$ ${cmd}`, 'Opening LinkedIn profile...', '']);
-      setTimeout(() => {
-        window.open(profile.linkedin, '_blank');
-      }, 500);
+      setCommandHistory(prev => [...prev, cmd]);
+      setHistoryIndex(null);
+      setTimeout(() => window.open(profile.linkedin, '_blank'), 500);
       return;
     }
 
     if (command === 'email') {
       setOutput(prev => [...prev, `$ ${cmd}`, `Opening email client to ${profile.email}...`, '']);
-      setTimeout(() => {
-        window.open(`mailto:${profile.email}`, '_blank');
-      }, 500);
+      setCommandHistory(prev => [...prev, cmd]);
+      setHistoryIndex(null);
+      setTimeout(() => window.open(`mailto:${profile.email}`, '_blank'), 500);
       return;
     }
 
     if (command === 'resume' || command === 'download') {
       setOutput(prev => [...prev, `$ ${cmd}`, 'Downloading PDF resume...', '']);
-      setTimeout(() => {
-        downloadResume();
-      }, 500);
+      setCommandHistory(prev => [...prev, cmd]);
+      setHistoryIndex(null);
+      setTimeout(() => downloadResume(), 500);
       return;
     }
 
@@ -97,42 +98,64 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
     } else {
       setOutput(prev => [...prev, `$ ${cmd}`, `Command not found: ${cmd}. Type 'help' for available commands.`, '']);
     }
-
     setCommandHistory(prev => [...prev, cmd]);
+    setHistoryIndex(null);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleCommand(currentCommand);
       setCurrentCommand('');
+    } else if (e.key === 'ArrowUp') {
+      if (commandHistory.length > 0) {
+        const newIndex =
+          historyIndex === null
+            ? commandHistory.length - 1
+            : Math.max(0, historyIndex - 1);
+        setCurrentCommand(commandHistory[newIndex]);
+        setHistoryIndex(newIndex);
+      }
+    } else if (e.key === 'ArrowDown') {
+      if (commandHistory.length > 0 && historyIndex !== null) {
+        const newIndex = Math.min(commandHistory.length - 1, historyIndex + 1);
+        setCurrentCommand(commandHistory[newIndex] || '');
+        setHistoryIndex(newIndex === commandHistory.length - 1 ? null : newIndex);
+      }
     }
   };
 
   if (!isVisible) {
     return (
-      <div className={`fixed bottom-4 right-4 icon-highlighter glow-highlighter ${
-        isDark ? 'bg-gray-800' : 'bg-white'
-      } rounded-full p-4 shadow-lg cursor-pointer transition-all duration-300 group`}
-           onClick={() => setIsVisible(true)}>
-        <TerminalIcon className={`w-6 h-6 ${
-          isDark ? 'text-blue-400' : 'text-blue-600'
-        }`} />
+      <div
+        className={`fixed bottom-4 right-4 icon-highlighter glow-highlighter ${
+          isDark ? 'bg-gray-800' : 'bg-white'
+        } rounded-full p-4 shadow-lg cursor-pointer transition-all duration-300 group`}
+        onClick={() => setIsVisible(true)}
+      >
+        <TerminalIcon
+          className={`w-6 h-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}
+        />
       </div>
     );
   }
 
   return (
-    <div className={`fixed bottom-4 right-4 w-96 h-80 z-[9999] terminal-highlighter custom-highlighter ${
-      isDark ? 'bg-gray-900 border-gray-700' : 'bg-black border-gray-600'
-    } border rounded-lg shadow-2xl overflow-hidden`}>
-      
+    <div
+      className={`fixed bottom-4 right-4 w-96 h-80 z-[9999] terminal-highlighter custom-highlighter ${
+        isDark ? 'bg-gray-900 border-gray-700' : 'bg-black border-gray-600'
+      } border rounded-lg shadow-2xl overflow-hidden`}
+    >
       {/* Terminal Header */}
-      <div className={`flex items-center justify-between p-3 relative z-[10000] ${
-        isDark ? 'bg-gray-800' : 'bg-gray-800'
-      } border-b border-gray-600`}>
+      <div
+        className={`flex items-center justify-between p-3 relative z-[10000] ${
+          isDark ? 'bg-gray-800' : 'bg-gray-800'
+        } border-b border-gray-600`}
+      >
         <div className="flex items-center gap-2">
           <TerminalIcon className="w-4 h-4 text-blue-400" />
-          <span className="text-sm text-blue-400 font-mono">Developer Terminal</span>
+          <span className="text-sm text-blue-400 font-mono">
+            Developer Terminal
+          </span>
         </div>
         <div className="flex items-center gap-2">
           {/* Quick Action Buttons */}
@@ -157,9 +180,9 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
           >
             <Mail className="w-3 h-3 text-gray-400 hover:text-white" />
           </button>
-          <button 
+          <button
             onClick={() => setIsVisible(false)}
-           className="text-gray-400 hover:text-white text-sm ml-2 relative z-[10001] icon-highlighter custom-highlighter"
+            className="text-gray-400 hover:text-white text-sm ml-2 relative z-[10001] icon-highlighter custom-highlighter"
           >
             ×
           </button>
@@ -169,13 +192,16 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
       {/* Terminal Content */}
       <div className="h-64 overflow-y-auto p-4 font-mono text-sm bg-black relative z-[9999]">
         {output.map((line, index) => (
-          <div key={index} className={`${
-            line.startsWith('$') ? 'text-blue-400' : 'text-gray-300'
-          } ${line.includes('Opening') ? 'text-green-400' : ''}`}>
+          <div
+            key={index}
+            className={`${
+              line.startsWith('$') ? 'text-blue-400' : 'text-gray-300'
+            } ${line.includes('Opening') ? 'text-green-400' : ''}`}
+          >
             {line}
           </div>
         ))}
-        
+
         {/* Current Input */}
         <div className="flex items-center text-blue-400">
           <span>$ </span>
@@ -183,7 +209,7 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
             type="text"
             value={currentCommand}
             onChange={(e) => setCurrentCommand(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             className="bg-transparent border-none outline-none text-gray-300 flex-1 relative z-[10001] selectable-text"
             placeholder="Type 'help' for commands"
             autoFocus

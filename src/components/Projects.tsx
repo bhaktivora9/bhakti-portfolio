@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Github, ExternalLink, Code } from 'lucide-react';
+import React from 'react';
+import { Github,  Code } from 'lucide-react';
 import projectsData from '../data/projects.json';
 
 interface ProjectsProps {
@@ -72,6 +72,7 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
                       Code
                     </a>
                   )}
+                  {/* 
                   {project.demo && (
                     <a href={project.demo} 
                        target="_blank" 
@@ -85,6 +86,7 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
                       Demo
                     </a>
                   )}
+                  */}
                 </div>
               </div>
             </div>

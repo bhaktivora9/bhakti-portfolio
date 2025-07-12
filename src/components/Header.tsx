@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Mail, MapPin, Download, Terminal, Zap, Code, Volume2, Linkedin, Eye } from 'lucide-react';
+import { Github, Mail, MapPin, Download, Zap, Linkedin, Eye } from 'lucide-react';
 import AnimatedTerminal from './AnimatedTerminal';
 import CurrentlyWorkingCard from './CurrentlyWorkingCard';
 import ProfileGreeting from './ProfileGreeting';
 import profile from '../data/profile.json';
-import ResumeModal from './ResumeModal';
-
 
 interface HeaderProps {
   isDark: boolean;
+  openResumeModal: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ isDark }) => {
+const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
-  const [showTerminal, setShowTerminal] = useState(true); // true = terminal, false = card
-  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
-
+  const [showTerminal, setShowTerminal] = useState(true);
 
   useEffect(() => {
     const text = profile.status;
     let currentIndex = 0;
-    
     const typeText = () => {
       if (currentIndex < text.length) {
         setDisplayedText(text.substring(0, currentIndex + 1));
@@ -31,77 +27,50 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
         setIsTyping(false);
       }
     };
-
     const timer = setTimeout(typeText, 2000);
     return () => clearTimeout(timer);
   }, []);
 
-    const downloadResume = () => {
-    // Create a temporary link to download the resume
+  const downloadResume = () => {
     const link = document.createElement('a');
-    link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}` ;
+    link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}`;
     link.download = 'BhaktiVoraresume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-
-  const openResumeModal = () => {
-    setIsResumeModalOpen(true);
-  };
-
-  const closeResumeModal = () => {
-    setIsResumeModalOpen(false);
-  };
-
-  const handleTerminalClose = () => {
-    setShowTerminal(false);
-  };
-
-  const handleTerminalMinimize = () => {
-    console.log('Terminal minimized');
-  };
-
-  const toggleView = () => {
-    setShowTerminal(!showTerminal);
-  };
+  const handleTerminalClose = () => setShowTerminal(false);
+  const handleTerminalMinimize = () => {};
+  const toggleView = () => setShowTerminal(!showTerminal);
 
   const playAudio = () => {
     const audioElementFirstName = document.getElementById('pronunciation-audio-1') as HTMLAudioElement;
     const audioElementLastName = document.getElementById('pronunciation-audio-2') as HTMLAudioElement;
-    
     const playSequentially = async () => {
-      // Play first name audio
       if (audioElementFirstName) {
         try {
           await audioElementFirstName.play();
-          // Wait for first audio to end before playing second
           await new Promise((resolve) => {
             audioElementFirstName.onended = resolve;
           });
         } catch (error) {
-          // If audio file fails, fall back to speech synthesis for first name
           if ('speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance('Bhakti');
             utterance.rate = 0.8;
             utterance.pitch = 1;
             utterance.volume = 1;
             speechSynthesis.speak(utterance);
-            // Wait for speech to finish
             await new Promise((resolve) => {
               utterance.onend = resolve;
             });
           }
         }
       }
-      
-      // Play second name audio after first one finishes
       if (audioElementLastName) {
         try {
           await audioElementLastName.play();
         } catch (error) {
-          // If audio file fails, fall back to speech synthesis for last name
           if ('speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance('Vora');
             utterance.rate = 0.8;
@@ -112,30 +81,15 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
         }
       }
     };
-    
-    playSequentially().catch(() => {
-      // Try to play the audio file first
-      console.log('Audio playback not supported in this browser');
-    });
+    playSequentially().catch(() => {});
   };
 
   return (
-    <div className={`relative z-10 pt-8 pb-8 ${
-      isDark ? 'text-white' : 'text-black'
-    }`}>
+    <div className={`relative z-10 pt-8 pb-8 ${isDark ? 'text-white' : 'text-black'}`}>
       <div className="container mx-auto px-4">
-        {/* Main Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[600px]">
-          
-          {/* Left Side - Profile Section (7 columns on large screens) */}
           <div className="lg:col-span-7 order-1 lg:order-1">
-                
-          
-
-            {/* Profile Picture and Name Section */}
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 mb-6">
-              
-              {/* Profile Picture with Floating Elements */}
               <div className="relative group flex-shrink-0">
                 <div className="w-56 h-56 lg:w-48 lg:h-48 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-gradient-to-br from-indigo-100 to-purple-100 p-1 transform hover:scale-105 transition-all duration-300">
                   <img
@@ -144,15 +98,11 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-                
-                {/* Status Indicator */}
                 <div className={`absolute bottom-2 -right-0 w-8 h-8 lg:w-10 lg:h-10 rounded-full border-4 border-green flex items-center justify-center shadow-lg ${
                   isDark ? 'bg-green-500' : 'bg-green-400'
                 }`}>
                   <div className="w-3 h-3 lg:w-4 lg:h-4 bg-green rounded-full animate-pulse"></div>
                 </div>
-                
-                {/* Experience Badge - positioned below profile picture */}
                 <div className="absolute -bottom-4 -right-1/2 transform -translate-x-1/2">
                   <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium shadow-lg min-w-[180px] justify-center ${
                     isDark 
@@ -162,19 +112,13 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                     <Zap className="h-3 h-3 mr-1.5" />
                     ~ 7 Years Experience</span>
                 </div>
-                
               </div>
-              
-              {/* Name and Title Container */}
               <div className="text-center lg:text-left flex-grow mt-6 lg:mt-0">
-                {/* Profile Greeting with Typing Animation */}
                 <ProfileGreeting 
                   isDark={isDark}
                   name={profile.name}
                   onPlayAudio={playAudio}
                 />
-                
-                {/* Hidden audio element for pronunciation */}
                 <audio 
                   id="pronunciation-audio-1" 
                   preload="none"
@@ -189,40 +133,30 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                 ><source src="https://en-audio.howtopronounce.com/17515761216866ee3906cbc.mp3"type="audio/mpeg" />
                   <source src="https://en-audio.howtopronounce.com/17294854996715dabbf0539.mp3" type="audio/mpeg" />
                 </audio>
-                
-                    
-        <div className={`flex flex-col lg:flex-row lg:items-center lg:gap-3 mb-4`}>
-          <p className={`text-lg md:text-xl lg:text-xl ${
-                  isDark ? 'text-gray-300' : 'text-gray-700'
-                } font-medium mb-1 lg:mb-0`}>
-                  {profile.title} 
-                  </p>
-                
-                  {/* Tech Stack Pills */}
-                  <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                    {['Java', 'Spring Boot', 'AI/ML', 'AWS'].map((tech, index) => (
-                      <span
-                        key={tech}
-                        className={`px-2.5 py-1 text-xs rounded-full font-medium ${
-                          isDark 
-                            ? 'bg-gray-800 text-gray-300 border border-gray-600' 
-                            : 'bg-gray-100 text-gray-700 border border-gray-200'
-                        } hover:scale-105 transition-transform duration-200`}
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                  
-              
-                </div>
-                
-                
+                <div className={`flex flex-col lg:flex-row lg:items-center lg:gap-3 mb-4`}>
+                  <p className={`text-lg md:text-xl lg:text-xl ${
+                          isDark ? 'text-gray-300' : 'text-gray-700'
+                        } font-medium mb-1 lg:mb-0`}>
+                          {profile.title} 
+                          </p>
+                        <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+                          {['Java', 'Spring Boot', 'AI/ML', 'AWS'].map((tech, index) => (
+                            <span
+                              key={tech}
+                              className={`px-2.5 py-1 text-xs rounded-full font-medium ${
+                                isDark 
+                                  ? 'bg-gray-800 text-gray-300 border border-gray-600' 
+                                  : 'bg-gray-100 text-gray-700 border border-gray-200'
+                              } hover:scale-105 transition-transform duration-200`}
+                              style={{ animationDelay: `${index * 0.1}s` }}
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+              </div>
             </div>
-
-            {/* Typing Animation */}
             <div className="mb-4 h-6 text-center lg:text-left">
               <p className={`text-sm md:text-base ${
                 isDark ? 'text-blue-400' : 'text-blue-600'
@@ -231,26 +165,20 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                 {isTyping && <span className="animate-pulse">|</span>}
               </p>
             </div>
-
-            {/* Bio */}
             <div className={`mb-6 text-sm md:text-base ${
               isDark ? 'text-gray-300' : 'text-gray-700'
             } text-center lg:text-left max-w-2xl`}>
               <p>{profile.bio}</p>
             </div>
-
-            {/* Contact Info and Actions */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-2 mb-4">
               <div  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
                    isDark 
                      ? 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600' 
                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
                  } ${isDark ? 'shadow-theme-dark' : 'shadow-theme-light'} hover:shadow-lg hover:scale-105`}>
-  <MapPin size={16}/>
-                  <span className="text-sm">
-{profile.location}</span>
-</div>
-
+                <MapPin size={16}/>
+                <span className="text-sm">{profile.location}</span>
+              </div>
               <a href={profile.github} 
                  target="_blank"
                  rel="noopener noreferrer"
@@ -262,7 +190,6 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                 <Github size={16} />
                 <span className="text-sm">GitHub</span>
               </a>
-            
               <a href={profile.github} 
                  target="_blank"
                  rel="noopener noreferrer"
@@ -274,7 +201,6 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                 <Linkedin size={16} />
                 <span className="text-sm">LinkedIn</span>
               </a>  
-              
               <a href={`mailto:${profile.email}`} 
                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
                    isDark 
@@ -284,7 +210,6 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                 <Mail size={16} />
                 <span className="text-sm">Email</span>
               </a>
-              
               <a
                 onClick={downloadResume}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
@@ -295,7 +220,6 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
                 <Download size={16} />
                 <span className="text-sm">Resume</span>
               </a>
-
               <a
                 onClick={openResumeModal}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
@@ -308,8 +232,6 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
               </a>
             </div>
           </div>
-
-          {/* Right Side - Terminal/Project Card (5 columns on large screens) */}
           <div className="lg:col-span-5 order-2 lg:order-2 w-full flex justify-center lg:justify-end">
             <div className="w-full max-w-lg lg:max-w-none">
               {showTerminal ? (
@@ -331,22 +253,9 @@ const Header: React.FC<HeaderProps> = ({ isDark }) => {
               )}
             </div>
           </div>
-
         </div>
       </div>
-      {/* Resume Modal - Must be rendered outside the main container */}
-{isResumeModalOpen && (
-  <div className="fixed inset-0 z-[9999] bg-black bg-opacity-50">
-    <ResumeModal 
-      isOpen={isResumeModalOpen}
-      onClose={closeResumeModal}
-      isDark={isDark}
-    />
-  </div>
-)}
-    
     </div>
-
   );
 };
 

@@ -1,4 +1,5 @@
 {
+  "homepage": "https://bhaktivora9.github.io/bhakti-portfolio/",
   "name": "bhakti-portfolio",
   "private": true,
   "version": "0.0.0",
@@ -8,7 +9,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build && cp src/data/* private-assets/* dist/",
+    "predeploy": "npm run build && cpx \"src/data/*\" dist/ && cpx \"private-assets/*\" dist/",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
     "autoprefixer": "^10.4.18",
+    "cpx": "^1.5.0",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",

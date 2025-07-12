@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Code2, Filter, Layers } from 'lucide-react';
+/*import { Code2, Filter, Layers } from 'lucide-react';*/
 
 interface Skill {
   name: string;
@@ -49,6 +49,9 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ isDark }) => {
     ? skills 
     : skills.filter(skill => skill.category.includes(selectedCategory));
 
+     
+     console.log(categories);
+     console.log(setSelectedCategory);
   return (
     <section className={`py-16 ${isDark ? 'bg-gray-900' : 'bg-gray-50'} relative overflow-hidden`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
@@ -57,53 +60,8 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ isDark }) => {
           <h2 className={`text-4xl font-bold mb-4 ${isDark ? 'text-white' : 'text-black'}`}>Technical Skills</h2>
         </div>
           
-        {/* Category Filter */}
-        {/*<div className="mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <Filter className={`w-5 h-5 mr-2 ${
-              isDark ? 'text-gray-400' : 'text-gray-500'
-            }`} />
-            <span className={`text-lg font-semibold ${
-              isDark ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              Filter by Category
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border shadow-lg button-highlighter custom-highlighter ${
-                  selectedCategory === category
-                    ? `${
-                        isDark 
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-gray-600 shadow-xl ring-2 ring-blue-500/50' 
-                          : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white border-gray-300 shadow-xl ring-2 ring-blue-300/50'
-                      }`
-                    : `${
-                        isDark 
-                          ? 'bg-gray-800/70 text-gray-300 border-gray-600 hover:bg-gray-700/90 hover:text-white' 
-                          : 'bg-white/70 text-gray-600 border-gray-200 hover:bg-white/90 hover:text-gray-700'
-                      }`
-                }`}
-              >
-                <div className="flex items-center space-x-2">
-                  <Layers className="w-4 h-4" />
-                  <span>{category}</span>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    selectedCategory === category
-                      ? 'bg-white/30'
-                      : isDark ? 'bg-gray-700/50' : 'bg-gray-200/50'
-                  }`}>
-                    {category === "All" ? skills.length : skills.filter(s => s.category.includes(category)).length}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-*/}
+   
+
         {/* Skills Container */}
         <div className="relative">
           {/* Glass Container */}
@@ -171,17 +129,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ isDark }) => {
                 ))}
               </div>
 
-              {/* Decorative Elements */}
-           {/*   <div className="flex items-center justify-center mt-10 space-x-3">
-                <span className={`text-lg font-medium tracking-wide ${
-                  isDark 
-                    ? 'bg-gradient-to-r from-gray-300 to-blue-400 bg-clip-text text-transparent' 
-                    : 'bg-gradient-to-r from-gray-600 to-blue-600 bg-clip-text text-transparent'
-                }`}>
-                  {filteredSkills.length} Technologies • Always Evolving
-                </span>
-              </div>
-*/}
+          
             </div>
 
             {/* Inner Glass Reflections */}
@@ -206,18 +154,6 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ isDark }) => {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </section>
   );
 };
