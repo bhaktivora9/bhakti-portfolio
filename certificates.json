@@ -1,0 +1,54 @@
+[
+  {
+    "id": "aws-solutions-architect",
+    "name": "AWS Certified Solutions Architect - Associate",
+    "issuer": "Amazon Web Services",
+    "issueDate": "2023-08-15",
+    "expiryDate": "2026-08-15",
+    "credentialId": "AWS-SAA-2023-001234",
+    "verificationUrl": "https://aws.amazon.com/verification",
+    "description": "Validates expertise in designing distributed systems and applications on the AWS platform.",
+    "skills": ["AWS", "Cloud Architecture", "EC2", "S3", "Lambda", "VPC", "IAM"],
+    "logo": "https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Solutions-Architect-Associate_badge.3419559c682629072f1eb968d59dea0741772c0f.png",
+    "status": "active"
+  },
+  {
+    "id": "spring-professional",
+    "name": "Spring Professional Certification",
+    "issuer": "VMware (Pivotal)",
+    "issueDate": "2022-11-20",
+    "expiryDate": "2025-11-20",
+    "credentialId": "SPRING-PRO-2022-005678",
+    "verificationUrl": "https://www.vmware.com/education-services/certification",
+    "description": "Demonstrates expertise in Spring Framework, Spring Boot, and enterprise Java development.",
+    "skills": ["Spring Framework", "Spring Boot", "Spring Security", "Spring Data", "Microservices"],
+    "logo": "https://spring.io/img/spring-logo.svg",
+    "status": "active"
+  },
+  {
+    "id": "oracle-java-se",
+    "name": "Oracle Certified Professional: Java SE 11 Developer",
+    "issuer": "Oracle Corporation",
+    "issueDate": "2021-06-10",
+    "expiryDate": "2024-06-10",
+    "credentialId": "OCP-JAVA-2021-009876",
+    "verificationUrl": "https://education.oracle.com/certification",
+    "description": "Validates advanced Java programming skills and knowledge of Java SE 11 features.",
+    "skills": ["Java SE 11", "Object-Oriented Programming", "Collections", "Streams", "Lambda Expressions"],
+    "logo": "https://education.oracle.com/file/general/p-80-java.png",
+    "status": "active"
+  },
+  {
+    "id": "docker-certified",
+    "name": "Docker Certified Associate",
+    "issuer": "Docker Inc.",
+    "issueDate": "2022-03-15",
+    "expiryDate": "2025-03-15",
+    "credentialId": "DCA-2022-001122",
+    "verificationUrl": "https://success.docker.com/certification",
+    "description": "Demonstrates proficiency in Docker containerization, orchestration, and best practices.",
+    "skills": ["Docker", "Containerization", "Docker Compose", "Docker Swarm", "Container Security"],
+    "logo": "https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png",
+    "status": "active"
+  }
+]
