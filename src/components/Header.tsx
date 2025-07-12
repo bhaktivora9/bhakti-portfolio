@@ -34,7 +34,8 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
   const downloadResume = () => {
     const link = document.createElement('a');
     link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}`;
-    link.download = 'BhaktiVoraresume.pdf';
+    link.download = 'BhaktiVoraResume.pdf';
+    console.log("Attempting to download "+ link.href);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
