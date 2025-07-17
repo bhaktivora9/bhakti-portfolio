@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Mail, MapPin, Download, Zap, Linkedin, Eye } from 'lucide-react';
+import { Github, Mail, MapPin, Download, Zap, Linkedin, Eye, Copy } from 'lucide-react';
 import AnimatedTerminal from './AnimatedTerminal';
 import CurrentlyWorkingCard from './CurrentlyWorkingCard';
 import ProfileGreeting from './ProfileGreeting';
+import CertificateModal from './CertificateModal';
 import profile from '../data/profile.json';
 
 interface HeaderProps {
@@ -14,6 +15,10 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [showTerminal, setShowTerminal] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
+  const [certificateUrl, setCertificateUrl] = useState('');
+  const [certificateTitle, setCertificateTitle] = useState('');
 
   useEffect(() => {
     const text = profile.status;
@@ -31,6 +36,12 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(profile.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const downloadResume = () => {
     const link = document.createElement('a');
     link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}`;
@@ -44,6 +55,23 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
   const handleTerminalClose = () => setShowTerminal(false);
   const handleTerminalMinimize = () => {};
   const toggleView = () => setShowTerminal(!showTerminal);
+
+  const handleBioClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('certificate-link')) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const url = target.getAttribute('data-certificate-url');
+      const title = target.getAttribute('data-certificate-title');
+      
+      if (url && title) {
+        setCertificateUrl(url);
+        setCertificateTitle(title);
+        setShowCertificateModal(true);
+      }
+    }
+  };
 
   const playAudio = () => {
     const audioElementFirstName = document.getElementById('pronunciation-audio-1') as HTMLAudioElement;
@@ -131,7 +159,8 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
                   id="pronunciation-audio-2" 
                   preload="none"
                   className="hidden"
-                ><source src="https://en-audio.howtopronounce.com/17515761216866ee3906cbc.mp3"type="audio/mpeg" />
+                >
+                  <source src="https://en-audio.howtopronounce.com/17515761216866ee3906cbc.mp3" type="audio/mpeg" />
                   <source src="https://en-audio.howtopronounce.com/17294854996715dabbf0539.mp3" type="audio/mpeg" />
                 </audio>
                 <div className={`flex flex-col lg:flex-row lg:items-center lg:gap-3 mb-4`}>
@@ -166,11 +195,18 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
                 {isTyping && <span className="animate-pulse">|</span>}
               </p>
             </div>
+            
+            {/* Bio Section with Certificate Modal */}
             <div className={`mb-6 text-sm md:text-base ${
               isDark ? 'text-gray-300' : 'text-gray-700'
             } text-center lg:text-left max-w-2xl`}>
-              <p>{profile.bio}</p>
+              <div 
+                className="leading-relaxed"
+                onClick={handleBioClick}
+                dangerouslySetInnerHTML={{ __html: profile.bio }}
+              />
             </div>
+
             <div className="flex flex-wrap justify-center lg:justify-start gap-2 mb-4">
               <div  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
                    isDark 
@@ -191,7 +227,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
                 <Github size={16} />
                 <span className="text-sm">GitHub</span>
               </a>
-              <a href={profile.github} 
+              <a href={profile.linkedin} 
                  target="_blank"
                  rel="noopener noreferrer"
                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
@@ -202,16 +238,28 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
                 <Linkedin size={16} />
                 <span className="text-sm">LinkedIn</span>
               </a>  
-              <a href={`mailto:${profile.email}`} 
-                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
+          
+              <a 
+           href={`mailto:${profile.email}?subject=${encodeURIComponent('Opportunity Inquiry - Portfolio Contact')}&body=${encodeURIComponent('Hello Bhakti,\n\nI came across your portfolio and would like to discuss potential opportunities.\n\nBest regards')}`} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
                    isDark 
                      ? 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600' 
                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
                  } ${isDark ? 'shadow-theme-dark' : 'shadow-theme-light'} hover:shadow-lg hover:scale-105`}>
                 <Mail size={16} />
                 <span className="text-sm">Email</span>
+                 <button
+    onClick={() => {
+      navigator.clipboard.writeText(profile.email);
+      // Show toast notification
+    }}
+    className="ml-1 p-1 opacity-50 hover:opacity-100 transition-opacity"
+    title="Copy email address"
+  >
+    <Copy size={12} />
+  </button>
               </a>
-              <a
+           
+              <button
                 onClick={downloadResume}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
                    isDark 
@@ -220,8 +268,8 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
                  } ${isDark ? 'shadow-theme-dark' : 'shadow-theme-light'} hover:shadow-lg hover:scale-105`}>
                 <Download size={16} />
                 <span className="text-sm">Resume</span>
-              </a>
-              <a
+              </button>
+              <button
                 onClick={openResumeModal}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg theme-transition button-highlighter custom-highlighter ${
                    isDark 
@@ -230,11 +278,11 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
                  } ${isDark ? 'shadow-theme-dark' : 'shadow-theme-light'} hover:shadow-lg hover:scale-105`}>
                 <Eye size={16} />
                 <span className="text-sm">View Resume</span>
-              </a>
+              </button>
             </div>
           </div>
-          <div className="lg:col-span-5 order-2 lg:order-2 w-full flex justify-center lg:justify-end">
-            <div className="w-full max-w-lg lg:max-w-none">
+      <div className="col-span-12 md:col-span-6 lg:col-span-5 order-2 w-full flex justify-center lg:justify-end">
+           {/* <div className="w-full max-w-lg lg:max-w-none">
               {showTerminal ? (
                 <div className="w-full">
                   <AnimatedTerminal
@@ -252,10 +300,25 @@ const Header: React.FC<HeaderProps> = ({ isDark, openResumeModal }) => {
                   />
                 </div>
               )}
-            </div>
+            </div>*/}
+            <div className="w-full">
+                  <CurrentlyWorkingCard 
+                    isDark={isDark}
+                    onOpenTerminal={toggleView}
+                  />
+                </div>
           </div>
         </div>
       </div>
+
+      {/* Certificate Modal */}
+      <CertificateModal
+        isOpen={showCertificateModal}
+        onClose={() => setShowCertificateModal(false)}
+        url={certificateUrl}
+        title={certificateTitle}
+        isDark={isDark}
+      />
     </div>
   );
 };

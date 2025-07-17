@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Terminal as TerminalIcon, Github, Linkedin, Mail } from 'lucide-react';
+import { Terminal as TerminalIcon, Github, Linkedin, Mail, MoveDown } from 'lucide-react';
+import TypingDoodlePrompt from './TypingDoodlePrompt'
 import profile from '../data/profile.json';
 
 interface TerminalProps {
@@ -127,11 +128,30 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
   if (!isVisible) {
     return (
       <div
-        className={`fixed bottom-4 right-4 icon-highlighter glow-highlighter ${
+        className={`fixed bottom-8 right-4 icon-highlighter glow-highlighter ${
           isDark ? 'bg-gray-800' : 'bg-white'
         } rounded-full p-4 shadow-lg cursor-pointer transition-all duration-300 group`}
         onClick={() => setIsVisible(true)}
       >
+          {(!isVisible || isMinimized) && (
+      <div className="fixed bottom-32 right-4 z-40 pointer-events-none">
+  <div className="flex flex-row-reverse items-center gap-3">
+    {/* Arrow */}
+   {/* <MoveDown
+      size={48}
+      strokeWidth={2.5}
+      absoluteStrokeWidth
+      className={`${isDark ? 'text-orange-400' : 'text-orange-500'} animate-bounce`}
+    />
+*/}
+    {/* Handwritten "Try this" note */}
+    <TypingDoodlePrompt/>
+   
+  </div>
+</div>
+
+      )}
+
         <TerminalIcon
           className={`w-6 h-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}
         />
@@ -158,28 +178,7 @@ const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {/* Quick Action Buttons */}
-          <button
-            onClick={() => handleCommand('git')}
-            className="p-1 hover:bg-gray-700 rounded transition-colors duration-200 relative z-[10001] icon-highlighter custom-highlighter"
-            title="GitHub"
-          >
-            <Github className="w-3 h-3 text-gray-400 hover:text-white" />
-          </button>
-          <button
-            onClick={() => handleCommand('linkedin')}
-            className="p-1 hover:bg-gray-700 rounded transition-colors duration-200 relative z-[10001] icon-highlighter custom-highlighter"
-            title="LinkedIn"
-          >
-            <Linkedin className="w-3 h-3 text-gray-400 hover:text-white" />
-          </button>
-          <button
-            onClick={() => handleCommand('email')}
-            className="p-1 hover:bg-gray-700 rounded transition-colors duration-200 relative z-[10001] icon-highlighter custom-highlighter"
-            title="Email"
-          >
-            <Mail className="w-3 h-3 text-gray-400 hover:text-white" />
-          </button>
+          
           <button
             onClick={() => setIsVisible(false)}
             className="text-gray-400 hover:text-white text-sm ml-2 relative z-[10001] icon-highlighter custom-highlighter"

@@ -79,12 +79,12 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose, isDark }) =>
           <div className={`w-full h-full rounded-lg overflow-hidden shadow-lg border ${
             isDark ? 'border-gray-700' : 'border-gray-200'
           }`}>
-            <iframe
-              src="/Bhakti Vora Resume.pdf#toolbar=1&navpanes=0&scrollbar=1"
-              className="w-full h-full border-0"
-              title="Resume PDF"
-            />
-          </div>
+         <iframe
+  src={`${import.meta.env.BASE_URL}assets/BhaktiVoraResume.pdf#toolbar=1&navpanes=0&scrollbar=1`}
+  className="w-full h-full border-0"
+  title="Bhakti Vora Resume"
+/>
+ </div>
         </div>
       </div>
     </div>,

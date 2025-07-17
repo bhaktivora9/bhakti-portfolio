@@ -22,7 +22,7 @@ const CurrentlyWorkingCard: React.FC<CurrentlyWorkingCardProps> = ({ isDark, onO
           </div>
           <div>
             <h3 className="text-white font-semibold">Currently Working On</h3>
-            <p className="text-blue-100 text-sm">AI Model Service</p>
+            <p className="text-blue-100 text-sm">genREADME</p>
           </div>
         </div>
       </div>
@@ -33,19 +33,19 @@ const CurrentlyWorkingCard: React.FC<CurrentlyWorkingCardProps> = ({ isDark, onO
           <h4 className={`text-lg font-semibold mb-2 ${
             isDark ? 'text-white' : 'text-gray-900'
           }`}>
-            Spring Boot AI Integration
-          </h4>
+        genREADME - Intelligent Context-Aware Resume Builder
+        </h4>
           <p className={`text-sm ${
             isDark ? 'text-gray-300' : 'text-gray-600'
           }`}>
-            Building a microservice that integrates TensorFlow models for sentiment analysis and image classification with Spring Boot backend.
+          Building a context-aware AI README system that generates intelligent, ecosystem-informed READMEs by analyzing successful projects in your tech stack and learning from community best practices.
           </p>
         </div>
 
         {/* Tech Stack */}
         <div className="mb-4">
           <div className="flex flex-wrap gap-2">
-            {['Spring Boot', 'TensorFlow', 'PostgreSQL', 'Docker'].map((tech) => (
+            {['Spring Boot', 'AI', 'ML', ''].map((tech) => (
               <span
                 key={tech}
                 className={`px-2 py-1 text-xs rounded-full ${

@@ -105,3 +105,14 @@ a {
   scrollbar-width: thin;
   scrollbar-color: var(--border-accent) var(--bg-secondary);
 }
+
+.typing-animation {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid currentColor;
+  animation: typing 2s steps(10) 1, blink 0.75s step-end infinite;
+}
+
+.font-handwriting {
+  font-family: 'Dancing Script', cursive;
+}
