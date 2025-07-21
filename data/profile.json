@@ -1,0 +1,13 @@
+{
+  "name": "Bhakti Vora",
+  "title": "Backend Developer",
+  "email": "bhaktivora16@gmail.com",
+  "location": "San Francisco, CA",
+  "github": "https://github.com/bhaktivora9",
+  "linkedin": "https://linkedin.com/in/bhakti-vora",
+  "bio": "Experienced Backend Developer with 7+ years of hands-on experience in designing, developing, and maintaining scalable systems and frameworks. Proficient in taking projects from ideation to deployment. Skilled in Core Java, Spring Boot, Kubernetes, Kafka and machine learning techniques, with a consistent track record of tackling complex engineering challenges and delivering practical solutions. Additionally, I hold a <i><span class=\"certificate-link cursor-pointer text-blue-500 hover:text-blue-600 underline transition-colors font-medium\" data-certificate-url=\"https://certificates.emeritus.org/fe943e05-a357-4561-987d-51ed62618e14#acc.nj8Ook9l\" data-certificate-title=\"Professional Certificate in Machine Learning & Artificial Intelligence\">Professional Certificate in Machine Learning & Artificial Intelligence</span></i> from <i>UC Berkeley Executive Education.</i>",
+  "status": "Currently building AI-powered README Generator...",
+  "picture":"bhakti-profile-pic.jpg",
+  "resume" : "BhaktiVoraResume.pdf"
+
+}

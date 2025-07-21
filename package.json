@@ -5,9 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build": "tsc -b && vite build",
+    "predeploy": "npm run build && cpx \"src/data/*\" dist/ && cpx  \"private-assets/**/*\" dist/assets/",
+    "deploy": "gh-pages -d dist"
+  
+  
   },
   "dependencies": {
     "lucide-react": "^0.344.0",

@@ -1,223 +1,129 @@
-import { useState, useEffect } from 'react';
-import { Terminal as TerminalIcon, Github, Linkedin, Mail, MoveDown } from 'lucide-react';
-import TypingDoodlePrompt from './TypingDoodlePrompt'
-import profile from '../data/profile.json';
+import React, { useRef, useEffect } from 'react';
+import { Search, Maximize2, X, Play } from 'lucide-react';
 
-interface TerminalProps {
-  isDark: boolean;
+interface TerminalCommand {
+  command: string;
+  output: string;
+  timestamp: string;
 }
 
-const Terminal: React.FC<TerminalProps> = ({ isDark }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [currentCommand, setCurrentCommand] = useState('');
-  const [output, setOutput] = useState<string[]>([]);
-  const [commandHistory, setCommandHistory] = useState<string[]>([]);
-  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+interface TerminalProps {
+  isTerminalOpen: boolean;
+  setIsTerminalOpen: (value: boolean) => void;
+  activePanel: string;
+  setActivePanel: (panel: string) => void;
+  terminalHistory: TerminalCommand[];
+  currentCommand: string;
+  setCurrentCommand: (command: string) => void;
+  onTerminalCommand: (command: string) => void;
+  themeClasses: any;
+}
 
-  const downloadResume = () => {
-    const link = document.createElement('a');
-    link.href = `${import.meta.env.BASE_URL}assets/${profile.resume}`;
-    link.download = 'BhaktiVoraresume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const commands = {
-    help: 'Available commands: about, skills, projects, experience, git, linkedin, email, clear, exit',
-    about: 'Backend developer focused on scalable systems and clean code',
-    skills: 'Java, Spring Boot, PostgreSQL, Redis, Docker, AWS',
-    projects: 'API Gateway, Data Processing Pipeline, E-commerce Backend',
-    experience: 'Senior Backend Developer with 5+ years experience',
-    resume: 'Downloading PDF resume...',
-    download: 'Downloading PDF resume...',
-    git: 'Opening GitHub profile...',
-    github: 'Opening GitHub profile...',
-    linkedin: 'Opening LinkedIn profile...',
-    email: `Opening email client to ${profile.email}...`,
-    clear: 'CLEAR_SCREEN',
-    exit: 'Thanks for visiting!'
-  };
+export const Terminal: React.FC<TerminalProps> = ({
+  isTerminalOpen,
+  setIsTerminalOpen,
+  activePanel,
+  setActivePanel,
+  terminalHistory,
+  currentCommand,
+  setCurrentCommand,
+  onTerminalCommand,
+  themeClasses
+}) => {
+  const terminalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isVisible) {
-      setOutput([
-        'Welcome to the Developer Terminal',
-        'Type "help" for available commands',
-        'Try: git, linkedin, email for quick access',
-        ''
-      ]);
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
-  }, [isVisible]);
+  }, [terminalHistory]);
 
-  const handleCommand = (cmd: string) => {
-    const command = cmd.toLowerCase().trim();
-    const response = commands[command as keyof typeof commands];
-
-    if (response === 'CLEAR_SCREEN') {
-      setOutput(['']);
-      setCommandHistory(prev => [...prev, cmd]);
-      setHistoryIndex(null);
-      return;
-    }
-
-    // Handle special commands that open external links
-    if (command === 'git' || command === 'github') {
-      setOutput(prev => [...prev, `$ ${cmd}`, 'Opening GitHub profile...', '']);
-      setCommandHistory(prev => [...prev, cmd]);
-      setHistoryIndex(null);
-      setTimeout(() => window.open(profile.github, '_blank'), 500);
-      return;
-    }
-
-    if (command === 'linkedin') {
-      setOutput(prev => [...prev, `$ ${cmd}`, 'Opening LinkedIn profile...', '']);
-      setCommandHistory(prev => [...prev, cmd]);
-      setHistoryIndex(null);
-      setTimeout(() => window.open(profile.linkedin, '_blank'), 500);
-      return;
-    }
-
-    if (command === 'email') {
-      setOutput(prev => [...prev, `$ ${cmd}`, `Opening email client to ${profile.email}...`, '']);
-      setCommandHistory(prev => [...prev, cmd]);
-      setHistoryIndex(null);
-      setTimeout(() => window.open(`mailto:${profile.email}`, '_blank'), 500);
-      return;
-    }
-
-    if (command === 'resume' || command === 'download') {
-      setOutput(prev => [...prev, `$ ${cmd}`, 'Downloading PDF resume...', '']);
-      setCommandHistory(prev => [...prev, cmd]);
-      setHistoryIndex(null);
-      setTimeout(() => downloadResume(), 500);
-      return;
-    }
-
-    if (response) {
-      setOutput(prev => [...prev, `$ ${cmd}`, response, '']);
-    } else {
-      setOutput(prev => [...prev, `$ ${cmd}`, `Command not found: ${cmd}. Type 'help' for available commands.`, '']);
-    }
-    setCommandHistory(prev => [...prev, cmd]);
-    setHistoryIndex(null);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleCommand(currentCommand);
+      onTerminalCommand(currentCommand);
       setCurrentCommand('');
-    } else if (e.key === 'ArrowUp') {
-      if (commandHistory.length > 0) {
-        const newIndex =
-          historyIndex === null
-            ? commandHistory.length - 1
-            : Math.max(0, historyIndex - 1);
-        setCurrentCommand(commandHistory[newIndex]);
-        setHistoryIndex(newIndex);
-      }
-    } else if (e.key === 'ArrowDown') {
-      if (commandHistory.length > 0 && historyIndex !== null) {
-        const newIndex = Math.min(commandHistory.length - 1, historyIndex + 1);
-        setCurrentCommand(commandHistory[newIndex] || '');
-        setHistoryIndex(newIndex === commandHistory.length - 1 ? null : newIndex);
-      }
     }
   };
 
-  if (!isVisible) {
-    return (
-      <div
-        className={`fixed bottom-8 right-4 icon-highlighter glow-highlighter ${
-          isDark ? 'bg-gray-800' : 'bg-white'
-        } rounded-full p-4 shadow-lg cursor-pointer transition-all duration-300 group`}
-        onClick={() => setIsVisible(true)}
-      >
-          {(!isVisible || isMinimized) && (
-      <div className="fixed bottom-32 right-4 z-40 pointer-events-none">
-  <div className="flex flex-row-reverse items-center gap-3">
-    {/* Arrow */}
-   {/* <MoveDown
-      size={48}
-      strokeWidth={2.5}
-      absoluteStrokeWidth
-      className={`${isDark ? 'text-orange-400' : 'text-orange-500'} animate-bounce`}
-    />
-*/}
-    {/* Handwritten "Try this" note */}
-    <TypingDoodlePrompt/>
-   
-  </div>
-</div>
-
-      )}
-
-        <TerminalIcon
-          className={`w-6 h-6 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}
-        />
-      </div>
-    );
-  }
+  if (!isTerminalOpen) return null;
 
   return (
-    <div
-      className={`fixed bottom-4 right-4 w-96 h-80 z-[9999] terminal-highlighter custom-highlighter ${
-        isDark ? 'bg-gray-900 border-gray-700' : 'bg-black border-gray-600'
-      } border rounded-lg shadow-2xl overflow-hidden`}
-    >
-      {/* Terminal Header */}
-      <div
-        className={`flex items-center justify-between p-3 relative z-[10000] ${
-          isDark ? 'bg-gray-800' : 'bg-gray-800'
-        } border-b border-gray-600`}
-      >
-        <div className="flex items-center gap-2">
-          <TerminalIcon className="w-4 h-4 text-blue-400" />
-          <span className="text-sm text-blue-400 font-mono">
-            Developer Terminal
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          
+    <div className={`h-48 ${themeClasses.bgSecondary} border-t ${themeClasses.border} flex flex-col`}>
+      {/* Panel Tabs */}
+      <div className={`flex items-center border-b ${themeClasses.border}`}>
+        {['PROBLEMS', 'OUTPUT', 'DEBUG CONSOLE', 'TERMINAL', 'PORTS'].map((panel) => (
           <button
-            onClick={() => setIsVisible(false)}
-            className="text-gray-400 hover:text-white text-sm ml-2 relative z-[10001] icon-highlighter custom-highlighter"
+            key={panel}
+            className={`px-4 py-2 text-xs font-medium border-r ${themeClasses.border} ${
+              activePanel === panel 
+                ? `${themeClasses.bg} ${themeClasses.textPrimary}` 
+                : `${themeClasses.textSecondary} hover:${themeClasses.textPrimary} ${themeClasses.hover}`
+            }`}
+            onClick={() => setActivePanel(panel)}
           >
-            ×
+            {panel}
           </button>
+        ))}
+        <div className="flex-1"></div>
+        <div className="flex items-center gap-2 px-4">
+          <input 
+            type="text" 
+            placeholder="Filter (e.g. text, !exclude, \\escape)"
+            className={`${themeClasses.bgTertiary} border ${themeClasses.border} rounded px-2 py-1 text-xs ${themeClasses.text} w-64`}
+          />
+          <Search className={`w-4 h-4 ${themeClasses.textSecondary}`} />
+          <Maximize2 className={`w-4 h-4 ${themeClasses.textSecondary} hover:${themeClasses.textPrimary} cursor-pointer`} />
+          <X 
+            className={`w-4 h-4 ${themeClasses.textSecondary} hover:${themeClasses.textPrimary} cursor-pointer`}
+            onClick={() => setIsTerminalOpen(false)}
+          />
         </div>
       </div>
 
-      {/* Terminal Content */}
-      <div className="h-64 overflow-y-auto p-4 font-mono text-sm bg-black relative z-[9999]">
-        {output.map((line, index) => (
-          <div
-            key={index}
-            className={`${
-              line.startsWith('$') ? 'text-blue-400' : 'text-gray-300'
-            } ${line.includes('Opening') ? 'text-green-400' : ''}`}
-          >
-            {line}
+      {/* Panel Content */}
+      <div className="flex-1 overflow-y-auto" ref={terminalRef}>
+        {activePanel === 'TERMINAL' && (
+          <div className="p-4 font-mono text-sm h-full flex flex-col">
+            <div className="flex-1 overflow-y-auto">
+              {terminalHistory.map((entry, index) => (
+                <div key={index} className="mb-2">
+                  <div className="flex items-center gap-2 text-green-400">
+                    <span>$</span>
+                    <span>{entry.command}</span>
+                    <span className={`${themeClasses.textSecondary} text-xs ml-auto`}>{entry.timestamp}</span>
+                  </div>
+                  <div className={`${themeClasses.text} ml-4 mb-2`}>{entry.output}</div>
+                </div>
+              ))}
+            </div>
+            <div className={`flex items-center gap-2 mt-2 border-t ${themeClasses.border} pt-2`}>
+              <span className="text-green-400">$</span>
+              <input
+                type="text"
+                value={currentCommand}
+                onChange={(e) => setCurrentCommand(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className={`flex-1 bg-transparent ${themeClasses.text} outline-none`}
+                placeholder="Type a command (try 'help')"
+                autoFocus
+              />
+              <button
+                onClick={() => onTerminalCommand(currentCommand)}
+                className="text-blue-400 hover:text-blue-300"
+              >
+                <Play className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        ))}
-
-        {/* Current Input */}
-        <div className="flex items-center text-blue-400">
-          <span>$ </span>
-          <input
-            type="text"
-            value={currentCommand}
-            onChange={(e) => setCurrentCommand(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="bg-transparent border-none outline-none text-gray-300 flex-1 relative z-[10001] selectable-text"
-            placeholder="Type 'help' for commands"
-            autoFocus
-          />
-          <span className="animate-pulse">|</span>
-        </div>
+        )}
+        {activePanel === 'OUTPUT' && (
+          <div className={`p-4 text-sm ${themeClasses.textSecondary}`}>
+            <div>[Extension Host] Portfolio loaded successfully</div>
+            <div>[Extension Host] All components rendered</div>
+            <div>[Extension Host] Interactive terminal ready</div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
-
-export default Terminal;
