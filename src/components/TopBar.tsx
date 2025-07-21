@@ -21,7 +21,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <Server className={`w-5 h-5 ${themeClasses.accent}`} />
-          <span className="text-sm font-medium">bhakti.dev</span>
+          <span className="text-m font-medium">bhakti.dev</span>
           <div className="absolute top-4 left-2 w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg">
             <div className="absolute inset-0 bg-green-400 rounded-full animate-ping opacity-75"></div>
           </div>

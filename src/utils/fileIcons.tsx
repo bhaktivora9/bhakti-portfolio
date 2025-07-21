@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 // JavaScript SVG Icon
 const JavaScriptIcon = () => (

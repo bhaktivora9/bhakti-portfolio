@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, X } from 'lucide-react';
+import {  X } from 'lucide-react';
 import { getFileIcon } from '../utils/fileIcons';
 
 interface TabBarProps {

@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState,  useEffect } from 'react';
 import { trackPageView, trackFileOpen, trackTerminalCommand, trackResumeDownload, trackContactClick } from './utils/analytics';
 import { TopBar } from './components/TopBar';
 import { FileExplorer } from './components/FileExplorer';
 import { TabBar } from './components/TabBar';
-import { NotificationBar } from './components/NotificationBar';
-import { Terminal } from './components/Terminal';
+/*import { NotificationBar } from './components/NotificationBar';
+*/import { Terminal } from './components/Terminal';
 import { StatusBar } from './components/StatusBar';
 import { ContextMenu } from './components/ContextMenu';
 import { HomeSection } from './sections/HomeSection';
@@ -15,7 +15,6 @@ import { ProjectsSection } from './sections/ProjectsSection';
 import { SkillsSection } from './sections/SkillsSection';
 import { ContactSection } from './sections/ContactSection';
 import { ResumeSection } from './sections/ResumeSection';
-import { DeveloperClass } from './sections/DeveloperClass';
 import {personalInfo} from './data/portfolio'
 interface FileItem {
   name: string;
@@ -157,7 +156,7 @@ function App() {
     }
   ]);
   const [currentCommand, setCurrentCommand] = useState('');
-  const sidebarRef = useRef<HTMLDivElement>(null);
+  //const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsResizing(true);

@@ -39,18 +39,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ themeClasses }) 
         <div className="grid md:grid-cols-12 gap-8 items-stretch">
           {/* Social Info */}
           <div className={`md:col-span-5 transition-all duration-1000 ease-out transform delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
-            <div className={`rounded-lg shadow-lg p-8 ${themeClasses.border} h-full flex flex-col hover:shadow-xl transition-all duration-300 group`}>
+            <div className={`rounded-lg shadow-lg p-8  h-full flex flex-col hover:shadow-xl transition-all duration-300 group`}>
               <h3 className={`text-2xl font-bold mb-6 text-center transition-colors duration-300 group-hover:${themeClasses.hover}`}>
                 Connect with me
               </h3>
 
               <div className="flex-1 flex flex-col justify-center space-y-6">
                 {/* Email */}
-                <div className={`flex items-center justify-center gap-3 p-4  rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer group/email`}>
+                <div className={`flex items-center justify-center border border-accent-themed gap-3 p-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer group/email`}>
                   <Mail className="h-5 w-5 text-[#5b3a29] group-hover/email:animate-bounce" />
                   <a
                     href={`mailto:${personalInfo.email}`}
-                    className="text-[#5b3a29] hover:underline font-medium transition-all duration-300"
+                    className={`text-[#5b3a29] hover:underline font-medium transition-all duration-300`}
                   >
                     {personalInfo.email}
                   </a>
@@ -61,7 +61,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ themeClasses }) 
                   href={socialLinks.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center justify-center gap-3 p-4  ${themeClasses.borderAccent} border border-accent-themed rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-md group/github`}
+                  className={`flex items-center justify-center gap-3 p-4 ${themeClasses.borderAccent} border border-accent-themed rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-md group/github`}
                 >
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/733/733553.png"
@@ -79,7 +79,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ themeClasses }) 
                   href={socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center justify-center gap-3 p-4  rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-md group/linkedin`}
+                  className={`flex items-center justify-center gap-3 p-4 ${themeClasses.borderAccent} border border-accent-themed rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-md group/linkedin`}
                 >
                   <img
                     src="https://cdn-icons-png.flaticon.com/512/174/174857.png"
@@ -98,17 +98,17 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ themeClasses }) 
           {/* Separator */}
           <div className={`md:col-span-2 flex items-center justify-center transition-all duration-1000 ease-out delay-400 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
             <div className="flex flex-col items-center">
-              <div className={`hidden md:block h-20 w-px  animate-pulse`}></div>
+              <div className={`hidden md:block h-20 w-px animate-pulse`}></div>
               <div className={`border-themed border-gray-300 rounded-full px-4 py-2 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-110 animate-pulse`}>
                 <span className="text-lg font-bold text-[#5b3a29]">OR</span>
               </div>
-              <div className={`hidden md:block h-20 w-px  animate-pulse`}></div>
+              <div className={`hidden md:block h-20 w-px animate-pulse`}></div>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className={`md:col-span-5 transition-all duration-1000 ease-out transform delay-600 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
-            <div className={` rounded-lg shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden hover:shadow-xl transition-all duration-300 group`}>
+            <div className={`rounded-lg shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden hover:shadow-xl transition-all duration-300 group`}>
               <div className="p-8 flex-1 flex flex-col">
                 <h3 className="text-2xl font-bold mb-6 text-center group-hover:text-[#7a523f] transition-colors duration-300">
                   Send a message
@@ -118,14 +118,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ themeClasses }) 
                     onClick={() => setShowForm(!showForm)}
                     className="relative w-full flex items-center justify-center gap-2 px-6 py-4 bg-black text-white rounded-lg hover:bg-gray-700 transition-all duration-300 font-medium hover:scale-105 hover:shadow-lg active:scale-95 overflow-hidden group/button"
                   >
-                    <div className={`absolute inset-0  opacity-0 group-hover/button:opacity-10 transition-opacity duration-300`}></div>
+                    <div className={`absolute inset-0 opacity-0 group-hover/button:opacity-10 transition-opacity duration-300`}></div>
                     <span className="relative z-10 transition-all duration-300">
                       {showForm ? 'Hide Form' : 'Show Contact Form'}
                     </span>
                     <div className="relative z-10 transition-all duration-300">
                       {showForm ? <ChevronUp className="h-4 w-4 animate-bounce" /> : <ChevronDown className="h-4 w-4 animate-bounce" />}
                     </div>
-                    <div className={`absolute inset-0  from-[#7a523f] to-[#8a6350] transform -translate-x-full group-hover/button:translate-x-0 transition-transform duration-300`}></div>
+                    <div className={`absolute inset-0 from-[#7a523f] to-[#8a6350] transform -translate-x-full group-hover/button:translate-x-0 transition-transform duration-300`}></div>
                   </button>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ themeClasses }) 
                         src="https://docs.google.com/forms/d/e/1FAIpQLScqnQx6IVwL6AaTOsOZqozF-medBLWCSf0hmPbEl5q74l0CZA/viewform?embedded=true"
                         width="100%"
                         height="700"
-                        frameBorder="0"
+                        frameBorder={0}
                         marginHeight={0}
                         marginWidth={0}
                         className="rounded-lg w-full transition-all duration-500 hover:shadow-inner"
@@ -156,8 +156,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ themeClasses }) 
         </div>
       </div>
 
-      {/* CSS Styles */}
-      <style jsx>{`
+      {/* CSS styles */}
+      <style>{`
         @keyframes fadeIn {
           from {
             opacity: 0;

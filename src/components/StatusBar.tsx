@@ -1,5 +1,5 @@
-import React from 'react';
-import { GitBranch, Terminal as TerminalIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { GitBranch, Terminal as TerminalIcon, ArrowRight } from 'lucide-react';
 
 interface StatusBarProps {
   isTerminalOpen: boolean;
@@ -8,10 +8,18 @@ interface StatusBarProps {
 
 export const StatusBar: React.FC<StatusBarProps> = ({
   isTerminalOpen,
-  setIsTerminalOpen
+  setIsTerminalOpen,
 }) => {
+  const [showArrow, setShowArrow] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowArrow(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="bg-blue-600 text-white px-4 py-1 flex items-center justify-between text-xs relative">
+      {/* Left section */}
       <div className="flex items-center gap-4">
         <span>Codespaces: obscure space meme</span>
         <div className="flex items-center gap-2">
@@ -25,15 +33,24 @@ export const StatusBar: React.FC<StatusBarProps> = ({
           <span>0</span>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+
+      {/* Right section */}
+      <div className="flex items-center gap-4 relative">
         {!isTerminalOpen && (
-          <button
-            onClick={() => setIsTerminalOpen(true)}
-            className="flex items-center gap-1 hover:bg-blue-700 px-2 py-1 rounded transition-colors"
-          >
-            <TerminalIcon className="w-3 h-3" />
-            <span>Terminal</span>
-          </button>
+          <div className="relative flex items-center gap-2">
+            {showArrow && (<span className={`text-amber-400 text-semibold`}>Try this cool interactive terminal!!</span>)}  
+            {showArrow && (
+             <ArrowRight className="w-7 h-7 text-amber-400 animate-bounce" />
+            )}
+
+            <button
+              onClick={() => setIsTerminalOpen(true)}
+              className="flex items-center gap-1 hover:bg-blue-700 px-2 py-1 rounded transition-colors z-10 relative"
+            >
+              <TerminalIcon className="w-3 h-3" />
+              <span>Terminal</span>
+            </button>
+          </div>
         )}
         <span>Portfolio Ready</span>
         <span>Layout: US</span>

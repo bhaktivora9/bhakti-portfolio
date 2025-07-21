@@ -1,6 +1,6 @@
 import React from 'react';
-import { GraduationCap, Calendar, BadgeCheck } from 'lucide-react';
-import { education, certificates } from '../data/portfolio';
+import { GraduationCap,  BadgeCheck } from 'lucide-react';
+import { educationList, certificates } from '../data/portfolio';
 
 interface EducationSectionProps {
   themeClasses: any;
@@ -20,7 +20,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ themeClasses
 
       {/* Education Entries */}
       <div className="space-y-6">
-        {education.map((edu, index) => (
+        {educationList.map((edu, index) => (
           <div key={index} className={`${themeClasses.bgSecondary} border ${themeClasses.border} rounded p-4`}>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
               <div>

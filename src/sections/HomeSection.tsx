@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Code, Briefcase, Award,Volume2 ,ArrowRight,Terminal ,StickyNote } from 'lucide-react';
+import { Code, Volume2 ,ArrowRight,Terminal ,StickyNote } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
 
 interface HomeSectionProps {
@@ -17,13 +17,38 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
  
   themeClasses
 }) => {
-  const [displayText, setDisplayText] = useState('');
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
-  const [showCursor, setShowCursor] = useState(true);
+   const [currentPhraseIndex, setCurrentPhraseIndex] = useState<number>(0);
+  const [displayText, setDisplayText] = useState<string>('');
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+//const [isTyping, setIsTyping] = useState(true);
+const [showCursor, setShowCursor] = useState<boolean>(true);
 
   const phrases = personalInfo.phrases;
 
+  useEffect(() => {
+    const currentPhrase = phrases[currentPhraseIndex];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (isDeleting) {
+      timeout = setTimeout(() => {
+        setDisplayText((prev) => prev.slice(0, -1));
+      }, 75);
+    } else {
+      timeout = setTimeout(() => {
+        setDisplayText((prev) => currentPhrase.slice(0, prev.length + 1));
+      }, 100);
+    }
+
+    if (!isDeleting && displayText === currentPhrase) {
+      timeout = setTimeout(() => setIsDeleting(true), 1000);
+    } else if (isDeleting && displayText === '') {
+      setIsDeleting(false);
+      setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, currentPhraseIndex]);
+  /*
   useEffect(() => {
     const currentPhrase = phrases[currentPhraseIndex];
     let timeout: NodeJS.Timeout;
@@ -53,7 +78,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
 
     return () => clearTimeout(timeout);
   }, [displayText, currentPhraseIndex, isTyping]);
-  const playAudio = () => {
+  */const playAudio = () => {
     const audioElementFirstName = document.getElementById('pronunciation-audio-1') as HTMLAudioElement;
     const audioElementLastName = document.getElementById('pronunciation-audio-2') as HTMLAudioElement;
     const playSequentially = async () => {
@@ -98,7 +123,7 @@ const profilePic= `${import.meta.env.BASE_URL}assets/${personalInfo.profileImage
   // Cursor blinking effect
   useEffect(() => {
     const cursorInterval = setInterval(() => {
-      setShowCursor(prev => !prev);
+      setShowCursor((prev: boolean) => !prev);
     }, 500);
 
     return () => clearInterval(cursorInterval);
@@ -157,7 +182,8 @@ const profilePic= `${import.meta.env.BASE_URL}assets/${personalInfo.profileImage
 
 </div>
 
-<p className={`text-lg font-semibold text-custom-secondary mt-2 . ${themeClasses.accent}`}>{displayText}</p>
+<p className={`text-lg font-semibold text-custom-secondary mt-2 . ${themeClasses.accent}`}>{displayText}  <span>{showCursor ? '|' : ' '}</span>
+</p>
 
 <div className="flex mt-8 space-x-4">
 <button className="bg-black hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg flex items-center"  onClick={() => {
@@ -197,7 +223,7 @@ View Work
 </div>
 <div className="md:w-1/2 mt-8 md:mt-0 flex justify-center">
 <div className="relative">
-<img alt="A beautiful landscape with a lake and mountains." className="rounded-xl shadow-2xl w-full max-w-sm" src={profilePic}/>
+<img alt="Profile Picture" className="rounded-xl shadow-2xl w-full max-w-sm" src={profilePic}/>
 <div className="absolute bottom-0 left-0 right-0 bg-black/50 dark:bg-black/50 backdrop-blur-sm p-4 rounded-b-xl max-w-sm mx-auto">
 <p className="text-white font-semibold mb-4">Tech Stack</p>
 <div className="flex justify-around">

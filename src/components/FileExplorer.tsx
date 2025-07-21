@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, ChevronDown, FileText, Folder, FolderOpen, Search, GitBranch } from 'lucide-react';
+import { ChevronRight, ChevronDown,  Folder, FolderOpen, Search, GitBranch } from 'lucide-react';
 import { getFileIcon } from '../utils/fileIcons';
 
 interface FileItem {

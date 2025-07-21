@@ -7,7 +7,7 @@ export interface PersonalInfo {
   profileImage: string;
   bio: string;
   tagline: string;
-  phrases:[];
+  phrases:string[];
   resume:string;
 }
 
@@ -23,6 +23,7 @@ export interface Experience {
   company: string;
   location: string;
   logo: string;
+  link: string;
   roles: {
     title: string;
     period: string;
@@ -33,14 +34,15 @@ export interface Experience {
 export interface Education {
   degree: string;
   institution: string;
-  period: string;
-  description: string;
+  period?: string;
+  description?: string;
   gpa?: string;
 }
+
 export interface Certificate {
   degree: string;
   institution: string;
-  credential: string;
+  credentials: string;
 }
 
 
@@ -55,17 +57,8 @@ export interface Project {
 
 type SkillLevel = 'beginner' | 'experienced';
 
-interface SkillItem {
-  name: string;
-  level: SkillLevel;
-}
 
-interface Skill {
-  category: string;
-  items: SkillItem[];
-}
 
-type SkillLevel = 'beginner' | 'experienced';
 
 interface SkillItem {
   name: string;
@@ -218,18 +211,18 @@ export const experiences: Experience[] = [
   }
 ];
 
-export const education: Education[] = [
+export const educationList: Education[] = [
   {
     degree: "Bachelor of Engineering in Information Technology",
     institution: "University of Pune"
     
   }
 ];
-export const certificates: Certificates[] = [
+export const certificates: Certificate[] = [
 {
   degree:"Professional Certificate in Machine Learning & Artificial Intelligence.",
   institution:"UC Berkeley Executive Education",
-  credential:"https://certificates.emeritus.org/fe943e05-a357-4561-987d-51ed62618e14#acc.nj8Ook9l"
+  credentials:"https://certificates.emeritus.org/fe943e05-a357-4561-987d-51ed62618e14#acc.nj8Ook9l"
 
 }
 ];
