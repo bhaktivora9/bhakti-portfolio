@@ -68,11 +68,11 @@
 
 .terminal-container.maximized {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  max-width: none;
+  top: 80px;
+  left: 30px;
+  right: 30px;
+  bottom: 80px;
+  max-width: 1300px;
   z-index: 10000;
 }
 
@@ -86,6 +86,20 @@
   user-select: none;
   position: relative;
   z-index: 10001;
+}
+
+.terminal-container.maximized .terminal-header {
+  height: 40px;
+  flex-shrink: 0; /* Prevent header from shrinking */
+  position: relative;
+  z-index: 10001;
+  width: 100%;
+}
+
+
+.terminal-container.maximized .terminal-status {
+  height: 24px;
+  flex-shrink: 0; /* Prevent status bar from shrinking */
 }
 
 .terminal-container.light .terminal-header {
