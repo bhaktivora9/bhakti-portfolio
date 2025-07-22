@@ -7,6 +7,10 @@ interface ProjectsSectionProps {
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDarkTheme }) => {
+  
+if(isDarkTheme){
+    console.log("dark theme");
+  }
   return (
     <div className="animate-fade-in-up">
       <div className="mb-8 transform transition-all duration-500">

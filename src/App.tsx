@@ -296,7 +296,9 @@ const link = document.createElement('a');
       case 'Contact.html':
         return (
           <div className={contentClasses}>
-            <ContactSection isDarkTheme={isDarkTheme} />
+            <ContactSection  setActiveTab={setActiveTab} 
+              openTabs={openTabs}
+              setOpenTabs={setOpenTabs} isDarkTheme={isDarkTheme} />
           </div>
         );
 

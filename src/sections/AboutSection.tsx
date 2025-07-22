@@ -7,6 +7,9 @@ interface AboutSectionProps {
 }
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ isDarkTheme }) => {
+  if(isDarkTheme){
+    console.log("dark theme");
+  }
   return (
     <div>
       <div className="mb-8">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Code, Volume2, ArrowRight, Terminal, StickyNote, Sparkles, MapPin, Mail, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Code, Volume2, ArrowRight, Terminal,  Sparkles, MapPin, Mail, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
 
 interface HomeSectionProps {
@@ -11,7 +11,7 @@ interface HomeSectionProps {
 }
 
 export const HomeSection: React.FC<HomeSectionProps> = ({
-  setActiveTab,
+   setActiveTab,
   openTabs,
   setOpenTabs,
   isDarkTheme
@@ -47,7 +47,6 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
 
     return () => clearTimeout(timeout);
   }, [displayText, isDeleting, currentPhraseIndex, phrases]);
-
   const playAudio = () => {
     const audioElementFirstName = document.getElementById('pronunciation-audio-1') as HTMLAudioElement;
     const audioElementLastName = document.getElementById('pronunciation-audio-2') as HTMLAudioElement;
@@ -126,10 +125,10 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
     <div className={`flex-grow flex items-center justify-center p-8 bg-themed animate-fade-in-up`}>
       {/* Hidden audio elements for pronunciation */}
       <audio id="pronunciation-audio-1" preload="auto">
-        <source src="/audio/bhakti.mp3" type="audio/mpeg" />
+        <source src="https://en-audio.howtopronounce.com/15938392635f000e9f60952.mp3" type="audio/mpeg" />
       </audio>
       <audio id="pronunciation-audio-2" preload="auto">
-        <source src="/audio/vora.mp3" type="audio/mpeg" />
+        <source src="https://en-audio.howtopronounce.com/1752021141686db89590618.mp3" type="audio/mpeg" />
       </audio>
       
       <div className="flex w-full max-w-6xl mx-auto">
@@ -157,7 +156,12 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           </p>
           <div className="flex space-x-4 mb-12 animate-slide-in-bottom stagger-5">
             <button 
-              onClick={() => setActiveTab('projects')}
+              onClick= {() => {
+                  if (!openTabs.includes('Work.css')) {
+                    setOpenTabs(prev => [...prev, 'Work.css']);
+                  }
+                  setActiveTab('Work.css');
+                }}
               className={`px-6 py-3 rounded-lg font-semibold flex items-center transition-colors ${
                 isDarkTheme 
                   ? 'bg-gray-200 text-gray-900 hover:bg-gray-300' 
@@ -167,7 +171,12 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               View Work <ArrowRight className="ml-2 hover-bounce" size={20} />
             </button>
             <button 
-              onClick={() => setActiveTab('contact')}
+              onClick={() => {
+                  if (!openTabs.includes('Contact.html')) {
+                    setOpenTabs(prev => [...prev, 'Contact.html']);
+                  }
+                  setActiveTab('Contact.html');
+                }}
               className={`px-6 py-3 rounded-lg font-semibold border transition-colors ${
                 isDarkTheme 
                   ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700' 
@@ -177,7 +186,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               Get In Touch
             </button>
           </div>
-          <p className={`text-xl mb-4 text-secondary-themed animate-slide-in-right stagger-1`}>{personalInfo.tagLine}</p>
+          <p className={`text-xl mb-4 text-secondary-themed animate-slide-in-right stagger-1`}>{personalInfo.tagline}</p>
           <div className={`flex items-center mb-4 text-secondary-themed space-x-6`}>
             <MapPin size={20} className="mr-2" />
             <span>{personalInfo.location}</span>

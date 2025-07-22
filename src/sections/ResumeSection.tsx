@@ -12,7 +12,7 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ isDarkTheme }) => 
     <div className="animate-fade-in-up">
       {/* Header + Download Button in One Row */}
       <div className="mb-8 flex items-center justify-between flex-wrap gap-3 transform transition-all duration-500">
-        <h1 className="text-xl font-bold text-primary-themed flex items-center gap-3 transition-colors duration-300">
+        <h1 className="text-xl font-bold text-primary-themed flex items-center gap-3 transition-colors duration-300 ">
           <FileText className="w-5 h-5 text-purple-400 transition-transform duration-300 hover:scale-110" />
           Resume
         </h1>
@@ -28,7 +28,7 @@ export const ResumeSection: React.FC<ResumeSectionProps> = ({ isDarkTheme }) => 
         </a>
       </div>
 
-      <div className="w-12 h-0.5 bg-purple-400 mb-4 transition-all duration-700 hover:w-24" />
+      <div className={`${isDarkTheme ? 'bg-purple-400' : 'bg-purple-200' } w-12 h-0.5 bg-purple-400 mb-4 transition-all duration-700 hover:w-24`} />
 
       {/* PDF Viewer */}
       <div className="p-6 h-[calc(100vh-6rem)] bg-themed transform transition-all duration-700 delay-200">

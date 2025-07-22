@@ -7,6 +7,9 @@ interface EducationSectionProps {
 }
 
 export const EducationSection: React.FC<EducationSectionProps> = ({ isDarkTheme }) => {
+  if(isDarkTheme){
+    console.log("dark theme");
+  }
   return (
     <div className="animate-fade-in-up">
       {/* Education Header */}

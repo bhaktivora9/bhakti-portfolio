@@ -41,6 +41,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   onMouseDown
 }) => {
   const renderFileTree = (items: FileItem[], level = 0) => {
+  
     return items.map((item, index) => (
       <div key={index}>
         <div 
@@ -85,7 +86,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
       </div>
     ));
   };
-
+ if(isDarkTheme){
+    console.log("dark theme");
+  }
   return (
     <>
       {/* Mobile Overlay */}

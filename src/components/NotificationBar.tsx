@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { X, ChevronDown, ChevronUp, Lightbulb, Palette, Keyboard } from 'lucide-react';
 
 interface NotificationBarProps {
-  themeClasses: any;
 }
 
-export const NotificationBar: React.FC<NotificationBarProps> = ({ themeClasses }) => {
+export const NotificationBar: React.FC<NotificationBarProps> = ({  }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isExpanded, setIsExpanded] = useState(true);
 

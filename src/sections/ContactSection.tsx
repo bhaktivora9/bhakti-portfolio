@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, MapPin, Phone, Copy, Check, Send } from 'lucide-react';
+import { Mail, MapPin, Phone, Copy, Check } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
 
 interface ContactSectionProps {
@@ -10,9 +10,9 @@ interface ContactSectionProps {
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({
-  setActiveTab,
-  openTabs,
-  setOpenTabs,
+  setActiveTab: _setActiveTab, // Prefixed with underscore to indicate intentionally unused
+  openTabs: _openTabs, // Prefixed with underscore to indicate intentionally unused
+  setOpenTabs: _setOpenTabs, // Prefixed with underscore to indicate intentionally unused
   isDarkTheme
 }) => {
   const [emailCopied, setEmailCopied] = useState(false);

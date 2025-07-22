@@ -93,30 +93,6 @@ export const socialLinks: SocialLinks = {
   linkedin: "https://www.linkedin.com/in/bhakti-vora/"
 };
 
-/*export const experiences: Experience[] = [
-  {
-    title: "Senior Full Stack Developer",
-    company: "TechCorp Solutions",
-    period: "2022 - Present",
-    description: "Led development of microservices architecture serving 1M+ users. Implemented CI/CD pipelines and mentored junior developers.",
-    technologies: ["React", "Node.js", "PostgreSQL", "AWS", "Docker"]
-  },
-  {
-    title: "Full Stack Developer",
-    company: "StartupXYZ",
-    period: "2020 - 2022",
-    description: "Built MVP from ground up, scaling to 100K+ users. Developed real-time features using WebSockets and implemented payment processing.",
-    technologies: ["Vue.js", "Express.js", "MongoDB", "Stripe", "Redis"]
-  },
-  {
-    title: "Frontend Developer",
-    company: "Digital Agency",
-    period: "2019 - 2020",
-    description: "Created responsive web applications for various clients. Improved site performance by 40% through optimization techniques.",
-    technologies: ["React", "JavaScript", "SCSS", "Webpack", "Jest"]
-  }
-];
-*/
 
 export const experiences: Experience[] = [
   {
@@ -127,7 +103,7 @@ export const experiences: Experience[] = [
     roles: [
       {
         title: "Backend Developer",
-        period: "03/2018 - 02/2020",
+        period: "03/2022 - 09/2024",
         description: `● Led ORBIT platform development, centralizing data for enhanced Business Intelligence and analytics.
 ● Increased database write performance 35x with multithreading.
 ● Contributed to Walmart Commerce Platform by scaling e-commerce infrastructure.
@@ -157,39 +133,7 @@ export const experiences: Experience[] = [
     logo: "https://www.contentserv.com/hs-fs/hubfs/Contentserv%20Theme%202024/images/Centric%2BContentserv.png?width=938&height=550&name=Centric%2BContentserv.png",
     link:"https://www.contentserv.com/",
     roles: [
-      {
-        title: "Software Engineer",
-        period: "03/2017 - 02/2018",
-        description: `● Integrated legacy systems with scalable alternatives for improved flexibility.
-● Implemented distributed image processing using Amazon S3 and Kafka.
-● Enhanced authentication and authorization using LDAP, AD, OAuth 2.0, and SAML.
-● Improved system reliability using Netflix Ribbon for soft load balancing.`,
-        technologies: [
-          "Amazon S3",
-          "Kafka",
-          "LDAP",
-          "Active Directory",
-          "OAuth 2.0",
-          "SAML",
-          "Netflix Ribbon"
-        ]
-      },
-      {
-        title: "Senior Software Engineer",
-        period: "03/2018 - 02/2020",
-        description: `● Designed and developed POC for connectors enabling product info export to Magento, Shopify, and Amazon Marketplace.
-● Developed a recommendation engine using ML for personalized product information.
-● Researched ML techniques to optimize contextual product data and upsell strategies.
-● Mentored junior developers on best practices and debugging.`,
-        technologies: [
-          "Magento",
-          "Shopify",
-          "Amazon Marketplace",
-          "Machine Learning",
-          "Recommendation Systems",
-          "Mentoring"
-        ]
-      },
+     
       {
         title: "Software Development Engineer I (SDE I)",
         period: "03/2020 - 02/2021",
@@ -205,6 +149,38 @@ export const experiences: Experience[] = [
           "Gradle",
           "AWS Lambda",
           "Performance Tuning"
+        ]
+      }, {
+        title: "Senior Software Engineer",
+        period: "03/2018 - 02/2020",
+        description: `● Designed and developed POC for connectors enabling product info export to Magento, Shopify, and Amazon Marketplace.
+● Developed a recommendation engine using ML for personalized product information.
+● Researched ML techniques to optimize contextual product data and upsell strategies.
+● Mentored junior developers on best practices and debugging.`,
+        technologies: [
+          "Magento",
+          "Shopify",
+          "Amazon Marketplace",
+          "Machine Learning",
+          "Recommendation Systems",
+          "Mentoring"
+        ]
+      },
+       {
+        title: "Software Engineer",
+        period: "03/2017 - 02/2018",
+        description: `● Integrated legacy systems with scalable alternatives for improved flexibility.
+● Implemented distributed image processing using Amazon S3 and Kafka.
+● Enhanced authentication and authorization using LDAP, AD, OAuth 2.0, and SAML.
+● Improved system reliability using Netflix Ribbon for soft load balancing.`,
+        technologies: [
+          "Amazon S3",
+          "Kafka",
+          "LDAP",
+          "Active Directory",
+          "OAuth 2.0",
+          "SAML",
+          "Netflix Ribbon"
         ]
       }
     ]
@@ -250,14 +226,13 @@ export const skills: Skill[] = [
     category: "Programming Languages",
     items: [
       { name: "Java", level: "experienced", badge: "https://img.shields.io/badge/Java-Experienced-lightgray?style=plastic&logo=java&logoColor=white&colorA=007396&size=20" },
-      { name: "JavaScript", level: "experienced", badge: "https://img.shields.io/badge/JavaScript-Experienced-lightgray?style=plastic&logo=javascript&logoColor=black&colorA=F7DF1E&size=20" },
-      { name: "PHP", level: "beginner", badge: "https://img.shields.io/badge/PHP-Beginner-lightgray?style=plastic&logo=php&logoColor=white&colorA=777BB4&size=20" },
-      { name: "Node.js", level: "experienced", badge: "https://img.shields.io/badge/Node.js-Experienced-lightgray?style=plastic&logo=nodedotjs&logoColor=white&colorA=339933&size=20" },
+      { name: "PHP", level: "experienced", badge: "https://img.shields.io/badge/PHP-Beginner-lightgray?style=plastic&logo=php&logoColor=white&colorA=777BB4&size=20" },
+      { name: "Node.js", level: "beginner", badge: "https://img.shields.io/badge/Node.js-Experienced-lightgray?style=plastic&logo=nodedotjs&logoColor=white&colorA=339933&size=20" },
       { name: "Python", level: "beginner", badge: "https://img.shields.io/badge/Python-Beginner-lightgray?style=plastic&logo=python&logoColor=white&colorA=3776AB&size=20" }
     ]
   },
   {
-    category: "Backend",
+    category: "javaTechnologies",
     items: [
       { name: "Spring Framework", level: "experienced", badge: "https://img.shields.io/badge/Spring-Experienced-lightgray?style=plastic&logo=spring&logoColor=white&colorA=6DB33F" },
       { name: "Spring Hibernate", level: "experienced", badge: "https://img.shields.io/badge/Spring%20Hibernate-Experienced-lightgray?style=plastic&logo=spring&logoColor=white&colorA=59666C" },
@@ -270,27 +245,21 @@ export const skills: Skill[] = [
     items: [
       { name: "SQL", level: "experienced", badge: "https://img.shields.io/badge/SQL-Experienced-lightgray?style=plastic&logo=mysql&logoColor=white&colorA=4479A1" },
       { name: "PostgreSQL", level: "experienced", badge: "https://img.shields.io/badge/PostgreSQL-Experienced-lightgray?style=plastic&logo=postgresql&logoColor=white&colorA=4169E1" },
-      { name: "MySQL", level: "experienced", badge: "https://img.shields.io/badge/MySQL-Experienced-lightgray?style=plastic&logo=mysql&logoColor=white&colorA=4479A1" },
       { name: "Elasticsearch", level: "beginner", badge: "https://img.shields.io/badge/Elasticsearch-Beginner-lightgray?style=plastic&logo=elasticsearch&logoColor=white&colorA=005571" },
       { name: "MongoDB", level: "beginner", badge: "https://img.shields.io/badge/MongoDB-Beginner-lightgray?style=plastic&logo=mongodb&logoColor=white&colorA=47A248" },
-      { name: "OrientDB", level: "beginner", badge: "https://img.shields.io/badge/OrientDB-Beginner-lightgray?style=plastic&logo=databricks&logoColor=white&colorA=FF6600" }
     ]
   },
   {
     category: "Middleware Technologies",
     items: [
       { name: "Apache Kafka", level: "experienced", badge: "https://img.shields.io/badge/Apache%20Kafka-Experienced-lightgray?style=plastic&logo=apachekafka&logoColor=white&colorA=231F20" },
-      { name: "Netflix Ribbon", level: "beginner", badge: "https://img.shields.io/badge/Netflix%20Ribbon-Beginner-lightgray?style=plastic&logo=netflix&logoColor=white&colorA=E50914" },
-      { name: "ActiveMQ", level: "beginner", badge: "https://img.shields.io/badge/ActiveMQ-Beginner-lightgray?style=plastic&logo=apache&logoColor=white&colorA=D22128" }
+      { name: "Netflix Ribbon", level: "experienced", badge: "https://img.shields.io/badge/Netflix%20Ribbon-Beginner-lightgray?style=plastic&logo=netflix&logoColor=white&colorA=E50914" }
     ]
   },
   {
     category: "Cloud & DevOps",
     items: [
-      { name: "AWS EC2", level: "beginner", badge: "https://img.shields.io/badge/AWS%20EC2-Beginner-lightgray?style=plastic&logo=amazonaws&logoColor=white&colorA=FF9900" },
-      { name: "AWS Lambda", level: "beginner", badge: "https://img.shields.io/badge/AWS%20Lambda-Beginner-lightgray?style=plastic&logo=awslambda&logoColor=white&colorA=FF9900" },
-      { name: "AWS S3", level: "beginner", badge: "https://img.shields.io/badge/AWS%20S3-Beginner-lightgray?style=plastic&logo=amazons3&logoColor=white&colorA=569A31" },
-      { name: "AWS SNS", level: "beginner", badge: "https://img.shields.io/badge/AWS%20SNS-Beginner-lightgray?style=plastic&logo=amazonaws&logoColor=white&colorA=FF9900" },
+      { name: "AWS", level: "beginner", badge: "https://img.shields.io/badge/AWS%20SNS-Beginner-lightgray?style=plastic&logo=amazonaws&logoColor=white&colorA=FF9900" },
       { name: "Docker", level: "experienced", badge: "https://img.shields.io/badge/Docker-Experienced-lightgray?style=plastic&logo=docker&logoColor=white&colorA=2496ED" },
       { name: "Kubernetes", level: "beginner", badge: "https://img.shields.io/badge/Kubernetes-Beginner-lightgray?style=plastic&logo=kubernetes&logoColor=white&colorA=326CE5" }
     ]
@@ -316,5 +285,5 @@ export const skills: Skill[] = [
 
 
 export const analytics = {
-  gtagId: "G-XXXXXXXXXX" // Replace with your actual Google Analytics ID
+  gtagId: "G-2P2V42WZR9" // Replace with your actual Google Analytics ID
 };
