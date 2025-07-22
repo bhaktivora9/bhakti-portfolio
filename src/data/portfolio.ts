@@ -78,7 +78,7 @@ export const personalInfo: PersonalInfo = {
   email: "bhaktivora16@gmail.com",
   phone: "+1 (415) 301-0317",
   location: "San Francisco, CA",
-  profileImage: "Bhakti-Vora-PP.jpg",
+  profileImage: "Bhakti-Vora-PP.png",
   bio: "I'm a passionate full-stack developer with 7+ years of experience, hand-on experience in designing, developing, and maintaining scalable systems and frameworks. Proficient in taking projects from ideation to deployment. Skilled in Core Java, Spring Boot, Kubernetes, Kafka,and machine learning techniques, with a consistent track record of tackling complex engineering challenges and delivering practical solutions.Additionally, I hold a Professional Certificate in Machine Learning & Artificial Intelligence from UC Berkeley Executive Education.",
   tagline: "Backend Developer | AI Enthusiast",
   phrases: ['Frontend Developer in making...',
