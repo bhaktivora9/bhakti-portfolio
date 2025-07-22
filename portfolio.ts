@@ -209,7 +209,7 @@ export const projects: Project[] = [
     technologies: ["Java", "GCP", "RAG","MCP"],
     github: "https://gitlab.com/bhaktivora09/genreadme/-/tree/MVP?ref_type=heads",
 /*    demo: "https://ecommerce-demo.bhaktideveloper.dev",
-*/    image: "assets/genReadME_LOGO.png?compress=400"
+*/    image: "genREADMELOGO.svg"
   },
   {
     name: "spotClassify",
