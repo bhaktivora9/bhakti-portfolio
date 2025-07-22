@@ -1,18 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Code,
-  Volume2,
-  ArrowRight,
-  Terminal,
-  StickyNote,
-  Sparkles,
-  MapPin,
-  Mail,
-  Copy,
-  Check,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { Code, Volume2, ArrowRight, Terminal, StickyNote, Sparkles, MapPin, Mail, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
 
 interface HomeSectionProps {
@@ -106,6 +94,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
       setEmailCopied(true);
       setTimeout(() => setEmailCopied(false), 2000);
     } catch (err) {
+      // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = text;
       document.body.appendChild(textArea);
@@ -124,6 +113,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
 
   const profilePic = `${import.meta.env.BASE_URL}assets/${personalInfo.profileImage}?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop`;
 
+  // Cursor blinking effect
   useEffect(() => {
     const cursorInterval = setInterval(() => {
       setShowCursor((prev: boolean) => !prev);
@@ -133,79 +123,64 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
   }, []);
 
   return (
-    <div className="flex-grow flex items-center justify-center p-8 bg-themed animate-fade-in-up">
-      {/* Hidden audio elements */}
+    <div className={`flex-grow flex items-center justify-center p-8 bg-themed animate-fade-in-up`}>
+      {/* Hidden audio elements for pronunciation */}
       <audio id="pronunciation-audio-1" preload="auto">
-                  <source src="https://en-audio.howtopronounce.com/b0def119065a620af28e439424c6e73b.mp3" type="audio/mpeg" />
+        <source src="/audio/bhakti.mp3" type="audio/mpeg" />
       </audio>
       <audio id="pronunciation-audio-2" preload="auto">
-        <source src="https://en-audio.howtopronounce.com/17515761216866ee3906cbc.mp3" type="audio/mpeg" />
+        <source src="/audio/vora.mp3" type="audio/mpeg" />
       </audio>
-
+      
       <div className="flex w-full max-w-6xl mx-auto">
-        <div className="w-1/2 flex flex-col justify-center">
-          <p className="text-xl mb-4 text-secondary-themed animate-slide-in-right stagger-1">
-            {personalInfo.tagLine}
-          </p>
-
-          <p className="flex items-center mb-4 text-secondary-themed">
+        <div className="w-1/2 pr-12 animate-slide-in-left">
+          <p className={`text-2xl font-medium mb-2 ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
             <span className="wave-hand">👋</span> Hi, I'm
           </p>
-
-          <h1
-            className={`text-7xl font-bold tracking-wider transition-all duration-300 hover-scale animate-slide-in-bottom ${
-              isDarkTheme ? 'text-blue-200' : 'text-blue-500'
-            }`}
-           style={{
-    fontFamily: '"VT323", monospace',
-  }}>
-    {personalInfo.name}
-          </h1>
-
-          <p
-            className={`text-xl font-medium mb-8 ${
-              isDarkTheme ? 'text-blue-400' : 'text-blue-600'
-            } animate-slide-in-right stagger-4`}
-          >
-            {displayText}
-            <span
-              className={`${
-                showCursor ? 'opacity-100' : 'opacity-0'
-              } transition-opacity duration-100`}
+          <div className="flex items-center mb-2">
+            <h1 className={`text-7xl font-semibold tracking-wider transition-all duration-300 hover-scale animate-slide-in-bottom  ${isDarkTheme}?text-['#4C4A59'] : text-['#B3B1BE']`} style={{ fontFamily: '"VT323", monospace' }}>
+              {personalInfo.name}
+            </h1>
+            <button 
+              onClick={playAudio}
+              className={`ml-4 p-2 rounded-full bg-secondary-themed hover-themed hover-bounce transition-all duration-300`}
             >
-              |
-            </span>
+              <Volume2 size={24} />
+            </button>
+          </div>
+          <div className={`w-full rounded-full h-2.5 mb-4 ${isDarkTheme ? 'bg-grey-500' : 'bg-gray-500'} animate-slide-in-right stagger-3`}>
+            <div className={`h-2.5 rounded-full ${isDarkTheme ? 'bg-[#6F4FBA]' :'bg-[#AE9AD9]' } animate-slide-in-left stagger-4`} style={{ width: '100%' }}></div>
+          </div>
+          <p className={`text-xl font-medium mb-8 ${isDarkTheme ? 'text-[#F6BE79]' : 'text-[#F2A03D]' } animate-slide-in-right stagger-4`}>
+            {displayText}
+            <span className={`${showCursor ? 'opacity-100' : 'opacity-0'} transition-opacity duration-100`}>|</span>
           </p>
-
           <div className="flex space-x-4 mb-12 animate-slide-in-bottom stagger-5">
-            <button
+            <button 
               onClick={() => setActiveTab('projects')}
               className={`px-6 py-3 rounded-lg font-semibold flex items-center transition-colors ${
-                isDarkTheme
-                  ? 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                isDarkTheme 
+                  ? 'bg-gray-200 text-gray-900 hover:bg-gray-300' 
                   : 'bg-gray-900 text-white hover:bg-gray-800'
               } hover-scale hover-glow-blue transition-all duration-300`}
             >
               View Work <ArrowRight className="ml-2 hover-bounce" size={20} />
             </button>
-            <button
+            <button 
               onClick={() => setActiveTab('contact')}
               className={`px-6 py-3 rounded-lg font-semibold border transition-colors ${
-                isDarkTheme
-                  ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700'
+                isDarkTheme 
+                  ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700' 
                   : 'bg-white border-gray-300 text-gray-800 hover:bg-gray-100'
               } hover-scale hover-glow-green transition-all duration-300`}
             >
               Get In Touch
             </button>
           </div>
-
-          <div className="flex items-center mb-4 text-secondary-themed">
+          <p className={`text-xl mb-4 text-secondary-themed animate-slide-in-right stagger-1`}>{personalInfo.tagLine}</p>
+          <div className={`flex items-center mb-4 text-secondary-themed space-x-6`}>
             <MapPin size={20} className="mr-2" />
             <span>{personalInfo.location}</span>
-          </div>
-
-          <div className="flex items-center mb-8 text-secondary-themed">
             <Mail size={20} className="mr-2" />
             <span className="mr-2">{personalInfo.email}</span>
             <button
@@ -217,33 +192,25 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               {emailCopied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
             </button>
           </div>
-
-          <div
-            className={`p-4 rounded-lg border-l-4 ${
-              isDarkTheme
-                ? 'bg-yellow-900/30 border-yellow-500'
-                : 'bg-yellow-100 border-yellow-400'
-            } animate-slide-in-bottom stagger-6 hover-scale-sm transition-all duration-300`}
-          >
-            <p className={`font-semibold mb-2 ${isDarkTheme ? 'text-yellow-300' : 'text-yellow-800'}`}>
-              Currently Working on:
-            </p>
+          <div className={`p-4 rounded-lg border-l-4 ${
+            isDarkTheme 
+              ? 'bg-yellow-900/30 border-yellow-500' 
+              : 'bg-yellow-100 border-yellow-400'
+          } animate-slide-in-bottom stagger-6 hover-scale-sm transition-all duration-300`}>
+            <p className={`font-semibold mb-2 ${isDarkTheme ? 'text-yellow-300' : 'text-yellow-800'}`}>Currently Working on:</p>
             <p className={`${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
               <strong>GenREADME:</strong> A context-aware AI documentation system that generates intelligent, ecosystem-informed READMEs.
             </p>
           </div>
         </div>
-
         <div className="w-1/2 flex justify-center items-center animate-slide-in-right">
-          <div
-            className={`relative w-80 h-[400px] rounded-3xl shadow-2xl overflow-hidden tech-stack-container group ${
-              isDarkTheme ? 'bg-gray-800' : 'bg-white'
-            } hover-scale transition-all duration-500 animate-float`}
-          >
+          <div className={`relative w-80 h-[400px] rounded-3xl shadow-2xl overflow-hidden tech-stack-container group ${
+            isDarkTheme ? 'bg-gray-800' : 'bg-white'
+          } hover-scale transition-all duration-500 animate-float`}>
             <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse"></div>
-            <img
-              alt="Profile Picture"
-              className="w-full h-full object-cover transition-all duration-700 ease-in-out transform hover-scale opacity-0 animate-fade-in-image"
+            <img 
+              alt="Profile Picture" 
+              className="w-full h-full object-cover transition-all duration-700 ease-in-out transform hover-scale opacity-0 animate-fade-in-image" 
               src={profilePic}
               onLoad={(e) => {
                 const img = e.target as HTMLImageElement;

@@ -11,7 +11,7 @@ export const WorkSection: React.FC<WorkSectionProps> = ({ isDarkTheme }) => {
     <div className="animate-fade-in-up">
       <div className="mb-8 transform transition-all duration-500">
         <h1 className="text-xl font-bold text-primary-themed mb-4 flex items-center gap-3 transition-colors duration-300">
-          <Briefcase className="w-5 h-5 text-green-400 transition-transform duration-300 hover:scale-110" />
+          <Briefcase className={`w-5 h-5 ${isDarkTheme} ? 'text-green-200' : 'text-green-500'  transition-transform duration-300 hover:scale-110`} />
           Work Experience
         </h1>
         <div className="w-12 h-0.5 bg-green-400 mb-4 transition-all duration-700 hover:w-24"></div>
