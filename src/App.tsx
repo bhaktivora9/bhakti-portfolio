@@ -3,8 +3,7 @@ import { trackPageView, trackFileOpen, trackTerminalCommand, trackResumeDownload
 import { TopBar } from './components/TopBar';
 import { FileExplorer } from './components/FileExplorer';
 import { TabBar } from './components/TabBar';
-/*import { NotificationBar } from './components/NotificationBar';
-*/import { Terminal } from './components/Terminal';
+import { Terminal } from './components/Terminal';
 import { StatusBar } from './components/StatusBar';
 import { ContextMenu } from './components/ContextMenu';
 import { HomeSection } from './sections/HomeSection';
@@ -15,7 +14,8 @@ import { ProjectsSection } from './sections/ProjectsSection';
 import { SkillsSection } from './sections/SkillsSection';
 import { ContactSection } from './sections/ContactSection';
 import { ResumeSection } from './sections/ResumeSection';
-import {personalInfo} from './data/portfolio'
+import { personalInfo } from './data/portfolio';
+
 interface FileItem {
   name: string;
   type: 'file' | 'folder';
@@ -30,74 +30,6 @@ interface TerminalCommand {
   output: string;
   timestamp: string;
 }
-
-const themeStyles = `
-  :root {
-    /* Light Theme Colors */
-    --bg-light: #ffffff;
-    --bg-light-secondary: #f3f4f6;
-    --bg-light-tertiary: #e5e7eb;
-    --text-light: #374151;
-    --text-light-primary: #111827;
-    --text-light-secondary: #4b5563;
-    --border-light: #d1d5db;
-    --border-light-accent:#00ccfa;
-    --hover-light: rgba(229, 231, 235, 0.5);
-    --accent-light: #2563eb;
-    
-    /* Dark Theme Colors */
-    --bg-dark: #111827;
-    --bg-dark-secondary: #1f2937;
-    --bg-dark-tertiary: #374151;
-    --text-dark: #d1d5db;
-    --text-dark-primary: #ffffff;
-    --text-dark-secondary: #9ca3af;
-    --border-dark: #374151;
-    --border-dark-accent:#f5c13d;
-    --hover-dark: rgba(55, 65, 81, 0.5);
-    --accent-dark: #60a5fa;
-  }
-
-  /* Default to light theme */
-  :root {
-    --bg: var(--bg-light);
-    --bg-secondary: var(--bg-light-secondary);
-    --bg-tertiary: var(--bg-light-tertiary);
-    --text: var(--text-light);
-    --text-primary: var(--text-light-primary);
-    --text-secondary: var(--text-light-secondary);
-    --border: var(--border-light);
-    --border-accent:var(--border-light-accent);
-    --hover: var(--hover-light);
-    --accent: var(--accent-light);
-  }
-
-  /* Dark theme */
-  [data-theme="dark"] {
-    --bg: var(--bg-dark);
-    --bg-secondary: var(--bg-dark-secondary);
-    --bg-tertiary: var(--bg-dark-tertiary);
-    --text: var(--text-dark);
-    --text-primary: var(--text-dark-primary);
-    --text-secondary: var(--text-dark-secondary);
-    --border: var(--border-dark);
-    --border-accent:var(--border-dark-accent);
-    --hover: var(--hover-dark);
-    --accent: var(--accent-dark);
-  }
-
-  /* Usage classes */
-  .bg-themed { background-color: var(--bg); }
-  .bg-secondary-themed { background-color: var(--bg-secondary); }
-  .bg-tertiary-themed { background-color: var(--bg-tertiary); }
-  .text-themed { color: var(--text); }
-  .text-primary-themed { color: var(--text-primary); }
-  .text-secondary-themed { color: var(--text-secondary); }
-  .border-themed { border-color: var(--border); }
-  .border-accent-themed { border-color: var(--border-accent); }
-  .hover-themed:hover { background-color: var(--hover); }
-  .accent-themed { color: var(--accent); }
-`;
 
 const fileStructure: FileItem[] = [
   {
@@ -148,6 +80,7 @@ function App() {
   const [contextMenu, setContextMenu] = useState({ x: 0, y: 0, show: false });
   const [sidebarWidth, setSidebarWidth] = useState(280);
   const [isResizing, setIsResizing] = useState(false);
+  const [isExplorerCollapsed, setIsExplorerCollapsed] = useState(false);
   const [terminalHistory, setTerminalHistory] = useState<TerminalCommand[]>([
     {
       command: 'npm run dev',
@@ -156,7 +89,6 @@ function App() {
     }
   ]);
   const [currentCommand, setCurrentCommand] = useState('');
-  //const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsResizing(true);
@@ -210,17 +142,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Inject theme styles
-    const styleElement = document.createElement('style');
-    styleElement.textContent = themeStyles;
-    document.head.appendChild(styleElement);
-
     // Set theme attribute on document
     document.documentElement.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
-
-    return () => {
-      document.head.removeChild(styleElement);
-    };
   }, [isDarkTheme]);
 
   useEffect(() => {
@@ -319,21 +242,8 @@ const link = document.createElement('a');
     setExpandedFolders(newExpanded);
   };
 
-  const themeClasses = {
-    bg: 'bg-themed',
-    bgSecondary: 'bg-secondary-themed',
-    bgTertiary: 'bg-tertiary-themed',
-    text: 'text-themed',
-    textPrimary: 'text-primary-themed',
-    textSecondary: 'text-secondary-themed',
-    borderAccent: 'border-accent-themed',
-    border: 'border-themed',
-    hover: 'hover-themed',
-    accent: 'accent-themed',
-    buttonAccent: 'bg-[color:var(--border-accent)]',  
-  };
   const getTabContent = () => {
-    const contentClasses = `flex-1 p-6 overflow-y-auto ${themeClasses.text}`;
+    const contentClasses = `flex-1 p-6 overflow-y-auto text-themed`;
 
     switch (activeTab) {
       case 'Home.jsx':
@@ -343,7 +253,7 @@ const link = document.createElement('a');
               setActiveTab={setActiveTab} 
               openTabs={openTabs}
               setOpenTabs={setOpenTabs}
-              themeClasses={themeClasses}
+             isDarkTheme={isDarkTheme}
               />
           </div>
         );
@@ -351,49 +261,49 @@ const link = document.createElement('a');
       case 'About.java':
         return (
           <div className={contentClasses}>
-            <AboutSection themeClasses={themeClasses} />
+            <AboutSection isDarkTheme={isDarkTheme} />
           </div>
         );
 
       case 'Work.css':
         return (
           <div className={contentClasses}>
-            <WorkSection themeClasses={themeClasses} />
+            <WorkSection isDarkTheme={isDarkTheme} />
           </div>
         );
 
       case 'education.yml':
         return (
           <div className={contentClasses}>
-            <EducationSection themeClasses={themeClasses} />
+            <EducationSection isDarkTheme={isDarkTheme} />
           </div>
         );
 
       case 'projects.ts':
         return (
           <div className={contentClasses}>
-            <ProjectsSection themeClasses={themeClasses} />
+            <ProjectsSection isDarkTheme={isDarkTheme} />
           </div>
         );
 
       case 'skills.json':
         return (
           <div className={contentClasses}>
-            <SkillsSection themeClasses={themeClasses} />
+            <SkillsSection isDarkTheme={isDarkTheme} />
           </div>
         );
 
       case 'Contact.html':
         return (
           <div className={contentClasses}>
-            <ContactSection themeClasses={themeClasses} />
+            <ContactSection isDarkTheme={isDarkTheme} />
           </div>
         );
 
       case 'resume.pdf':
         return (
           <div className={contentClasses}>
-            <ResumeSection themeClasses={themeClasses} />
+            <ResumeSection isDarkTheme={isDarkTheme} />
           </div>
         );
       /*case 'main.tsx':
@@ -405,15 +315,15 @@ const link = document.createElement('a');
       default:
         return (
           <div className={contentClasses}>
-            <div className={`${themeClasses.bgSecondary} border ${themeClasses.border} rounded p-4 mb-6`}>
-              <div className={`text-sm font-mono ${themeClasses.textPrimary} mb-3`}>
+            <div className={`bg-secondary-themed border border-themed rounded p-4 mb-6`}>
+              <div className={`text-sm font-mono text-primary-themed mb-3`}>
                 <span className="text-gray-500">// </span>
                 <span className="text-purple-400">Welcome to</span> <span className="text-blue-400">Bhakti.dev</span>
               </div>
-              <p className={`${themeClasses.text} text-sm mb-4`}>
+              <p className={`text-themed text-sm mb-4`}>
                 Select a file from the explorer or use terminal commands to navigate.
               </p>
-              <h3 className={`text-sm font-semibold ${themeClasses.textPrimary} mb-2 font-mono`}>
+              <h3 className={`text-sm font-semibold text-primary-themed mb-2 font-mono`}>
                 <span className="text-purple-400">const</span> <span className="text-blue-400">availableCommands</span> = [
               </h3>
               <div className="grid grid-cols-2 gap-2 text-sm">
@@ -426,7 +336,7 @@ const link = document.createElement('a');
                 <code className="text-green-400 text-xs ml-4">"skills"</code>
                 <code className="text-green-400 text-xs">"help"</code>
               </div>
-              <div className={`text-sm font-mono ${themeClasses.textPrimary} mt-2`}>];</div>
+              <div className={`text-sm font-mono text-primary-themed mt-2`}>];</div>
             </div>
           </div>
         );
@@ -434,13 +344,14 @@ const link = document.createElement('a');
   };
 
   return (
-    <div className={`h-screen ${themeClasses.bg} ${themeClasses.text} flex flex-col`}>
+    <div className={`h-screen bg-themed text-themed flex flex-col`}>
       <TopBar
         isDarkTheme={isDarkTheme}
         setIsDarkTheme={setIsDarkTheme}
         showSettings={showSettings}
         setShowSettings={setShowSettings}
-        themeClasses={themeClasses}
+        isExplorerCollapsed={isExplorerCollapsed}
+        setIsExplorerCollapsed={setIsExplorerCollapsed}
       />
 
       {/*<NotificationBar themeClasses={themeClasses} />*/}
@@ -452,7 +363,9 @@ const link = document.createElement('a');
           expandedFolders={expandedFolders}
           sidebarWidth={sidebarWidth}
           isResizing={isResizing}
-          themeClasses={themeClasses}
+          isCollapsed={isExplorerCollapsed}
+          isDarkTheme={isDarkTheme}
+          setIsCollapsed={setIsExplorerCollapsed}
           onFileClick={handleFileClick}
           onFolderToggle={toggleFolder}
           onRightClick={handleRightClick}
@@ -465,10 +378,9 @@ const link = document.createElement('a');
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             onCloseTab={handleCloseTab}
-            themeClasses={themeClasses}
           />
 
-          <div className={`flex-1 overflow-y-auto ${themeClasses.bg} ${!isTerminalOpen ? 'pb-0' : ''}`}>
+          <div className={`flex-1 overflow-y-auto bg-themed ${!isTerminalOpen ? 'pb-0' : ''} ${isExplorerCollapsed ? 'ml-0' : ''}`}>
             {getTabContent()}
           </div>
 
@@ -481,7 +393,6 @@ const link = document.createElement('a');
             currentCommand={currentCommand}
             setCurrentCommand={setCurrentCommand}
             onTerminalCommand={handleTerminalCommand}
-            themeClasses={themeClasses}
           />
         </div>
       </div>
@@ -492,7 +403,6 @@ const link = document.createElement('a');
           downloadResume();
           trackContactClick('resume_download');
         }}
-        themeClasses={themeClasses}
       />
 
       <StatusBar

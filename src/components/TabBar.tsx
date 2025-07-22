@@ -7,7 +7,6 @@ interface TabBarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   onCloseTab: (tab: string) => void;
-  themeClasses: any;
 }
 
 export const TabBar: React.FC<TabBarProps> = ({
@@ -15,7 +14,6 @@ export const TabBar: React.FC<TabBarProps> = ({
   activeTab,
   setActiveTab,
   onCloseTab,
-  themeClasses
 }) => {
   const handleCloseTab = (e: React.MouseEvent, tab: string) => {
     e.stopPropagation();
@@ -23,23 +21,23 @@ export const TabBar: React.FC<TabBarProps> = ({
   };
 
   return (
-    <div className={`${themeClasses.bgSecondary} border-b ${themeClasses.border} flex items-center`}>
+    <div className={`bg-secondary-themed border-b border-themed flex items-center`}>
       <div className="flex">
         {openTabs.map((tab) => (
           <div
             key={tab}
-            className={`px-4 py-2 text-sm border-r ${themeClasses.border} cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 text-sm border-r border-themed cursor-pointer flex items-center gap-2 ${
               activeTab === tab 
-                ? `${themeClasses.bg} ${themeClasses.textPrimary} border-t-2 border-t-blue-400` 
-                : `${themeClasses.textSecondary} hover:${themeClasses.textPrimary} ${themeClasses.hover}`
-            }`}
+                ? `bg-themed text-primary-themed border-t-2 border-t-blue-400` 
+                : `text-secondary-themed hover:text-primary-themed hover-themed`
+            } transition-all duration-300 hover-scale-sm`}
             onClick={() => setActiveTab(tab)}
           >
-            <div className="w-5 h-5">{getFileIcon(tab)}</div>
-            <span>{tab}</span>
+            <div className="w-5 h-5 hover-bounce">{getFileIcon(tab)}</div>
+            <span className="transition-all duration-200">{tab}</span>
             {openTabs.length > 1 && (
               <X 
-                className={`w-3 h-3 ml-1 ${themeClasses.hover} rounded p-0.5 hover:${themeClasses.textPrimary}`}
+                className={`w-3 h-3 ml-1 hover-themed rounded p-0.5 hover:text-primary-themed transition-all duration-200 hover-rotate`}
                 onClick={(e) => handleCloseTab(e, tab)}
               />
             )}

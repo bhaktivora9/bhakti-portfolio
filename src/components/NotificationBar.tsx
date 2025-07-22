@@ -12,7 +12,7 @@ export const NotificationBar: React.FC<NotificationBarProps> = ({ themeClasses }
   if (!isVisible) return null;
 
   return (
-    <div className={`${themeClasses.bgSecondary} text-white border-b border-blue-500`}>
+    <div className="bg-blue-600 text-white border-b border-blue-500">
       {/* Header Bar */}
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex items-center gap-3">
