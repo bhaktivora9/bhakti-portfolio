@@ -147,6 +147,8 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               <Volume2 size={24} />
             </button>
           </div>
+          <p className={`text-xl mb-4 text-secondary-themed animate-slide-in-right stagger-1`}>{personalInfo.title}</p>
+
           <div className={`w-full rounded-full h-2.5 mb-4 ${isDarkTheme ? 'bg-grey-500' : 'bg-gray-500'} animate-slide-in-right stagger-3`}>
             <div className={`h-2.5 rounded-full ${isDarkTheme ? 'bg-[#6F4FBA]' :'bg-[#AE9AD9]' } animate-slide-in-left stagger-4`} style={{ width: '100%' }}></div>
           </div>
@@ -186,7 +188,6 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               Get In Touch
             </button>
           </div>
-          <p className={`text-xl mb-4 text-secondary-themed animate-slide-in-right stagger-1`}>{personalInfo.tagline}</p>
           <div className={`flex items-center mb-4 text-secondary-themed space-x-6`}>
             <MapPin size={20} className="mr-2" />
             <span>{personalInfo.location}</span>
