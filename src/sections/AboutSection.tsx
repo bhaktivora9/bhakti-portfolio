@@ -1,67 +1,276 @@
 import React from 'react';
-import { User } from 'lucide-react';
+import { useState } from 'react';
+import { Volume2, MapPin, Mail, Copy, Check, Download, User, Code, Briefcase, Award } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
+import { trackContactClick, trackResumeDownload } from '../utils/analytics';
 
 interface AboutSectionProps {
-  isDarkTheme: boolean;
+  setActiveTab: (tab: string) => void;
+  openTabs: string[];
+  setOpenTabs: (tabs: string[] | ((prev: string[]) => string[])) => void;
 }
 
-export const AboutSection: React.FC<AboutSectionProps> = ({ isDarkTheme }) => {
-  if(isDarkTheme){
-    console.log("dark theme");
-  }
+export const AboutSection: React.FC<AboutSectionProps> = ({
+  setActiveTab,
+  openTabs,
+  setOpenTabs,
+}) => {
+  const profilePic = `${import.meta.env.BASE_URL}assets/${personalInfo.profileImage}?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop`
+    const resumeUrl = `${import.meta.env.BASE_URL}assets/${personalInfo.resume}`;
+
+  const [emailCopied, setEmailCopied] = useState(false);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(personalInfo.email);
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy email:', err);
+    }
+  };
+
+  const playAudio = () => {
+    const a1 = document.getElementById('pronunciation-audio-1') as HTMLAudioElement | null;
+//    const a2 = document.getElementById('pronunciation-audio-2') as HTMLAudioElement | null;
+
+    const speak = (text: string) =>
+      new Promise<void>((resolve) => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 0.8;
+        u.pitch = 1;
+        u.volume = 1;
+        u.onend = () => resolve();
+        speechSynthesis.speak(u);
+      });
+
+    (async () => {
+      // First name
+      if (a1) {
+        try {
+          a1.currentTime = 0;
+          await a1.play();
+          await new Promise<void>((r) => {
+            a1.onended = () => r();
+          });
+        } catch {
+          if ('speechSynthesis' in window) await speak('Bhakti');
+        }
+      }
+
+      // Last name
+      const a2 = document.getElementById('pronunciation-audio-2') as HTMLAudioElement | null;
+      if (a2) {
+        try {
+          a2.currentTime = 0;
+          await a2.play();
+        } catch {
+          if ('speechSynthesis' in window) await speak('Vora');
+        }
+      }
+    })().catch(() => {});
+  };
+
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className={`text-xl font-bold text-primary-themed mb-4 flex items-center gap-3`}>
-          <User className="w-5 h-5 text-blue-400" />
-          About Me
-        </h1>
-        <div className="w-12 h-0.5 bg-blue-400 mb-4"></div>
-      </div>
-      
-      <div className="space-y-6">
-        <div className={`bg-secondary-themed border border-themed rounded p-4 `}>
-          <div className={`text-sm font-mono text-primary-themed mb-3 `}>
+    <div id="about-section-container" className="w-full h-full bg-[var(--vscode-bg-primary)] text-[var(--vscode-text-primary)] overflow-y-auto px-2 sm:px-4 md:px-6 lg:px-8">
+      {/* Audio elements for pronunciation */}
+      <audio id="pronunciation-audio-1" preload="auto">
+        <source
+          src="https://en-audio.howtopronounce.com/15938392635f000e9f60952.mp3"
+          type="audio/mpeg"
+        />
+      </audio>
+      <audio id="pronunciation-audio-2" preload="auto">
+        <source
+          src="https://en-audio.howtopronounce.com/1752021141686db89590618.mp3"
+          type="audio/mpeg"
+        />
+      </audio>
+
+      {/* Header Section */}
+      <div id="about-section-header" className="py-2 sm:py-4 md:py-6 lg:py-8 min-h-screen">
+        <div id="about-section-content" className="max-w-6xl mx-auto">
+          {/* Profile Section */}
+          <div id="about-profile-section" className="flex flex-col lg:flex-row items-center lg:items-start gap-4 sm:gap-6 md:gap-8 lg:gap-12 mb-4 sm:mb-6 md:mb-8">
+            {/* Profile Picture */}
+            <div id="about-profile-picture-container" className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 xl:w-72 xl:h-72 flex-shrink-0">
+              <div id="about-profile-picture-placeholder" className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-full animate-pulse" />
+              <img
+                id="about-profile-picture"
+                alt="Bhakti Vora"
+                className="w-full h-full object-cover object-top rounded-full border-1.5 sm:border-1 border-[var(--vscode-bg-secondary)] shadow-xl transition-all duration-700 ease-in-out hover:scale-105 opacity-0 animate-fade-in-image"
+                src={profilePic}
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  img.style.opacity = '1';
+                  const placeholder = img.previousElementSibling as HTMLElement | null;
+                  if (placeholder) placeholder.style.display = 'none';
+                }}
+                onError={(e) => {
+                  console.log('Image failed to load:', e.currentTarget.src);
+                  // Keep placeholder visible if image fails to load
+                }}
+              />
+            </div>
+
+            {/* Profile Info */}
+            <div id="about-profile-info" className="flex-1 text-center lg:text-left">
+              {/* Greeting */}
+              <div id="about-greeting" className="mb-2 sm:mb-3 md:mb-4">
+                <span id="about-greeting-text" className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-[var(--vscode-text-secondary)] font-light flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
+                  Hi, I'm 
+                  <span id="about-greeting-wave" className="inline-block animate-wave text-lg sm:text-xl md:text-2xl lg:text-3xl">👋</span>
+                </span>
+              </div>
+
+              {/* Name with pronunciation */}
+              <div id="about-name-container" className="flex flex-col sm:flex-row sm:items-center justify-center lg:justify-start gap-2 sm:gap-3 mb-2 sm:mb-3 md:mb-4">
+                <h1 id="about-name-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-8xl font-bold tracking-tight text-[var(--vscode-text-primary)] leading-none" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                  BHAKTI 
+                </h1>
+                <button
+                  id="about-pronunciation-button"
+                  onClick={playAudio}
+                  className="p-1 sm:p-2 rounded-full transition-all duration-300 hover:scale-110 hover:bg-[var(--vscode-bg-tertiary)] self-center lg:self-start"
+                  title="Hear pronunciation"
+                >
+                  <Volume2 id="about-pronunciation-icon" className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[var(--vscode-text-secondary)]" />
+                </button>
+              </div>
+
+              {/* Title */}
+              <div id="about-title-container" className="mb-3 sm:mb-4 md:mb-6">
+                <h2 id="about-title-heading" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-[var(--vscode-text-secondary)] font-light tracking-wide uppercase mt-1 sm:mt-2" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                  JAVA | BACKEND
+                </h2>
+              </div>
+
+              {/* Contact Info */}
+              <div id="about-contact-info" className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2 sm:gap-4 md:gap-6 mb-3 sm:mb-4">
+              
+                <div id="about-location-info" className="flex items-center gap-2">
+                  <MapPin id="about-location-icon" className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[var(--vscode-text-secondary)]" />
+                  <span id="about-location-text" className="text-[var(--vscode-text-secondary)] text-xs sm:text-sm font-medium">{personalInfo.location}</span>
+                </div>
+                  <div id="about-email-info" className="flex items-center gap-2 group">
+                  <Mail id="about-email-icon" className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[var(--vscode-text-secondary)]" />
+                  <a 
+                    id="about-email-link"
+                    href={`mailto:${personalInfo.email}`}
+                    className="text-[var(--vscode-text-secondary)] hover:text-[var(--vscode-accent)] transition-colors text-xs sm:text-sm font-medium"
+                    onClick={() => trackContactClick('email')}
+                  >
+                    {personalInfo.email}
+                  </a>
+                  <button
+                    id="about-email-copy-button"
+                    onClick={copyEmail}
+                    className="ml-1 p-0.5 sm:p-1 rounded hover:bg-[var(--vscode-bg-tertiary)] transition-colors opacity-0 group-hover:opacity-100"
+                    title={emailCopied ? 'Copied!' : 'Copy email'}
+                  >
+                    {emailCopied ? (
+                      <Check id="about-email-copy-check" className="w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 text-[var(--vscode-green)]" />
+                    ) : (
+                      <Copy id="about-email-copy-icon" className="w-2 h-2 sm:w-3 sm:h-3 md:w-4 md:h-4 text-[var(--vscode-text-secondary)]" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div id="about-action-buttons" className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 justify-center lg:justify-start">
+                <a
+                  id="about-resume-download-button"
+                  href={resumeUrl}
+                  download="Bhakti Vora Resume.pdf"
+                  className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 bg-vscode-accent hover:bg-vscode-accent-hover text-white rounded-md sm:rounded-lg transition-colors font-medium text-xs sm:text-sm"
+                  onClick={() => {
+                    
+                    trackResumeDownload();
+                  }}
+                >
+                  <Download id="about-resume-download-icon" className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Download Resume
+                </a>
+                <button
+                  id="about-contact-button"
+                    className="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 bg-transparent hover:bg-[var(--vscode-bg-tertiary)] text-vscode-accent rounded-md sm:rounded-lg transition-colors font-medium border border-[var(--vscode-accent)] text-xs sm:text-sm"
+                     onClick={() => {
+                  if (!openTabs.includes('Contact.html')) {
+                    setOpenTabs(prev => [...prev, 'Contact.html']);
+                  }
+                  setActiveTab('Contact.html');
+                }}
+                >
+                  <User id="about-contact-icon" className="w-3 h-3 sm:w-4 sm:h-4"  />
+                  Get In Touch
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* About Me Section */}
+          <div id="about-me-section" className="bg-[var(--vscode-bg-secondary)] rounded-md sm:rounded-lg p-3 sm:p-4 md:p-6 border border-[var(--vscode-border)] mb-3 sm:mb-4 md:mb-6">
+            <h3 id="about-me-heading" className="text-base sm:text-lg md:text-xl font-semibold text-[var(--vscode-text-primary)] mb-2 sm:mb-3 md:mb-4 flex items-center gap-2 sm:gap-3">
+              <User id="about-me-icon" className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-vscode-accent" />
+              About Me
+            </h3>
+            <div id="about-me-content" className="text-[var(--vscode-text-primary)] leading-relaxed text-xs sm:text-sm md:text-base space-y-2 sm:space-y-3 text-left">
+              <p id="about-me-paragraph-1">
+                I'm a passionate full-stack developer with 7+ years of experience, hand-on experience in designing, 
+                developing, and maintaining scalable systems and frameworks. Proficient in taking projects from ideation 
+                to deployment. Skilled in Core Java, Spring Boot, Kubernetes, Kafka, and machine learning techniques, 
+                with a consistent track record of tackling complex engineering challenges and delivering practical solutions.
+              </p>
+              <p id="about-me-paragraph-2">
+                Additionally, I hold a Professional Certificate in Machine Learning & Artificial Intelligence from 
+                UC Berkeley Executive Education.
+              </p>
+            </div>
+          </div>
+
+          {/* Current Focus */}
+          <section id="about-current-focus-section" className="mb-4 sm:mb-6 md:mb-8">
+            <div id="about-current-focus-container" className="bg-[var(--vscode-bg-secondary)] p-3 sm:p-4 rounded-md sm:rounded-lg border border-[var(--vscode-border)]">
+              <h3 id="about-current-focus-heading" className="text-base sm:text-lg md:text-xl font-semibold text-[var(--vscode-text-primary)] mb-2 sm:mb-3 flex items-center">
+                <Code id="about-current-focus-icon" className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 text-vscode-accent" />
+                Currently working on
+              </h3>
+              <p id="about-current-focus-text" className="text-[var(--vscode-text-primary)] text-left leading-relaxed mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm md:text-base">
+                With over <span id="about-experience-highlight" className="font-bold text-[var(--vscode-text-primary)]">7 years of experience</span> in the field, I am currently focusing on building robust backend systems and exploring the fascinating world of Artificial Intelligence. My goal is to leverage my skills in Java and machine learning to create innovative and impactful solutions.
+              </p>
+              <div id="about-current-focus-tags" className="flex flex-wrap gap-1 sm:gap-2">
+                <span id="about-tag-java" className="bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-xs font-medium px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">Java</span>
+                <span id="about-tag-spring-boot" className="bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-xs font-medium px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">Spring Boot</span>
+                <span id="about-tag-python" className="bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-xs font-medium px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">Python</span>
+                <span id="about-tag-kubernetes" className="bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-xs font-medium px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">Kubernetes</span>
+                <span id="about-tag-aws" className="bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-xs font-medium px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">AWS</span>
+                <span id="about-tag-tensorflow" className="bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-xs font-medium px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">TensorFlow</span>
+              </div>
+            </div>
+          </section>
+
+          <div id="about-stats-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+            <div id="about-experience-stat" className="bg-[var(--vscode-bg-secondary)] rounded-md sm:rounded-lg p-3 sm:p-4 border border-[var(--vscode-border)] text-center">
+              <div id="about-experience-stat-icon-container" className="flex items-center justify-center mb-2 sm:mb-3">
+                <Briefcase id="about-experience-stat-icon" className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-vscode-accent" />
+              </div>
+              <div id="about-experience-stat-number" className="text-xl sm:text-2xl font-bold text-[var(--vscode-text-primary)] mb-1">7+</div>
+              <div id="about-experience-stat-label" className="text-xs sm:text-sm md:text-base text-[var(--vscode-text-secondary)]">Years Experience</div>
+            </div>
             
-            <span className="text-purple-400">public class</span> <span className="text-amber-500 font-semibold">Developer</span> <span className="text-purple-400">extends</span> <span className="text-amber-500 font-semibold">Human</span>
-          </div>
-          <p className={`text-themed leading-relaxed mb-3 text-sm`}>
-            {personalInfo.bio}
-          </p>
-          <p className={`text-themed leading-relaxed text-sm`}>
-            When I'm not coding, you'll find me exploring new technologies, planting, expanding my knowledge.
-          </p>
-        </div>
-
-        <div className={`bg-secondary-themed border border-themed rounded p-4`}>
-          <h3 className={`text-m  text-primary-themed mb-3 font-mono`}>
-            <span className="text-purple-400 font-semibold">public static final </span> <span className="text-blue-400">techStack</span> = [
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {['JAVA','SPRING FRAMEWORK','DOCKER','KAFKA'].map((tech) => (
-              <div key={tech} className={`bg-tertiary-themed border border-themed rounded px-2 py-1 text-center text-sm font-mono`}>
-                <span className="text-green-500 font-semibold">"{tech}"</span>
+            <div id="about-certification-stat" className="bg-[var(--vscode-bg-secondary)] rounded-md sm:rounded-lg p-3 sm:p-4 border border-[var(--vscode-border)] text-center">
+              <div id="about-certification-stat-icon-container" className="flex items-center justify-center mb-2 sm:mb-3">
+                <Award id="about-certification-stat-icon" className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-vscode-accent" />
               </div>
-            ))}
+              <div id="about-certification-stat-text" className="text-lg sm:text-xl font-bold text-[var(--vscode-text-primary)] mb-1">UC Berkeley</div>
+              <div id="about-certification-stat-label" className="text-xs sm:text-sm md:text-base text-[var(--vscode-text-secondary)]">ML & AI Certified</div>
+            </div>
           </div>
-          <div className={`text-sm font-mono text-primary-themed mt-2`}>];</div>
-        </div>
-
-         <div className={`bg-secondary-themed border border-themed rounded p-4`}>
-          <h3 className={`text-m  text-primary-themed mb-3 font-mono`}>
-            <span className="text-purple-400 font-semibold">public ConcurrentLinkedList{`<Activities>`} </span> <span className="text-blue-400">stressRelievingActivities</span> = [
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {['PLANTING', 'PLAY CHESS'].map((tech) => (
-              <div key={tech} className={`bg-tertiary-themed border border-themed rounded px-2 py-1 text-center text-sm font-mono`}>
-                <span className="text-green-500 font-semibold">"{tech}"</span>
-              </div>
-            ))}
-          </div>
-          <div className={`text-sm font-mono text-primary-themed mt-2`}>];</div>
         </div>
       </div>
     </div>
   );
 };
+
+export default AboutSection;

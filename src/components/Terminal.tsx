@@ -1,228 +1,211 @@
-import React, { useRef, useEffect } from 'react';
-import { Search, Maximize2, X, Play, ArrowDown, ArrowDownToLine } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { terminalCommands, fileContents, personalInfo } from '../data/portfolio';
 
-interface TerminalCommand {
-  command: string;
-  output: string;
-  timestamp: string;
+interface TerminalLine {
+  type: 'command' | 'output' | 'error';
+  content: string;
+  timestamp?: Date;
 }
 
 interface TerminalProps {
-  isTerminalOpen: boolean;
-  setIsTerminalOpen: (value: boolean) => void;
-  activePanel: string;
-  setActivePanel: (panel: string) => void;
-  terminalHistory: TerminalCommand[];
-  currentCommand: string;
-  setCurrentCommand: (command: string) => void;
-  onTerminalCommand: (command: string) => void;
+  id?: string;
 }
 
-export const Terminal: React.FC<TerminalProps> = ({
-  isTerminalOpen,
-  setIsTerminalOpen,
-  activePanel,
-  setActivePanel,
-  terminalHistory,
-  currentCommand,
-  setCurrentCommand,
-  onTerminalCommand,
-}) => {
-  const terminalRef = useRef<HTMLDivElement>(null);
+export function Terminal({ id }: TerminalProps = {}) {
+  const [history, setHistory] = useState<TerminalLine[]>([
+    { type: 'output', content: `Welcome to ${personalInfo.name}'s portfolio terminal!` },
+    { type: 'output', content: 'Type "help" to see available commands.' },
+    { type: 'output', content: '' },
+  ]);
+  const [currentCommand, setCurrentCommand] = useState('');
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [autoScroll, setAutoScroll] = React.useState(true);
-  const [isMaximized, setIsMaximized] = React.useState(false);
-  const [terminalHeight, setTerminalHeight] = React.useState(192); // 48 * 4 = 192px (h-48)
-  const [isResizing, setIsResizing] = React.useState(false);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+  const executeCommand = (cmd: string) => {
+    const trimmedCmd = cmd.trim();
+    if (!trimmedCmd) return;
+
+    // Add command to history
+    setHistory(prev => [...prev, { type: 'command', content: `bhakti@portfolio:~/portfolio$ ${trimmedCmd}` }]);
+    setCommandHistory(prev => [...prev, trimmedCmd]);
+    setHistoryIndex(-1);
+
+    // Parse command and arguments
+    const [command, ...args] = trimmedCmd.split(' ');
+    const commandLower = command.toLowerCase();
+
+    let output: string[] = [];
+    
+    if (commandLower === 'clear') {
+      setHistory([]);
+      return;
+    }
+
+    if (commandLower === 'cat') {
+      const filename = args[0];
+      if (!filename) {
+        output = ['cat: missing file operand', 'Try "cat [filename]" or "ls" to see available files.'];
+      } else if (fileContents[filename]) {
+        output = fileContents[filename];
+      } else {
+        output = [`cat: ${filename}: No such file or directory`];
+      }
+    } else if (commandLower === 'resume') {
+      output = [
+        'Resume download initiated...',
+        `📄 resume_${personalInfo.name.toLowerCase().replace(' ', '_')}.pdf`,
+        '',
+        'Note: This is a demo portfolio. In a real implementation,',
+        'this would trigger an actual file download.',
+        '',
+      ];
+    } else if (terminalCommands[commandLower as keyof typeof terminalCommands]) {
+      output = terminalCommands[commandLower as keyof typeof terminalCommands];
+      
+      // Handle file opening commands
+      const commandMap: { [key: string]: string } = {
+        'about': 'About.java',
+
+        'experience': 'Work.css',
+        'work': 'Work.css',
+        'education': 'education.yml',
+        'projects': 'projects.ts',
+        'skills': 'skills.json',
+        'contact': 'Contact.html',
+        'resume': 'resume.pdf',
+        'home': 'Home.jsx',
+      };
+
+      if (commandMap[commandLower]) {
+        // Use a timeout to allow the output to be displayed first
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('openFile', { 
+            detail: { fileName: commandMap[commandLower] } 
+          }));
+        }, 100);
+      }
+    } else {
+      output = [
+        `Command not found: ${command}`,
+        'Type "help" to see available commands.',
+        '',
+      ];
+    }
+
+    // Add output to history
+    output.forEach(line => {
+      setHistory(prev => [...prev, { type: 'output', content: line }]);
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    executeCommand(currentCommand);
+    setCurrentCommand('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (commandHistory.length > 0) {
+        const newIndex = historyIndex === -1 ? commandHistory.length - 1 : Math.max(0, historyIndex - 1);
+        setHistoryIndex(newIndex);
+        setCurrentCommand(commandHistory[newIndex]);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex >= 0) {
+        const newIndex = historyIndex + 1;
+        if (newIndex >= commandHistory.length) {
+          setHistoryIndex(-1);
+          setCurrentCommand('');
+        } else {
+          setHistoryIndex(newIndex);
+          setCurrentCommand(commandHistory[newIndex]);
+        }
+      }
     }
   };
 
-  // Handle resize functionality
-  React.useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isResizing) return;
-      const newHeight = window.innerHeight - e.clientY;
-      if (newHeight >= 150 && newHeight <= window.innerHeight * 0.8) {
-        setTerminalHeight(newHeight);
+  useEffect(() => {
+    if (terminalRef.current) {
+      const terminal = terminalRef.current;
+      // Smooth scroll to bottom
+      terminal.scrollTo({
+        top: terminal.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [history]);
+
+  // Auto-scroll when new content is added (like a real terminal)
+  useEffect(() => {
+    if (terminalRef.current) {
+      const terminal = terminalRef.current;
+      const isScrolledToBottom = terminal.scrollHeight - terminal.clientHeight <= terminal.scrollTop + 1;
+      
+      if (isScrolledToBottom) {
+        // Only auto-scroll if user is already at the bottom
+        setTimeout(() => {
+          terminal.scrollTo({
+            top: terminal.scrollHeight,
+            behavior: 'smooth'
+          });
+        }, 50);
       }
-    };
-
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    };
-
-    if (isResizing) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = 'row-resize';
-      document.body.style.userSelect = 'none';
     }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isResizing]);
-  useEffect(() => {
-    if (autoScroll && terminalHistory.length > 0) {
-      scrollToBottom();
-    }
-  }, [terminalHistory, autoScroll]);
+  }, [history.length]);
 
   useEffect(() => {
-    if (isTerminalOpen && activePanel === 'TERMINAL' && inputRef.current) {
+    if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isTerminalOpen, activePanel]);
+  }, []);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      onTerminalCommand(currentCommand);
-      setCurrentCommand('');
-    }
-  };
-
-  const handleMaximize = () => {
-    setIsMaximized(!isMaximized);
-    if (!isMaximized) {
-      setTerminalHeight(window.innerHeight * 0.8);
-    } else {
-      setTerminalHeight(192);
-    }
-  };
-
-  const handleResize = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-  };
-  if (!isTerminalOpen) return null;
-
-  const terminalStyle = isMaximized 
-    ? { height: `${terminalHeight}px`, position: 'fixed' as const, bottom: 0, left: 0, right: 0, zIndex: 50 }
-    : { height: `${terminalHeight}px` };
   return (
-    <div 
-      className={`bg-secondary-themed border-t border-themed flex flex-col animate-slide-up ${isMaximized ? 'shadow-2xl' : ''}`}
-      style={terminalStyle}
+    <div
+      id={id || "terminal-container"}
+      ref={terminalRef}
+      className="bg-vscode-primary flex-1 font-mono text-sm leading-5 overflow-auto p-4 min-h-0 w-full"
+      onClick={() => inputRef.current?.focus()}
     >
-      {/* Resize Handle */}
-      <div 
-        className={`h-1 bg-secondary-themed hover:bg-blue-500 cursor-row-resize transition-colors duration-200 ${isResizing ? 'bg-blue-500' : ''}`}
-        onMouseDown={handleResize}
-        title="Drag to resize terminal"
-      />
-
-      {/* Panel Tabs */}
-      <div className={`flex items-center border-b border-themed`}>
-        {['PROBLEMS', 'OUTPUT', 'DEBUG CONSOLE', 'TERMINAL', 'PORTS'].map((panel) => (
-          <button
-            key={panel}
-            className={`px-4 py-2 text-xs font-medium border-r border-themed ${
-              activePanel === panel 
-                ? `bg-themed text-primary-themed` 
-                : `text-secondary-themed hover:text-primary-themed hover-themed`
-            } transition-all duration-200 hover-scale-sm`}
-            onClick={() => setActivePanel(panel)}
-          >
-            {panel}
-          </button>
-        ))}
-        <div className="flex-1"></div>
-        <div className="flex items-center gap-2 px-4">
-          <input 
-            type="text" 
-            placeholder="Filter (e.g. text, !exclude, \\escape)"
-            className={`bg-tertiary-themed border border-themed rounded px-2 py-1 text-xs text-themed w-64 transition-all duration-200 focus:ring-2 focus:ring-blue-400`}
-          />
-          <Search className={`w-4 h-4 text-secondary-themed hover-bounce`} />
-          <div className="flex items-center gap-1 border-l border-themed pl-2 ml-2">
-            <button
-              onClick={() => setAutoScroll(!autoScroll)}
-              className={`p-1 rounded transition-all duration-200 hover-scale ${
-                autoScroll 
-                  ? 'text-green-400 hover:text-green-300' 
-                  : 'text-secondary-themed hover:text-primary-themed'
-              }`}
-              title={autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF'}
-            >
-              <ArrowDownToLine className="w-4 h-4" />
-            </button>
-            <button
-              onClick={scrollToBottom}
-              className="p-1 text-secondary-themed hover:text-primary-themed rounded transition-all duration-200 hover-scale"
-              title="Scroll to bottom"
-            >
-              <ArrowDown className="w-4 h-4" />
-            </button>
-          </div>
-          <button
-            onClick={handleMaximize}
-            className={`p-1 rounded transition-all duration-200 hover-scale ${
-              isMaximized 
-                ? 'text-blue-400 hover:text-blue-300' 
-                : 'text-secondary-themed hover:text-primary-themed'
+      <div id="terminal-content" className="text-vscode-text-primary whitespace-pre-wrap">
+        {history.map((line, index) => (
+          <div 
+            key={`terminal-line-${index}`}
+            id={`terminal-line-${index}`}
+            className={`${
+              line.type === 'command' 
+                ? 'text-vscode-text-primary' 
+                : line.type === 'error' 
+                  ? 'text-vscode-red' 
+                  : 'text-vscode-text-primary'
             }`}
-            title={isMaximized ? 'Restore terminal' : 'Maximize terminal'}
           >
-            <Maximize2 className="w-4 h-4" />
-          </button>
-          <X 
-            className={`w-4 h-4 text-secondary-themed hover:text-primary-themed cursor-pointer hover-rotate transition-all duration-200`}
-            onClick={() => setIsTerminalOpen(false)}
+            {line.content}
+          </div>
+        ))}
+        
+        <form id="terminal-input-form" onSubmit={handleSubmit} className="flex items-center gap-2 mt-1 sticky bottom-0 bg-vscode-primary py-1">
+          <span id="terminal-prompt-user" className="text-vscode-green-alt flex-shrink-0">bhakti@portfolio</span>
+          <span id="terminal-prompt-colon" className="text-vscode-primary flex-shrink-0">:</span>
+          <span id="terminal-prompt-path" className="text-vscode-blue flex-shrink-0">~/portfolio</span>
+          <span id="terminal-prompt-dollar" className="text-vscode-primary flex-shrink-0">$</span>
+          <input
+            id="terminal-input"
+            ref={inputRef}
+            type="text"
+            value={currentCommand}
+            onChange={(e) => setCurrentCommand(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 bg-transparent border-none outline-none text-vscode-primary min-w-0"
+            placeholder="Type a command..."
+            autoComplete="off"
           />
-        </div>
-      </div>
-
-      {/* Panel Content */}
-      <div className="flex-1 overflow-y-auto scroll-smooth" ref={terminalRef}>
-        {activePanel === 'TERMINAL' && (
-          <div className="p-4 font-mono text-sm h-full flex flex-col animate-fade-in-scale">
-            <div className="flex-1 overflow-y-auto">
-              {terminalHistory.map((entry, index) => (
-                <div key={index} className={`mb-2 animate-slide-in-bottom stagger-${Math.min(index + 1, 6)}`}>
-                  <div className="flex items-center gap-2 text-green-400">
-                    <span>$</span>
-                    <span>{entry.command}</span>
-                    <span className={`text-secondary-themed text-xs ml-auto`}>{entry.timestamp}</span>
-                  </div>
-                  <div className={`text-themed ml-4 mb-2`}>{entry.output}</div>
-                </div>
-              ))}
-            </div>
-            <div className={`flex items-center gap-2 mt-2 border-t border-themed pt-2`}>
-              <span className="text-green-400">$</span>
-              <input
-                ref={inputRef}
-                type="text"
-                value={currentCommand}
-                onChange={(e) => setCurrentCommand(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className={`flex-1 bg-transparent text-themed outline-none transition-all duration-200`}
-                placeholder="Type a command (try 'help')"
-              />
-              <button
-                onClick={() => onTerminalCommand(currentCommand)}
-                className="text-blue-400 hover:text-blue-300 hover-scale transition-all duration-200"
-              >
-                <Play className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-        {activePanel === 'OUTPUT' && (
-          <div className={`p-4 text-sm text-secondary-themed`}>
-            <div>[Extension Host] Portfolio loaded successfully</div>
-            <div>[Extension Host] All components rendered</div>
-            <div>[Extension Host] Interactive terminal ready</div>
-          </div>
-        )}
+        </form>
       </div>
     </div>
   );
-};
+}

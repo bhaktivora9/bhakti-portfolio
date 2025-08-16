@@ -6,6 +6,7 @@ export interface PersonalInfo {
   location: string;
   profileImage: string;
   bio: string;
+  shortBio:string;
   tagline: string;
   phrases:string[];
   resume:string;
@@ -24,6 +25,7 @@ export interface Experience {
   location: string;
   logo: string;
   link: string;
+  totalPeriod:string;
   roles: {
     title: string;
     period: string;
@@ -31,18 +33,22 @@ export interface Experience {
     technologies: string[];
   }[];
 }
-export interface Education {
+export interface Certs {
   degree: string;
   institution: string;
   period?: string;
-  description?: string;
+  credentials?: string;
   gpa?: string;
 }
 
-export interface Certificate {
+export interface Education {
   degree: string;
   institution: string;
-  credentials: string;
+  university?: string;
+  period?: string;
+  description?: string;
+  gpa?: string;
+
 }
 
 
@@ -55,20 +61,10 @@ export interface Project {
   image?: string;
 }
 
-type SkillLevel = 'beginner' | 'experienced';
-
-
-
-
-interface SkillItem {
-  name: string;
-  level: SkillLevel;
-  badge: string;
-}
 
 interface Skill {
   category: string;
-  items: SkillItem[];
+score: number;
 }
 
 
@@ -79,13 +75,14 @@ export const personalInfo: PersonalInfo = {
   phone: "+1 (415) 301-0317",
   location: "San Francisco, CA",
   profileImage: "Bhakti-Vora-PP.png",
+  shortBio: "I'm a passionate full-stack developer with 7+ years of experience. Skilled in Core Java, Spring Boot, Kubernetes, Kafka. Additionally, I hold a Professional Certificate in Machine Learning & Artificial Intelligence from UC Berkeley Executive Education.",
   bio: "I'm a passionate full-stack developer with 7+ years of experience, hand-on experience in designing, developing, and maintaining scalable systems and frameworks. Proficient in taking projects from ideation to deployment. Skilled in Core Java, Spring Boot, Kubernetes, Kafka,and machine learning techniques, with a consistent track record of tackling complex engineering challenges and delivering practical solutions.Additionally, I hold a Professional Certificate in Machine Learning & Artificial Intelligence from UC Berkeley Executive Education.",
   tagline: "Backend Developer | AI Enthusiast",
   phrases: ['Frontend Developer in making...',
     'Learning about MCP, RAG, LLM',
     'Currently working on genReadME'
     ],
-    resume : "Bhakti Vora Resume.pdf"
+    resume : "Bhakti_Vora_Resume.pdf"
 };
 
 export const socialLinks: SocialLinks = {
@@ -98,8 +95,9 @@ export const experiences: Experience[] = [
   {
     company: "Walmart @ Caspex",
     location: "Sunnyvale, USA",
+    totalPeriod: "03/2022 - 09/2024",
     link:"https://www.walmart.com/",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Walmart_logo.svg",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/archive/b/b1/20250802041144%21Walmart_logo_%282008%29.svg/120px-Walmart_logo_%282008%29.svg.png",
     roles: [
       {
         title: "Backend Developer",
@@ -130,6 +128,7 @@ export const experiences: Experience[] = [
   {
     company: "Contentserv Technologies (Now Acquired by Centric Software)",
     location: "Pune, India",
+    totalPeriod:"03/2017 - 02/2021",
     logo: "https://www.contentserv.com/hs-fs/hubfs/Contentserv%20Theme%202024/images/Centric%2BContentserv.png?width=938&height=550&name=Centric%2BContentserv.png",
     link:"https://www.contentserv.com/",
     roles: [
@@ -189,16 +188,20 @@ export const experiences: Experience[] = [
 
 export const educationList: Education[] = [
   {
-    degree: "Bachelor of Engineering in Information Technology",
-    institution: "University of Pune"
+    degree: "Bachelor of Engineering [Information Technology]",
+    institution: "Cummins College of Engineering",
+    university: "University of Pune",
+    period:"June 2016"
     
   }
 ];
-export const certificates: Certificate[] = [
+
+export const certificates: Certs[] = [
 {
   degree:"Professional Certificate in Machine Learning & Artificial Intelligence.",
   institution:"UC Berkeley Executive Education",
-  credentials:"https://certificates.emeritus.org/fe943e05-a357-4561-987d-51ed62618e14#acc.nj8Ook9l"
+  credentials:"https://certificates.emeritus.org/fe943e05-a357-4561-987d-51ed62618e14#acc.nj8Ook9l",
+  period:"May 2023"
 
 }
 ];
@@ -209,7 +212,7 @@ export const projects: Project[] = [
     technologies: ["Java", "GCP", "RAG","MCP"],
     github: "https://gitlab.com/bhaktivora09/genreadme/-/tree/MVP?ref_type=heads",
 /*    demo: "https://ecommerce-demo.bhaktideveloper.dev",
-*/    image: "assets/genReadME_LOGO.png?compress=400"
+*/    image: "genREADMELOGO.svg?compress=400"
   },
   {
     name: "spotClassify",
@@ -221,69 +224,403 @@ export const projects: Project[] = [
   }
 ];
 
-export const skills: Skill[] = [
-  {
-    category: "Programming Languages",
-    items: [
-      { name: "Java", level: "experienced", badge: "https://img.shields.io/badge/Java-Experienced-lightgray?style=plastic&logo=java&logoColor=white&colorA=007396&size=20" },
-      { name: "PHP", level: "experienced", badge: "https://img.shields.io/badge/PHP-Beginner-lightgray?style=plastic&logo=php&logoColor=white&colorA=777BB4&size=20" },
-      { name: "Node.js", level: "beginner", badge: "https://img.shields.io/badge/Node.js-Experienced-lightgray?style=plastic&logo=nodedotjs&logoColor=white&colorA=339933&size=20" },
-      { name: "Python", level: "beginner", badge: "https://img.shields.io/badge/Python-Beginner-lightgray?style=plastic&logo=python&logoColor=white&colorA=3776AB&size=20" }
-    ]
+
+interface Skill {
+  name: string;
+  score: number;
+  category: string;
+  badgeLight: string;
+  badgeDark: string;
+}
+
+export const flattenedSkills: Skill[] = [
+  // Programming Languages
+  { 
+    name: "Java", 
+    score: 7, 
+    badgeLight: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", 
+    badgeDark: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+    category: "Programming Languages" 
   },
-  {
-    category: "javaTechnologies",
-    items: [
-      { name: "Spring Framework", level: "experienced", badge: "https://img.shields.io/badge/Spring-Experienced-lightgray?style=plastic&logo=spring&logoColor=white&colorA=6DB33F" },
-      { name: "Spring Hibernate", level: "experienced", badge: "https://img.shields.io/badge/Spring%20Hibernate-Experienced-lightgray?style=plastic&logo=spring&logoColor=white&colorA=59666C" },
-      { name: "Spring Boot", level: "experienced", badge: "https://img.shields.io/badge/Spring%20Boot-Experienced-lightgray?style=plastic&logo=springboot&logoColor=white&colorA=6DB33F" },
-      { name: "Spring Security", level: "experienced", badge: "https://img.shields.io/badge/Spring%20Security-Experienced-lightgray?style=plastic&logo=springsecurity&logoColor=white&colorA=6DB33F" }
-    ]
+  { 
+    name: "JavaScript", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/javascript/F7DF1E?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/javascript/F7DF1E?viewbox=auto",
+    category: "Programming Languages" 
   },
-  {
-    category: "Databases",
-    items: [
-      { name: "SQL", level: "experienced", badge: "https://img.shields.io/badge/SQL-Experienced-lightgray?style=plastic&logo=mysql&logoColor=white&colorA=4479A1" },
-      { name: "PostgreSQL", level: "experienced", badge: "https://img.shields.io/badge/PostgreSQL-Experienced-lightgray?style=plastic&logo=postgresql&logoColor=white&colorA=4169E1" },
-      { name: "Elasticsearch", level: "beginner", badge: "https://img.shields.io/badge/Elasticsearch-Beginner-lightgray?style=plastic&logo=elasticsearch&logoColor=white&colorA=005571" },
-      { name: "MongoDB", level: "beginner", badge: "https://img.shields.io/badge/MongoDB-Beginner-lightgray?style=plastic&logo=mongodb&logoColor=white&colorA=47A248" },
-    ]
+  { 
+    name: "PHP", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/php/777BB4?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/php/8892BF?viewbox=auto",
+    category: "Programming Languages" 
   },
-  {
-    category: "Middleware Technologies",
-    items: [
-      { name: "Apache Kafka", level: "experienced", badge: "https://img.shields.io/badge/Apache%20Kafka-Experienced-lightgray?style=plastic&logo=apachekafka&logoColor=white&colorA=231F20" },
-      { name: "Netflix Ribbon", level: "experienced", badge: "https://img.shields.io/badge/Netflix%20Ribbon-Beginner-lightgray?style=plastic&logo=netflix&logoColor=white&colorA=E50914" }
-    ]
+  { 
+    name: "Node.js", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/nodedotjs/339933?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/nodedotjs/68CC44?viewbox=auto",
+    category: "Programming Languages" 
   },
-  {
-    category: "Cloud & DevOps",
-    items: [
-      { name: "AWS", level: "beginner", badge: "https://img.shields.io/badge/AWS%20SNS-Beginner-lightgray?style=plastic&logo=amazonaws&logoColor=white&colorA=FF9900" },
-      { name: "Docker", level: "experienced", badge: "https://img.shields.io/badge/Docker-Experienced-lightgray?style=plastic&logo=docker&logoColor=white&colorA=2496ED" },
-      { name: "Kubernetes", level: "beginner", badge: "https://img.shields.io/badge/Kubernetes-Beginner-lightgray?style=plastic&logo=kubernetes&logoColor=white&colorA=326CE5" }
-    ]
+  { 
+    name: "Python", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/python/3776AB?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/python/4B8BBE?viewbox=auto",
+    category: "Programming Languages" 
   },
-  {
-    category: "Tools & Others",
-    items: [
-      { name: "GitHub", level: "experienced", badge: "https://img.shields.io/badge/GitHub-Experienced-lightgray?style=plastic&logo=github&logoColor=white&colorA=181717" },
-      { name: "SPLUNK", level: "beginner", badge: "https://img.shields.io/badge/Splunk-Beginner-lightgray?style=plastic&logo=splunk&logoColor=white&colorA=000000" },
-      { name: "xMatters", level: "beginner", badge: "https://img.shields.io/badge/xMatters-Beginner-lightgray?style=plastic&logo=openaccess&logoColor=white&colorA=00BFA5" },
-      { name: "Dynatrace", level: "beginner", badge: "https://img.shields.io/badge/Dynatrace-Beginner-lightgray?style=plastic&logo=dynatrace&logoColor=white&colorA=1496FF" },
-      { name: "Grafana", level: "beginner", badge: "https://img.shields.io/badge/Grafana-Beginner-lightgray?style=plastic&logo=grafana&logoColor=white&colorA=F46800" }
-    ]
+
+  // Java Technologies
+  { 
+    name: "Spring Framework", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/spring/6DB33F?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/spring/68BC45?viewbox=auto",
+    category: "Java Technologies" 
   },
-  {
-    category: "Methodologies",
-    items: [
-      { name: "Agile (Scrum)", level: "experienced", badge: "https://img.shields.io/badge/Agile%20(Scrum)-Experienced-lightgray?style=plastic&logo=scrumalliance&logoColor=white&colorA=6DB33F" },
-      { name: "SDLC", level: "experienced", badge: "https://img.shields.io/badge/SDLC-Experienced-lightgray?style=plastic&logo=bookstack&logoColor=white&colorA=0A66C2" }
-    ]
+  { 
+    name: "Spring Hibernate", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/hibernate/59666C?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/hibernate/BCAE79?viewbox=auto",
+    category: "Java Technologies" 
+  },
+  { 
+    name: "Spring Boot", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/springboot/6DB33F?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/springboot/68BC45?viewbox=auto",
+    category: "Java Technologies" 
+  },
+  { 
+    name: "Spring Security", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/springsecurity/6DB33F?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/springsecurity/68BC45?viewbox=auto",
+    category: "Java Technologies" 
+  },
+
+  // Databases
+  { 
+    name: "SQL", 
+    score: 7, 
+    badgeLight: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-original-wordmark.svg", 
+    badgeDark: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-original-wordmark.svg",
+    category: "Databases" 
+  },
+  { 
+    name: "PostgreSQL", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/postgresql/4169E1?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/postgresql/336791?viewbox=auto",
+    category: "Databases" 
+  },
+  { 
+    name: "MySQL", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/mysql/4479A1?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/mysql/00758F?viewbox=auto",
+    category: "Databases" 
+  },
+  { 
+    name: "Elasticsearch", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/elasticsearch/005571?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/elasticsearch/FEC514?viewbox=auto",
+    category: "Databases" 
+  },
+  { 
+    name: "MongoDB", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/mongodb/47A248?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/mongodb/4DB33D?viewbox=auto",
+    category: "Databases" 
+  },
+
+  // Middleware Technologies
+  { 
+    name: "Apache Kafka", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/apachekafka/000000?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/apachekafka/FFFFFF?viewbox=auto",
+    category: "Middleware Technologies" 
+  },
+  { 
+    name: "Netflix Ribbon", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/netflix/E50914?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/netflix/E50914?viewbox=auto",
+    category: "Middleware Technologies" 
+  },
+
+  // CI/CD and Other Tools
+  { 
+    name: "GitHub", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/github/181717?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/github/FFFFFF?viewbox=auto",
+    category: "CI/CD and Other Tools" 
+  },
+  { 
+    name: "Docker", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/docker/2496ED?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/docker/2496ED?viewbox=auto",
+    category: "CI/CD and Other Tools" 
+  },
+  { 
+    name: "Kubernetes", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/kubernetes/326CE5?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/kubernetes/326CE5?viewbox=auto",
+    category: "CI/CD and Other Tools" 
+  },
+  { 
+    name: "SPLUNK", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/splunk/000000?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/splunk/FFFFFF?viewbox=auto",
+    category: "CI/CD and Other Tools" 
+  },
+  { 
+    name: "Dynatrace", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/dynatrace/1496FF?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/dynatrace/1496FF?viewbox=auto",
+    category: "CI/CD and Other Tools" 
+  },
+  { 
+    name: "Grafana", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/grafana/F46800?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/grafana/F46800?viewbox=auto",
+    category: "CI/CD and Other Tools" 
+  },
+
+  // Cloud Technologies
+  { 
+    name: "AWS", 
+    score: 7, 
+    badgeLight: "https://cdn.worldvectorlogo.com/logos/amazon-web-services-4.svg", 
+    badgeDark: "https://cdn.worldvectorlogo.com/logos/amazon-web-services-7.svg",
+    category: "Cloud Technologies" 
+  },
+  { 
+    name: "AWS Lambda", 
+    score: 7, 
+    badgeLight: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Amazon_Lambda_architecture_logo.svg", 
+    badgeDark: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Amazon_Lambda_architecture_logo.svg",
+    category: "Cloud Technologies" 
+  },
+  { 
+    name: "AWS S3", 
+    score: 7, 
+    badgeLight: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Amazon-S3-Logo.svg", 
+    badgeDark: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Amazon-S3-Logo.svg",
+    category: "Cloud Technologies" 
+  },
+  { 
+    name: "GCP", 
+    score: 4, 
+    badgeLight: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original-wordmark.svg", 
+    badgeDark: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original-wordmark.svg",
+    category: "Cloud Technologies" 
+  },
+
+  // AI & Machine Learning
+  { 
+    name: "TensorFlow", 
+    score: 4, 
+    badgeLight: "https://cdn.simpleicons.org/tensorflow/FF6F00?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/tensorflow/FF6F00?viewbox=auto",
+    category: "AI & Machine Learning" 
+  },
+  { 
+    name: "PyTorch", 
+    score: 4, 
+    badgeLight: "https://cdn.simpleicons.org/pytorch/EE4C2C?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/pytorch/EE4C2C?viewbox=auto",
+    category: "AI & Machine Learning" 
+  },
+  { 
+    name: "Scikit-learn", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/scikitlearn/F7931E?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/scikitlearn/F7931E?viewbox=auto",
+    category: "AI & Machine Learning" 
+  },
+  { 
+    name: "Pandas", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/pandas/150458?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/pandas/E70488?viewbox=auto",
+    category: "AI & Machine Learning" 
+  },
+  { 
+    name: "NumPy", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/numpy/013243?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/numpy/4DABCF?viewbox=auto",
+    category: "AI & Machine Learning" 
   }
 ];
 
-
 export const analytics = {
   gtagId: "G-2P2V42WZR9" // Replace with your actual Google Analytics ID
+};
+
+export const terminalCommands = {
+  help: [
+    'Available commands:',
+    '  help       - Show this help message',
+    '  clear      - Clear terminal',
+    '  about      - Open About section',
+    '  work       - Open Work Experience',
+    '  experience - Open Work Experience',
+    '  education  - Open Education section',
+    '  projects   - Open Projects section',
+    '  skills     - Open Skills section',
+    '  contact    - Open Contact section',
+    '  resume     - Open Resume',
+    '  whoami     - Show user info',
+    '  ls         - List available files',
+    '  pwd        - Show current directory',
+    '  date       - Show current date',
+    '  echo <msg> - Echo a message'
+  ],
+  about: ['Opening About.java...'],
+  work: ['Opening Work.css...'],
+  experience: ['Opening Work.css...'],
+  education: ['Opening education.yml...'],
+  projects: ['Opening projects.ts...'],
+  skills: ['Opening skills.json...'],
+  contact: ['Opening Contact.html...'],
+  resume: ['Opening resume.pdf...'],
+  whoami: ['bhakti@portfolio:~$ Bhakti Vora - Backend Developer'],
+  ls: [
+    'About.java',
+    'Work.css',
+    'education.yml',
+    'projects.ts',
+    'skills.json',
+    'Contact.html',
+    'resume.pdf'
+  ],
+  pwd: ['/home/bhakti/portfolio'],
+  date: [new Date().toString()]
+};
+
+
+
+
+export const fileContents: { [key: string]: string[] } = {
+  'About.java': [
+    '// About.java - Personal Information',
+    'public class About {',
+    '    private String name = "Bhakti Vora";',
+    '    private String title = "Backend Developer | Java | AI Enthusiast";',
+    '    private String location = "San Francisco, CA";',
+    '    private String email = "bhaktivora16@gmail.com";',
+    '    ',
+    '    public String getBio() {',
+    '        return "Passionate full-stack developer with 7+ years of experience";',
+    '    }',
+    '}'
+  ],
+  'Work.css': [
+    '/* Work.css - Professional Experience Styles */',
+    '.experience {',
+    '    company: "Walmart @ Caspex";',
+    '    location: "Sunnyvale, USA";',
+    '    role: "Backend Developer";',
+    '    technologies: ["Java", "Spring Boot", "Kafka", "Docker", "Kubernetes"];',
+    '}',
+    '',
+    '.previous-experience {',
+    '    company: "Contentserv Technologies";',
+    '    location: "Pune, India";',
+    '    roles: ["SDE I", "Senior Software Engineer", "Software Engineer"];',
+    '}'
+  ],
+  'education.yml': [
+    '# education.yml - Educational Background',
+    'education:',
+    '  degree: "Bachelor of Engineering [Information Technology]"',
+    '  institution: "Cummins College of Engineering"',
+    '  university: "University of Pune"',
+    '',
+    'certificates:',
+    '  - name: "Professional Certificate in Machine Learning & AI"',
+    '    institution: "UC Berkeley Executive Education"'
+  ],
+  'projects.ts': [
+    '// projects.ts - Portfolio Projects',
+    'interface Project {',
+    '  name: string;',
+    '  description: string;',
+    '  technologies: string[];',
+    '}',
+    '',
+    'const projects: Project[] = [',
+    '  {',
+    '    name: "genReadME",',
+    '    description: "Context-aware AI documentation system",',
+    '    technologies: ["Java", "GCP", "RAG", "MCP"]',
+    '  },',
+    '  {',
+    '    name: "spotClassify",',
+    '    description: "ML pipeline for Spotify track classification",',
+    '    technologies: ["scikit-learn", "python"]',
+    '  }',
+    '];'
+  ],
+  'skills.json': [
+    '{',
+    '  "programming_languages": ["Java", "JavaScript", "PHP", "Python"],',
+    '  "java_technologies": ["Spring Framework", "Spring Boot", "Hibernate"],',
+    '  "databases": ["SQL", "PostgreSQL", "MySQL", "MongoDB"],',
+    '  "cloud_technologies": ["AWS", "AWS Lambda", "AWS S3", "GCP"],',
+    '  "tools": ["Docker", "Kubernetes", "Apache Kafka", "GitHub"],',
+    '  "ai_ml": ["TensorFlow", "PyTorch", "Scikit-learn", "Pandas", "NumPy"]',
+    '}'
+  ],
+  'Contact.html': [
+    '<!-- Contact.html - Contact Information -->',
+    '<!DOCTYPE html>',
+    '<html>',
+    '<head>',
+    '    <title>Contact - Bhakti Vora</title>',
+    '</head>',
+    '<body>',
+    '    <div class="contact-info">',
+    '        <h1>Get In Touch</h1>',
+    '        <p>Email: bhaktivora16@gmail.com</p>',
+    '        <p>Phone: +1 (415) 301-0317</p>',
+    '        <p>Location: San Francisco, CA</p>',
+    '        <p>LinkedIn: linkedin.com/in/bhakti-vora/</p>',
+    '        <p>GitHub: github.com/bhaktivora9</p>',
+    '    </div>',
+    '</body>',
+    '</html>'
+  ],
+  'resume.pdf': [
+    'PDF Content Preview:',
+    '========================',
+    'BHAKTI VORA',
+    'Backend Developer | Java | AI Enthusiast',
+    '',
+    'Contact: bhaktivora16@gmail.com',
+    'Location: San Francisco, CA',
+    '',
+    'EXPERIENCE:',
+    '- Walmart @ Caspex (Backend Developer)',
+    '- Contentserv Technologies (SDE I, Senior Engineer)',
+    '',
+    'EDUCATION:',
+    '- B.E. Information Technology, University of Pune',
+    '- ML & AI Certificate, UC Berkeley',
+    '',
+    'Note: Use the download button to get the actual PDF file.'
+  ]
 };
