@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Volume2, MapPin, Mail, Copy, Check, Download, User, Code, Briefcase, Award } from 'lucide-react';
+import { Volume2, MapPin, Mail, Copy, Check, Download, User, Code, Briefcase,Zap , Award } from 'lucide-react';
 import { personalInfo } from '../data/portfolio';
 import { trackContactClick, trackResumeDownload } from '../utils/analytics';
 
@@ -93,7 +93,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           {/* Profile Section */}
           <div id="about-profile-section" className="flex flex-col lg:flex-row items-center lg:items-start gap-4 sm:gap-6 md:gap-8 lg:gap-12 mb-4 sm:mb-6 md:mb-8">
             {/* Profile Picture */}
-            <div id="about-profile-picture-container" className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-64 lg:h-64 xl:w-72 xl:h-72 flex-shrink-0">
+            <div id="about-profile-picture-container" className="relative w-24 h-24 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 xl:w-60 xl:h-60 flex-shrink-0">
               <div id="about-profile-picture-placeholder" className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-full animate-pulse" />
               <img
                 id="about-profile-picture"
@@ -111,7 +111,18 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                   // Keep placeholder visible if image fails to load
                 }}
               />
-            </div>
+{/* Zap Badge */}
+
+      <div id="about-experience-badge" className="absolute -bottom-2 -left-8 sm:-bottom-6 sm:items-center sm:left-6 z-10">
+  <span className={`inline-flex items-center px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-medium shadow-lg justify-center bg-[(--var(vscode-secondary))] text-white/90 backdrop-blur-sm border-dashed border-red-500 border-2`}>
+    <Zap className="h-3 w-3 mr-1.5" />
+    <span className="hidden sm:inline">7+ Years Experience</span>
+    <span className="sm:hidden">7+ Yrs</span>
+  </span>
+</div>
+      </div>
+
+
 
             {/* Profile Info */}
             <div id="about-profile-info" className="flex-1 text-center lg:text-left">
@@ -139,12 +150,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
               </div>
 
               {/* Title */}
-              <div id="about-title-container" className="mb-3 sm:mb-4 md:mb-6">
+{/*              <div id="about-title-container" className="mb-3 sm:mb-4 md:mb-6">
                 <h2 id="about-title-heading" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-[var(--vscode-text-secondary)] font-light tracking-wide uppercase mt-1 sm:mt-2" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                  JAVA | BACKEND
+
                 </h2>
               </div>
-
+*/}
               {/* Contact Info */}
               <div id="about-contact-info" className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2 sm:gap-4 md:gap-6 mb-3 sm:mb-4">
               
@@ -175,6 +186,14 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                     )}
                   </button>
                 </div>
+              </div>
+{/* Key Technologies Pills */}
+              <div id="about-key-technologies" className="flex flex-wrap gap-2 justify-center lg:justify-start mb-4 sm:mb-6">
+                <span id="about-tech-java" className="px-3 py-1.5 bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-sm font-medium rounded-full border border-[var(--vscode-border)] hover:border-[var(--vscode-accent)] transition-colors">Java</span>
+                <span id="about-tech-spring-boot" className="px-3 py-1.5 bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-sm font-medium rounded-full border border-[var(--vscode-border)] hover:border-[var(--vscode-accent)] transition-colors">Spring Boot</span>
+                <span id="about-tech-kubernetes" className="px-3 py-1.5 bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-sm font-medium rounded-full border border-[var(--vscode-border)] hover:border-[var(--vscode-accent)] transition-colors">Kubernetes</span>
+                <span id="about-tech-aws" className="px-3 py-1.5 bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-sm font-medium rounded-full border border-[var(--vscode-border)] hover:border-[var(--vscode-accent)] transition-colors">AWS</span>
+                <span id="about-tech-aiml" className="px-3 py-1.5 bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-sm font-medium rounded-full border border-[var(--vscode-border)] hover:border-[var(--vscode-accent)] transition-colors">AI/ML</span>
               </div>
 
               {/* Action Buttons */}
@@ -237,7 +256,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
                 Currently working on
               </h3>
               <p id="about-current-focus-text" className="text-[var(--vscode-text-primary)] text-left leading-relaxed mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm md:text-base">
-                With over <span id="about-experience-highlight" className="font-bold text-[var(--vscode-text-primary)]">7 years of experience</span> in the field, I am currently focusing on building robust backend systems and exploring the fascinating world of Artificial Intelligence. My goal is to leverage my skills in Java and machine learning to create innovative and impactful solutions.
+                 <span id="about-experience-highlight" className="font-bold text-[var(--vscode-text-primary)]">genREADME : </span> A Context Driven Documentation System.
               </p>
               <div id="about-current-focus-tags" className="flex flex-wrap gap-1 sm:gap-2">
                 <span id="about-tag-java" className="bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)] text-xs font-medium px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">Java</span>

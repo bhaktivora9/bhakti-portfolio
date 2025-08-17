@@ -12,7 +12,8 @@
   --vscode-bg-panel: #f0f0f0;
 
   --vscode-text-primary: #333333;
-  --vscode-text-secondary: #666666;
+  --vscode-text-tertiary: #666666;
+  --vscode-text-secondary: #545454
   --vscode-text-muted: #999999;
 
   --vscode-border: #d4d4d4;
@@ -88,7 +89,8 @@
   --vscode-bg-panel: #37373d;
   --vscode-bg-quaternary: #252526;
   --vscode-text-primary: #cccccc;
-  --vscode-text-secondary: #858585;
+  --vscode-text-secondary: #ADADAD;
+  --vscode-text-tertiary: #858585;
   --vscode-text-muted: #6a6a6a;
 
   --vscode-border: #3C3C40;
@@ -191,6 +193,8 @@
 /* Text Colors */
 .text-vscode-primary     { color: var(--vscode-text-primary); }
 .text-vscode-secondary   { color: var(--vscode-text-secondary); }
+.text-vscode-tertiary   { color: var(--vscode-text-tertiary); }
+
 .text-vscode-muted       { color: var(--vscode-text-muted); }
 .text-vscode-accent      { color: var(--vscode-accent); }
 .text-vscode-blue        { color: var(--vscode-blue); }
@@ -490,3 +494,22 @@
     opacity: 1;
   }
 }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px currentColor; }
+  50% { box-shadow: 0 0 20px currentColor; }
+}
+
+.animate-breathe { 
+  animation: breathe 1s ease-in-out infinite; 
+}
+.animate-glow { 
+  animation: glow 0.5s ease-in-out infinite; 
+}
+
+.animate-bounce {animation:bounce  2s 10s}

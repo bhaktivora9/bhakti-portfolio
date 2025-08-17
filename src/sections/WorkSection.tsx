@@ -139,16 +139,22 @@ export const WorkSection: React.FC<WorkSectionProps> = ({ color }) => {
                             {isExpanded && (
                               <div id={`work-role-details-${companyIndex}-${roleIndex}`} className="px-2 sm:px-3 md:px-4 pb-2 sm:pb-3 md:pb-4 border-t flex-1" style={{ borderTopColor: `${color}10` }}>
                                 {/* Role Description */}
-                                <p id={`work-role-description-${companyIndex}-${roleIndex}`} className="text-secondary-themed text-xs sm:text-sm font-sans leading-relaxed mb-2 sm:mb-3 md:mb-4 mt-2 sm:mt-3 md:mt-4">
-                                  {role.description}
-                                </p>
-
+                              <ul 
+  id={`work-role-description-${companyIndex}-${roleIndex}`} 
+  className="text-vscode-secondary text-xs sm:text-sm font-sans leading-relaxed mb-2 sm:mb-3 md:mb-4 mt-2 sm:mt-3 md:mt-4 list-disc pl-4 sm:pl-5"
+>
+  {role.description.map((item, index) => (
+    <li key={index} className="mb-1">
+      {item}
+    </li>
+  ))}
+</ul>
                                 {/* Technology Tags */}
                                 <div id={`work-role-technologies-${companyIndex}-${roleIndex}`} className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2">
                                   {role.technologies.map((tech, techIndex) => (
                                    <span  key={tech}
                                       id={`work-role-tech-${companyIndex}-${roleIndex}-${techIndex}`}
-                                      className="px-1 sm:px-1.5 md:px-2 py-0.5 sm:py-1 bg-secondary-themed text-secondary-themed rounded text-xs font-mono transition-all duration-300 hover:text-white hover:[background-color:var(--hover-accent)] whitespace-nowrap"
+                                      className="px-1 sm:px-1.5 md:px-2 py-0.5 sm:py-1 bg-secondary-themed text-vscode-tertiary rounded text-xs font-mono transition-all duration-300 hover:text-white hover:[background-color:var(--hover-accent)] whitespace-nowrap"
                                       >
                                       {tech}
                                     </span>
@@ -169,14 +175,18 @@ export const WorkSection: React.FC<WorkSectionProps> = ({ color }) => {
                     })}
                   </div>
                 </div>
+
               </div>
             </div>
           ))}
         </div>
 
         {/* Timeline End with Simple Fade */}
-        <div id="work-timeline-end" className="relative mt-4 sm:mt-6 md:mt-8">
-          <div id="work-timeline-fade" className="absolute left-3 sm:left-4 md:left-6 top-0 w-0.5 h-12 sm:h-16 bg-gradient-to-b from-vscode-accent via-vscode-accent/50 to-transparent"></div>
+        <div id="work-timeline-end" className="relative mt-0 ml-0.2">
+          <div id="work-timeline-fade" className="absolute left-3 sm:left-4 md:left-6 top-0 w-0.5 h-12 sm:h-16 bg-gradient-to-b from-vscode-accent via-vscode-accent/50 to-vscode-accent/95"></div>
+
+        <div id={`work-company-node-end`} className="absolute left-1.5 sm:left-2 md:left-4 w-3 h-3 sm:w-4 sm:h-4 bg-vscode-accent border-vscode-muted rounded-full z-10"></div>
+
         </div>
       </div>
     </div>

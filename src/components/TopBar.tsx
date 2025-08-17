@@ -5,28 +5,32 @@ interface TopBarProps {
     id?: string; // Add this line
   isDarkTheme: boolean;
   setIsDarkTheme: (isDark: boolean) => void;
-  
+   onServerClick?: () => void;
+ 
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
   
   isDarkTheme,
   setIsDarkTheme,
+  onServerClick,
 }) => {
   //const [isServerPulsing, setIsServerPulsing] = React.useState(false);
-  // Optional: Handle click on server icon
   const handleServerClick = () => {
-    console.log('Server icon clicked');
+    if (onServerClick) {
+      onServerClick();
+    }
   };
+
 
   return (
     <div id="top-bar-container" className="h-9 p-3 flex items-center justify-between bg-vscode-primary border-b border-vscode text-xs select-none transition-vscode shadow-vscode">
       {/* Left Section - Logo and Name */}
-      <div id="top-bar-logo-section" className="relative flex items-center gap-2">
+      <div id="top-bar-logo-section" className="relative flex items-center gap-2" onClick={handleServerClick}>
         <div
           id="top-bar-server-container"
           className="relative cursor-pointer"
-          onClick={handleServerClick}
+         
         >
           <Server
             className={`w-3 h-3 text-vscode-primary hover:text-vscode-muted transition-all duration-200 hover:scale-105 flex-shrink-0 `}
@@ -35,14 +39,14 @@ export const TopBar: React.FC<TopBarProps> = ({
           {/* Status Indicator */}
           <div
             id="top-bar-status-indicator"
-            className={`absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 bg-green-400 rounded-full shadow-sm transition-all duration-10 group animate-ping`}
+            className={`absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 bg-green-200 rounded-full shadow-sm transition-all duration-10 group animate-bounce animate-glow`}
             tabIndex={0}
             role="button"
             aria-label="Server status: Online"
           >
             <div
               id="top-bar-status-ping"
-              className={` absolute inset-0 bg-green-400 group-hover:bg-green-500 rounded-full opacity-75 transition-all duration-10 animate-ping`} 
+              className={` absolute inset-0 bg-green-500 group-hover:bg-green-500 rounded-full opacity-75 transition-all duration-10 animate-glow animate-bounce`} 
             ></div>
           </div>
         </div>
@@ -69,7 +73,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   value="codespace-styled-portfolio [Codespaces: bhakti.dev]"
   className="bg-transparent text-vscode-muted items-center truncate text-xs outline-none flex-1 cursor-default select-none"
   tabIndex={0}
-  
+  readOnly
 />
 
 

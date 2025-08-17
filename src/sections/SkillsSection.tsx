@@ -158,53 +158,14 @@ const SkillsSection: React.FC = () => {
         <div id="skills-section-divider" className="w-16 sm:w-20 h-0.5 sm:h-1 rounded-full mb-3 sm:mb-4 md:mb-6" style={{ background: `linear-gradient(to right, var(--vscode-yellow), var(--vscode-accent))` }}></div>
       </div>
 
-      {/* Description */}
-      <div id="skills-section-description" className="mb-3 sm:mb-4 md:mb-6">
-        <p id="skills-section-description-text" className="text-secondary-themed leading-relaxed text-xs sm:text-sm md:text-base">
-          My technology stack and expertise across various domains
-        </p>
-      </div>
-
-      {/* View Mode Toggle */}
-      <div id="skills-view-controls" className="flex items-center justify-between mb-3 sm:mb-4 md:mb-6">
-        <div id="skills-count-container" className="flex items-center gap-3">
-          <div id="skills-count-wrapper">
-            <p id="skills-count-text" className="text-xs sm:text-sm text-secondary-themed font-sans">
-              {filteredSkills.length} skills shown
-            </p>
-          </div>
-        </div>
-        
-        <div id="skills-view-mode-toggle" className="flex items-center gap-1 bg-secondary-themed rounded-md sm:rounded-lg p-1">
-          <button
-            id="skills-grid-view-button"
-            onClick={() => setViewMode('grid')}
-            className={`p-1.5 rounded-md transition-all duration-200 ${
-              viewMode === 'grid' ? 'bg-themed shadow-sm text-primary-themed' : 'text-secondary-themed hover:text-themed'
-            }`}
-          >
-            <Grid3X3 id="skills-grid-view-icon" className="w-3 h-3 sm:w-4 sm:h-4" />
-          </button>
-          <button
-            id="skills-compact-view-button"
-            onClick={() => setViewMode('compact')}
-            className={`p-1.5 rounded-md transition-all duration-200 ${
-              viewMode === 'compact' ? 'bg-themed shadow-sm text-primary-themed' : 'text-secondary-themed hover:text-themed'
-            }`}
-          >
-            <List id="skills-compact-view-icon" className="w-3 h-3 sm:w-4 sm:h-4" />
-          </button>
-        </div>
-      </div>
-
       {/* Search and Filters Layout */}
-      <div id="skills-search-filters" className="mb-3 sm:mb-4 md:mb-6 space-y-2 sm:space-y-3 md:space-y-4">
-        {/* Search and Filters in One Line */}
-        <div id="skills-search-filter-row" className="flex flex-col lg:flex-row items-center gap-2 sm:gap-3 md:gap-4">
+      <div id="skills-search-filters" className="flex-row mb-3 sm:mb-4 md:mb-6 space-y-2 sm:space-y-3 md:space-y-4">
+        {/* Search, Filters and View Toggle in One Line for Large Screens */}
+        <div id="skills-search-filter-row" className="flex flex-col lg:flex-row justify lg:items-center gap-2 sm:gap-3 md:gap-4">
           {/* Search Bar */}
-          <div id="skills-search-container" className="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md">
+          <div id="skills-search-container" className="relative flex-1 items-start max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg order-2 lg:order-1">
             <div id="skills-search-icon-container" className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search id="skills-search-icon" className="h-3 w-3 sm:h-4 sm:w-4 text-secondary-themed" />
+              <Search id="skills-search-icon" className="h-3 w-3 sm:h-4 sm:w-4 text-vscode-secondary" />
             </div>
             <input
               id="skills-search-input"
@@ -219,114 +180,264 @@ const SkillsSection: React.FC = () => {
                 id="skills-search-clear-button"
                 onClick={() => setSearchTerm("")}
                 className="absolute inset-y-0 right-0 pr-2 sm:pr-3 flex items-center
-                  text-secondary-themed hover:text-themed transition-colors"
+                  text-vscode-secondary hover:text-themed transition-colors"
               >
-                <X id="skills-search-clear-icon" className="h-3 w-3 sm:h-4 sm:w-4" />
+                <X id="skills-search-clear-icon" className="h-3 w-3 sm:h-4 sm:h-4" />
               </button>
             )}
           </div>
 
-          {/* Filter Controls */}
-          <div id="skills-filter-controls" className="flex items-center gap-2 sm:gap-3">
-          {/* Active Filters Display */}
-          {hasActiveFilters && (
-            <div id="skills-active-filters" className="hidden sm:flex items-center gap-2 text-xs text-secondary-themed">
-              <span id="skills-active-filters-label" className="font-medium">Active filters:</span>
-              {selectedCategory !== "All Categories" && (
-                <span id="skills-active-category-filter" className="px-2 py-1 bg-tertiary-themed rounded-full text-xs font-sans">
-                  {selectedCategory}
-                </span>
+          {/* Mobile: Filter and View Toggle in same line */}
+          <div id="skills-mobile-controls" className="flex lg:hidden items-center justify-between w-full gap-2 sm:gap-3 order-1">
+            {/* Filter Controls */}
+            <div id="skills-filter-controls-mobile" className="flex items-center gap-2 sm:gap-3">
+              {/* Active Filters Display */}
+              {hasActiveFilters && (
+                <div id="skills-active-filters-mobile" className="flex items-center gap-2 text-xs text-vscode-secondary">
+                  <span id="skills-active-filters-label-mobile" className="font-medium">Active filters:</span>
+                  {selectedCategory !== "All Categories" && (
+                    <span id="skills-active-category-filter-mobile" className="px-2 py-1 bg-tertiary-themed rounded-full text-xs font-sans">
+                      {selectedCategory}
+                    </span>
+                  )}
+                  {selectedLevel !== "All Levels" && (
+                    <span id="skills-active-level-filter-mobile" className="px-2 py-1 bg-tertiary-themed rounded-full text-xs font-sans">
+                      {selectedLevel}
+                    </span>
+                  )}
+                </div>
               )}
-              {selectedLevel !== "All Levels" && (
-                <span id="skills-active-level-filter" className="px-2 py-1 bg-tertiary-themed rounded-full text-xs font-sans">
-                  {selectedLevel}
-                </span>
+            
+              {/* Filter Dropdown */}
+              <div id="skills-filter-dropdown-container-mobile" className="relative items-start flex items-center gap-2 sm:gap-3">
+                <button
+                  id="skills-filter-dropdown-button-mobile"
+                  onClick={() => {
+                    setShowCategoryDropdown(!showCategoryDropdown);
+                  }}
+                  className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-tertiary-themed border border-themed rounded-md sm:rounded-lg 
+                    text-xs sm:text-sm font-medium text-themed hover-themed transition-all duration-200 font-sans shadow-sm"
+                >
+                  <Filter id="skills-filter-icon-mobile" className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span id="skills-filter-text-mobile">Filters</span>
+                  <ChevronDown id="skills-filter-chevron-mobile" className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${showCategoryDropdown ? 'rotate-180' : ''}`} />
+                </button>
+              
+                {showCategoryDropdown && (
+                  <div id="skills-filter-dropdown-mobile" className="absolute top-full left-0 mt-2 w-56 sm:w-64 bg-secondary-themed border border-themed rounded-md sm:rounded-lg shadow-lg z-50 max-h-60 sm:max-h-80 overflow-y-auto">
+                    {/* Category Section */}
+                    <div id="skills-category-filter-header-mobile" className="px-3 py-2 border-b border-themed bg-tertiary-themed">
+                      <span id="skills-category-filter-title-mobile" className="text-xs font-semibold text-primary-themed uppercase tracking-wider font-sans">
+                        Filter by Category
+                      </span>
+                    </div>
+                    {categories.map((category) => (
+                      <button
+                        key={category}
+                        id={`skills-category-filter-mobile-${category.replace(/\s+/g, '-').toLowerCase()}`}
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setShowCategoryDropdown(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 sm:py-2.5 text-xs sm:text-sm hover-themed transition-colors duration-200 flex items-center justify-between font-sans ${
+                          selectedCategory === category ? 'bg-tertiary-themed text-primary-themed font-medium' : 'text-vscode-secondary'
+                        }`}
+                      >
+                        <span id={`skills-category-name-mobile-${category.replace(/\s+/g, '-').toLowerCase()}`}>{category}</span>
+                        <span id={`skills-category-count-mobile-${category.replace(/\s+/g, '-').toLowerCase()}`} className="text-xs bg-themed px-1.5 py-0.5 rounded-full">
+                          {getCategoryCount(category)}
+                        </span>
+                      </button>
+                    ))}
+                  
+                    {/* Level Section */}
+                    <div id="skills-level-filter-header-mobile" className="px-3 py-2 border-b border-themed bg-tertiary-themed border-t">
+                      <span id="skills-level-filter-title-mobile" className="text-xs font-semibold text-primary-themed uppercase tracking-wider font-sans">
+                        Filter by Level
+                      </span>
+                    </div>
+                    {levels.map((level) => (
+                      <button
+                        key={level}
+                        id={`skills-level-filter-mobile-${level.replace(/\s+/g, '-').toLowerCase()}`}
+                        onClick={() => {
+                          setSelectedLevel(level);
+                          setShowCategoryDropdown(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 sm:py-2.5 text-xs sm:text-sm hover-themed transition-colors duration-200 capitalize flex items-center justify-between font-sans ${
+                          selectedLevel === level ? 'bg-tertiary-themed text-primary-themed font-medium' : 'text-vscode-secondary'
+                        }`}
+                      >
+                        <span id={`skills-level-name-mobile-${level.replace(/\s+/g, '-').toLowerCase()}`}>{level}</span>
+                        <span id={`skills-level-count-mobile-${level.replace(/\s+/g, '-').toLowerCase()}`} className="text-xs bg-themed px-1.5 py-0.5 rounded-full">
+                          {getLevelCount(level)}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            
+              {/* Clear Filters */}
+              {hasActiveFilters && (
+                <button
+                  id="skills-clear-filters-button-mobile"
+                  onClick={clearFilters}
+                  className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium 
+                    bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all duration-200 font-sans shadow-sm border border-red-500/20"
+                >
+                  <X id="skills-clear-filters-icon-mobile" className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Clear
+                </button>
               )}
             </div>
-          )}
-          
-          {/* Filter Dropdown */}
-          <div id="skills-filter-dropdown-container" className="relative flex items-center gap-2 sm:gap-3">
-            <button
-              id="skills-filter-dropdown-button"
-              onClick={() => {
-                setShowCategoryDropdown(!showCategoryDropdown);
-              }}
-              className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-tertiary-themed border border-themed rounded-md sm:rounded-lg 
-                text-xs sm:text-sm font-medium text-themed hover-themed transition-all duration-200 font-sans shadow-sm"
-            >
-              <Filter id="skills-filter-icon" className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span id="skills-filter-text">Filters</span>
-              <ChevronDown id="skills-filter-chevron" className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${showCategoryDropdown ? 'rotate-180' : ''}`} />
-            </button>
-            
-            {showCategoryDropdown && (
-              <div id="skills-filter-dropdown" className="absolute top-full left-0 mt-2 w-56 sm:w-64 bg-secondary-themed border border-themed rounded-md sm:rounded-lg shadow-lg z-50 max-h-60 sm:max-h-80 overflow-y-auto">
-                {/* Category Section */}
-                <div id="skills-category-filter-header" className="px-3 py-2 border-b border-themed bg-tertiary-themed">
-                  <span id="skills-category-filter-title" className="text-xs font-semibold text-primary-themed uppercase tracking-wider font-sans">
-                    Filter by Category
+
+            {/* View Mode Toggle - Mobile */}
+            <div id="skills-view-mode-toggle-mobile" className="flex items-center gap-1 bg-secondary-themed rounded-md sm:rounded-lg p-1">
+              <button
+                id="skills-grid-view-button-mobile"
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-md transition-all duration-200 ${
+                  viewMode === 'grid' ? 'bg-themed shadow-sm text-primary-themed' : 'text-vscode-secondary hover:text-themed'
+                }`}
+              >
+                <Grid3X3 id="skills-grid-view-icon-mobile" className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+              <button
+                id="skills-compact-view-button-mobile"
+                onClick={() => setViewMode('compact')}
+                className={`p-1.5 rounded-md transition-all duration-200 ${
+                  viewMode === 'compact' ? 'bg-themed shadow-sm text-primary-themed' : 'text-vscode-secondary hover:text-themed'
+                }`}
+              >
+                <List id="skills-compact-view-icon-mobile" className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Desktop: Filter Controls */}
+          <div id="skills-filter-controls-desktop" className="hidden justify-end lg:flex  gap-2 sm:gap-3 order-2">
+            {/* Active Filters Display */}
+            {hasActiveFilters && (
+              <div id="skills-active-filters-desktop" className="flex items-center gap-2 text-xs text-vscode-secondary">
+                <span id="skills-active-filters-label-desktop" className="font-medium">Active filters:</span>
+                {selectedCategory !== "All Categories" && (
+                  <span id="skills-active-category-filter-desktop" className="px-2 py-1 bg-tertiary-themed rounded-full text-xs font-sans">
+                    {selectedCategory}
                   </span>
-                </div>
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    id={`skills-category-filter-${category.replace(/\s+/g, '-').toLowerCase()}`}
-                    onClick={() => {
-                      setSelectedCategory(category);
-                      setShowCategoryDropdown(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 sm:py-2.5 text-xs sm:text-sm hover-themed transition-colors duration-200 flex items-center justify-between font-sans ${
-                      selectedCategory === category ? 'bg-tertiary-themed text-primary-themed font-medium' : 'text-secondary-themed'
-                    }`}
-                  >
-                    <span id={`skills-category-name-${category.replace(/\s+/g, '-').toLowerCase()}`}>{category}</span>
-                    <span id={`skills-category-count-${category.replace(/\s+/g, '-').toLowerCase()}`} className="text-xs bg-themed px-1.5 py-0.5 rounded-full">
-                      {getCategoryCount(category)}
-                    </span>
-                  </button>
-                ))}
-                
-                {/* Level Section */}
-                <div id="skills-level-filter-header" className="px-3 py-2 border-b border-themed bg-tertiary-themed border-t">
-                  <span id="skills-level-filter-title" className="text-xs font-semibold text-primary-themed uppercase tracking-wider font-sans">
-                    Filter by Level
+                )}
+                {selectedLevel !== "All Levels" && (
+                  <span id="skills-active-level-filter-desktop" className="px-2 py-1 bg-tertiary-themed rounded-full text-xs font-sans">
+                    {selectedLevel}
                   </span>
-                </div>
-                {levels.map((level) => (
-                  <button
-                    key={level}
-                    id={`skills-level-filter-${level.replace(/\s+/g, '-').toLowerCase()}`}
-                    onClick={() => {
-                      setSelectedLevel(level);
-                      setShowCategoryDropdown(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 sm:py-2.5 text-xs sm:text-sm hover-themed transition-colors duration-200 capitalize flex items-center justify-between font-sans ${
-                      selectedLevel === level ? 'bg-tertiary-themed text-primary-themed font-medium' : 'text-secondary-themed'
-                    }`}
-                  >
-                    <span id={`skills-level-name-${level.replace(/\s+/g, '-').toLowerCase()}`}>{level}</span>
-                    <span id={`skills-level-count-${level.replace(/\s+/g, '-').toLowerCase()}`} className="text-xs bg-themed px-1.5 py-0.5 rounded-full">
-                      {getLevelCount(level)}
-                    </span>
-                  </button>
-                ))}
+                )}
               </div>
             )}
-          </div>
           
-          {/* Clear Filters */}
-          {hasActiveFilters && (
+            {/* Filter Dropdown */}
+            <div id="skills-filter-dropdown-container-desktop" className="relative justify-end flex items-center gap-2 sm:gap-3">
+              <button
+                id="skills-filter-dropdown-button-desktop"
+                onClick={() => {
+                  setShowCategoryDropdown(!showCategoryDropdown);
+                }}
+                className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-tertiary-themed border border-themed rounded-md sm:rounded-lg 
+                  text-xs sm:text-sm font-medium text-themed hover-themed transition-all duration-200 font-sans shadow-sm"
+              >
+                <Filter id="skills-filter-icon-desktop" className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span id="skills-filter-text-desktop">Filters</span>
+                <ChevronDown id="skills-filter-chevron-desktop" className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${showCategoryDropdown ? 'rotate-180' : ''}`} />
+              </button>
+            
+              {showCategoryDropdown && (
+                <div id="skills-filter-dropdown-desktop" className="absolute top-full left-0 mt-2 w-56 sm:w-64 bg-secondary-themed border border-themed rounded-md sm:rounded-lg shadow-lg z-50 max-h-60 sm:max-h-80 overflow-y-auto">
+                  {/* Category Section */}
+                  <div id="skills-category-filter-header-desktop" className="px-3 py-2 border-b border-themed bg-tertiary-themed">
+                    <span id="skills-category-filter-title-desktop" className="text-xs font-semibold text-primary-themed uppercase tracking-wider font-sans">
+                      Filter by Category
+                    </span>
+                  </div>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      id={`skills-category-filter-desktop-${category.replace(/\s+/g, '-').toLowerCase()}`}
+                      onClick={() => {
+                        setSelectedCategory(category);
+                        setShowCategoryDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 sm:py-2.5 text-xs sm:text-sm hover-themed transition-colors duration-200 flex items-center justify-between font-sans ${
+                        selectedCategory === category ? 'bg-tertiary-themed text-primary-themed font-medium' : 'text-vscode-secondary'
+                      }`}
+                    >
+                      <span id={`skills-category-name-desktop-${category.replace(/\s+/g, '-').toLowerCase()}`}>{category}</span>
+                      <span id={`skills-category-count-desktop-${category.replace(/\s+/g, '-').toLowerCase()}`} className="text-xs bg-themed px-1.5 py-0.5 rounded-full">
+                        {getCategoryCount(category)}
+                      </span>
+                    </button>
+                  ))}
+                
+                  {/* Level Section */}
+                  <div id="skills-level-filter-header-desktop" className="px-3 py-2 border-b border-themed bg-tertiary-themed border-t">
+                    <span id="skills-level-filter-title-desktop" className="text-xs font-semibold text-primary-themed uppercase tracking-wider font-sans">
+                      Filter by Level
+                    </span>
+                  </div>
+                  {levels.map((level) => (
+                    <button
+                      key={level}
+                      id={`skills-level-filter-desktop-${level.replace(/\s+/g, '-').toLowerCase()}`}
+                      onClick={() => {
+                        setSelectedLevel(level);
+                        setShowCategoryDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 sm:py-2.5 text-xs sm:text-sm hover-themed transition-colors duration-200 capitalize flex items-center justify-between font-sans ${
+                        selectedLevel === level ? 'bg-tertiary-themed text-primary-themed font-medium' : 'text-vscode-secondary'
+                      }`}
+                    >
+                      <span id={`skills-level-name-desktop-${level.replace(/\s+/g, '-').toLowerCase()}`}>{level}</span>
+                      <span id={`skills-level-count-desktop-${level.replace(/\s+/g, '-').toLowerCase()}`} className="text-xs bg-themed px-1.5 py-0.5 rounded-full">
+                        {getLevelCount(level)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          
+            {/* Clear Filters */}
+            {hasActiveFilters && (
+              <button
+                id="skills-clear-filters-button-desktop"
+                onClick={clearFilters}
+                className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium 
+                  bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all duration-200 font-sans shadow-sm border border-red-500/20"
+              >
+                <X id="skills-clear-filters-icon-desktop" className="w-3 h-3 sm:w-4 sm:h-4" />
+                Clear
+              </button>
+            )}
+          </div>
+
+          {/* View Mode Toggle - Desktop (rightmost) */}
+          <div id="skills-view-mode-toggle-desktop" className="hidden lg:flex justify-end items-center gap-1 bg-secondary-themed rounded-md sm:rounded-lg p-1 order-3">
             <button
-              id="skills-clear-filters-button"
-              onClick={clearFilters}
-              className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium 
-                bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all duration-200 font-sans shadow-sm border border-red-500/20"
+              id="skills-grid-view-button-desktop"
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-md transition-all duration-200 ${
+                viewMode === 'grid' ? 'bg-themed shadow-sm text-primary-themed' : 'text-vscode-secondary hover:text-themed'
+              }`}
             >
-              <X id="skills-clear-filters-icon" className="w-3 h-3 sm:w-4 sm:h-4" />
-              Clear
+              <Grid3X3 id="skills-grid-view-icon-desktop" className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
-          )}
+            <button
+              id="skills-compact-view-button-desktop"
+              onClick={() => setViewMode('compact')}
+              className={`p-1.5 rounded-md transition-all duration-200 ${
+                viewMode === 'compact' ? 'bg-themed shadow-sm text-primary-themed' : 'text-vscode-secondary hover:text-themed'
+              }`}
+            >
+              <List id="skills-compact-view-icon-desktop" className="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -356,10 +467,10 @@ const SkillsSection: React.FC = () => {
         ) : (
           <div id="skills-no-results" className="text-center py-6 sm:py-8 md:py-12">
             <div id="skills-no-results-icon-container" className="w-12 h-12 sm:w-16 sm:h-16 bg-secondary-themed rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-              <Search id="skills-no-results-icon" className="w-6 h-6 sm:w-8 sm:h-8 text-secondary-themed" />
+              <Search id="skills-no-results-icon" className="w-6 h-6 sm:w-8 sm:h-8 text-vscode-secondary" />
             </div>
             <h3 id="skills-no-results-title" className="text-sm sm:text-base font-semibold text-themed mb-2 font-sans">No skills found</h3>
-            <p id="skills-no-results-description" className="text-xs sm:text-sm text-secondary-themed mb-4 sm:mb-6 max-w-xs sm:max-w-md mx-auto font-sans">
+            <p id="skills-no-results-description" className="text-xs sm:text-sm text-vscode-secondary mb-4 sm:mb-6 max-w-xs sm:max-w-md mx-auto font-sans">
               We couldn't find any skills matching your current filters. Try adjusting your search or filters.
             </p>
             <button
@@ -374,30 +485,7 @@ const SkillsSection: React.FC = () => {
       </div>
 
       {/* Summary */}
-      <div id="skills-summary-section" className="mt-6 sm:mt-8 md:mt-12 text-center">
-        <div id="skills-summary-container" className="bg-vscode-bg-secondary rounded-md sm:rounded-lg p-4 sm:p-6 md:p-8 border border-vscode-border">
-          <h3 id="skills-summary-title" className="text-base sm:text-lg md:text-xl font-semibold text-vscode-text-active mb-2 sm:mb-3">
-            Skills Summary
-          </h3>
-          <p id="skills-summary-description" className="text-xs sm:text-sm md:text-base text-vscode-text-secondary mb-3 sm:mb-4 md:mb-6">
-            Continuously learning and expanding my technical expertise across various domains.
-          </p>
-          <div id="skills-summary-stats" className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-            <div id="skills-summary-total" className="text-center">
-              <div id="skills-summary-total-number" className="text-lg sm:text-xl md:text-2xl font-bold text-vscode-text-primary mb-1">{flattenedSkills.length}</div>
-              <div id="skills-summary-total-label" className="text-xs sm:text-sm text-vscode-text-secondary">Total Skills</div>
-            </div>
-            <div id="skills-summary-categories" className="text-center">
-              <div id="skills-summary-categories-number" className="text-lg sm:text-xl md:text-2xl font-bold text-vscode-text-primary mb-1">{categories.length - 1}</div>
-              <div id="skills-summary-categories-label" className="text-xs sm:text-sm text-vscode-text-secondary">Categories</div>
-            </div>
-            <div id="skills-summary-showing" className="text-center">
-              <div id="skills-summary-showing-number" className="text-lg sm:text-xl md:text-2xl font-bold text-vscode-text-primary mb-1">{filteredSkills.length}</div>
-              <div id="skills-summary-showing-label" className="text-xs sm:text-sm text-vscode-text-secondary">Showing</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };
@@ -461,7 +549,7 @@ const SkillCard: React.FC<{ skill: Skill; index: number; viewMode: ViewMode; isD
             <div id={`skill-card-tooltip-${skill.name.replace(/\s+/g, '-').toLowerCase()}`} className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
               <div id={`skill-card-tooltip-content-${skill.name.replace(/\s+/g, '-').toLowerCase()}`} className="bg-secondary-themed border border-themed backdrop-blur-sm text-themed text-xs rounded-md sm:rounded-lg px-2 py-1 sm:px-3 sm:py-2 shadow-xl whitespace-nowrap">
                 <div id={`skill-card-tooltip-name-${skill.name.replace(/\s+/g, '-').toLowerCase()}`} className="font-semibold">{skill.name}</div>
-                <div id={`skill-card-tooltip-level-${skill.name.replace(/\s+/g, '-').toLowerCase()}`} className="text-secondary-themed">{getScoreLabel(skill.score)} ({skill.score}/8)</div>
+                <div id={`skill-card-tooltip-level-${skill.name.replace(/\s+/g, '-').toLowerCase()}`} className="text-vscode-secondary">{getScoreLabel(skill.score)} ({skill.score}/8)</div>
                 {/* Arrow */}
                 <div id={`skill-card-tooltip-arrow-${skill.name.replace(/\s+/g, '-').toLowerCase()}`} className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-secondary-themed"></div>
               </div>

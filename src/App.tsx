@@ -16,16 +16,11 @@ import { Terminal } from './components/Terminal';
 import { ResumeSection } from './sections/ResumeSection';
 
 import { Download, Code2 } from 'lucide-react';
-import { trackPageView, trackFileOpen, trackTerminalCommand, trackResumeDownload } from './utils/analytics';
+import { trackPageView, trackFileOpen,  trackResumeDownload } from './utils/analytics';
 import { personalInfo } from './data/portfolio';
 
 import './index.css';
 
-// Type definitions
-interface TerminalHistoryItem {
-  type: 'command' | 'output' | 'error';
-  content: string;
-}
 
 interface ContextMenuState {
   x: number;
@@ -84,54 +79,105 @@ function App() {
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['bhakti-vora-portfolio']));
 
-  // Helper function to get command output
-  const getCommandOutput = (command: string): string => {
-    const cmd = command.trim().toLowerCase();
-    
-    const outputs: { [key: string]: string } = {
-      'help': `Available commands:
-  help       - Show this help message
-  clear      - Clear terminal
-  about      - Open About section
-  work       - Open Work Experience
-  experience - Open Work Experience
-  education  - Open Education section
-  projects   - Open Projects section
-  skills     - Open Skills section
-  contact    - Open Contact section
-  resume     - Open Resume
-  whoami     - Show user info
-  ls         - List available files
-  pwd        - Show current directory
-  date       - Show current date
-  echo <msg> - Echo a message`,
-      'clear': '',
-      'about': 'Opening About.java...',
-      'work': 'Opening Work.css...',
-      'experience': 'Opening Work.css...',
-      'education': 'Opening education.yml...',
-      'projects': 'Opening projects.ts...',
-      'skills': 'Opening skills.json...',
-      'contact': 'Opening Contact.html...',
-      'resume': 'Opening resume.pdf...',
-      'whoami': 'bhakti@portfolio:~$ Bhakti Vora - Backend Developer',
-      'ls': `About.java
-Work.css
-education.yml
-projects.ts
-skills.json
-Contact.html
-resume.pdf`,
-      'pwd': '/home/bhakti/portfolio',
-      'date': new Date().toString()
-    };
 
-    if (cmd.startsWith('echo ')) {
-      return cmd.substring(5);
-    }
 
-    return outputs[cmd] || `Command not found: ${command}. Type 'help' for available commands.`;
+  const downloadResume = () => {
+    trackResumeDownload();
+    const link = document.createElement('a');
+    link.href = resumeUrl;
+    link.download = 'Bhakti Vora Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setContextMenu(null);
   };
+
+  const handleFileClick = (item: FileItem) => {
+    trackFileOpen(item.name);
+    
+    // Set dynamic accent color based on file
+    const fileColor = getFileColor(item.name);
+    if (fileColor && fileColor !== 'var(--vscode-accent)') {
+      document.documentElement.style.setProperty('--vscode-accent', fileColor);
+      document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90'); // Add transparency for hover
+    } else {
+      // Reset to default accent color
+      document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
+      document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
+    }
+    
+    // Add tab to openTabs if not already open
+    if (!openTabs.includes(item.name)) {
+      setOpenTabs(prev => [...prev, item.name]);
+    }
+    setActiveTab(item.name);
+    if (item.command) {
+      // Terminal commands are now handled by TerminalComplete component
+    }
+  };
+  
+  const handleCloseTab = useCallback((fileName: string) => {
+  const newTabs = openTabs.filter(tab => tab !== fileName);
+  setOpenTabs(newTabs);
+    
+  if (activeTab === fileName) {
+      const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1] : '';
+      setActiveTab(newActiveTab);
+      
+      // Update accent color for new active tab or reset to default
+      if (newActiveTab) {
+        const fileColor = getFileColor(newActiveTab);
+        if (fileColor && fileColor !== 'var(--vscode-accent)') {
+          document.documentElement.style.setProperty('--vscode-accent', fileColor);
+          document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90');
+        } else {
+          document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
+          document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
+        }
+      } else {
+        // No tabs open, reset to default
+        document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
+        document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
+      }
+    }
+  }, [openTabs, activeTab, setOpenTabs, setActiveTab]);
+
+  // Handle server click to close all tabs and go to welcome
+  const handleServerClick = () => {
+    setOpenTabs([]);
+    setActiveTab('');
+    // Reset accent color to default
+    document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
+    document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
+  };
+;
+// Helper function to get file color from structure
+  const getFileColor = (fileName: string): string => {
+    for (const folder of fileStructure) {
+      if (folder.children) {
+        const file = folder.children.find(child => child.name === fileName);
+        if (file && file.color) {
+          return file.color;
+        }
+      }
+    }
+    return 'var(--vscode-accent)'; // fallback color
+  };
+
+  const handleSetActiveTab = useCallback((tab: string) => {
+    // Set dynamic accent color based on active tab
+    const fileColor = getFileColor(tab);
+    if (fileColor && fileColor !== 'var(--vscode-accent)') {
+      document.documentElement.style.setProperty('--vscode-accent', fileColor);
+      document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90');
+    } else {
+      // Reset to default accent color
+      document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
+      document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
+    }
+    
+    setActiveTab(tab);
+  }, [setActiveTab]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
@@ -155,27 +201,23 @@ resume.pdf`,
     return () => document.removeEventListener('click', handleClickOutside);
   }, [contextMenu]);
 
-
- useEffect(() => {
+// Handle file opening from terminal
+  useEffect(() => {
     const handleOpenFile = (event: CustomEvent) => {
       const { fileName } = event.detail;
-      handleFileClick({ name: fileName, type: 'file' });
+      if (!openTabs.includes(fileName)) {
+        handleFileClick({ name: fileName, type: 'file' });
+      } else {
+        handleSetActiveTab(fileName);
+      }
     };
 
     window.addEventListener('openFile', handleOpenFile as EventListener);
     return () => {
       window.removeEventListener('openFile', handleOpenFile as EventListener);
     };
-  }, []);
+  }, [openTabs, handleSetActiveTab]);
 
-  /*// Handle terminal close to reset left navigation
-  const handleTerminalClose = () => {
-    setIsTerminalOpen(false);
-    if (leftNavActiveItem === 'terminal') {
-      setLeftNavActiveItem('explorer');
-    }
-  };
-*/
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).classList.contains('resize-handle')) {
       setIsResizing(true);
@@ -259,163 +301,6 @@ resume.pdf`,
   </div>
 </div>
   );
-
-  const downloadResume = () => {
-    trackResumeDownload();
-    const link = document.createElement('a');
-    link.href = resumeUrl;
-    link.download = 'Bhakti Vora Resume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setContextMenu(null);
-  };
-
-
-  const handleFileClick = (item: FileItem) => {
-    trackFileOpen(item.name);
-    
-    // Set dynamic accent color based on file
-    const fileColor = getFileColor(item.name);
-    if (fileColor && fileColor !== 'var(--vscode-accent)') {
-      document.documentElement.style.setProperty('--vscode-accent', fileColor);
-      document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90'); // Add transparency for hover
-    } else {
-      // Reset to default accent color
-      document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
-      document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
-    }
-    
-    // Add tab to openTabs if not already open
-    if (!openTabs.includes(item.name)) {
-      setOpenTabs(prev => [...prev, item.name]);
-    }
-    setActiveTab(item.name);
-    if (item.command) {
-      handleTerminalCommand(item.command);
-    }
-  };
-    const handleCloseTab = useCallback((fileName: string) => {
-    const newTabs = openTabs.filter(tab => tab !== fileName);
-    setOpenTabs(newTabs);
-    
-    if (activeTab === fileName) {
-      const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1] : '';
-      setActiveTab(newActiveTab);
-      
-      // Update accent color for new active tab or reset to default
-      if (newActiveTab) {
-        const fileColor = getFileColor(newActiveTab);
-        if (fileColor && fileColor !== 'var(--vscode-accent)') {
-          document.documentElement.style.setProperty('--vscode-accent', fileColor);
-          document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90');
-        } else {
-          document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
-          document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
-        }
-      } else {
-        // No tabs open, reset to default
-        document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
-        document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
-      }
-    }
-  }, [openTabs, activeTab, setOpenTabs, setActiveTab]);
-
-  const handleTerminalCommand = (command: string) => {
-    trackTerminalCommand(command);
-
-    const cmd = command.trim().toLowerCase();
-    
-    // Add command to history
-    const commandEntry: TerminalHistoryItem = {
-      type: 'command',
-      content: `$ ${command}`
-    };
-    
-    let newHistory = [...terminalHistory, commandEntry];
-    
-    // Handle clear command specially
-    if (cmd === 'clear') {
-      newHistory = [];
-    } else {
-      // Add output to history
-      const output = getCommandOutput(command);
-      if (output) {
-        const outputEntry: TerminalHistoryItem = {
-          type: 'output',
-          content: output
-        };
-        newHistory = [...newHistory, outputEntry];
-      }
-    }
-    
-    setTerminalHistory(newHistory);
-
-    // Handle file opening commands
-    if (cmd !== '') {
-      const commandMap: { [key: string]: string } = {
-        'about': 'About.java',
-        'contact': 'Contact.html',
-        'experience': 'Work.css',
-        'work': 'Work.css',
-        'education': 'education.yml',
-        'projects': 'projects.ts',
-        'skills': 'skills.json',
-        'resume': 'resume.pdf',
-        'home': 'Home.jsx',
-        'whoami': 'Home.jsx',
-      };
-
-      if (commandMap[cmd]) {
-        handleFileClick({ name: commandMap[cmd], type: 'file' });
-      }
-    }
-  };
-// Helper function to get file color from structure
-  const getFileColor = (fileName: string): string => {
-    for (const folder of fileStructure) {
-      if (folder.children) {
-        const file = folder.children.find(child => child.name === fileName);
-        if (file && file.color) {
-          return file.color;
-        }
-      }
-    }
-    return 'var(--vscode-accent)'; // fallback color
-  };
-
-  const handleSetActiveTab = useCallback((tab: string) => {
-    // Set dynamic accent color based on active tab
-    const fileColor = getFileColor(tab);
-    if (fileColor && fileColor !== 'var(--vscode-accent)') {
-      document.documentElement.style.setProperty('--vscode-accent', fileColor);
-      document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90');
-    } else {
-      // Reset to default accent color
-      document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
-      document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
-    }
-    
-    setActiveTab(tab);
-  }, [setActiveTab]);
-
-/*  const getTabContent = () => {
-    const contentClasses = `flex-1 overflow-y-auto text-themed transition-all duration-300`;
-    const paddingClasses = `p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 2xl:p-8 flex-1`;
-
-    // Show welcome screen if no tabs are open
-    if (openTabs.length === 0 || !activeTab) {
-      return (
-        <div className={contentClasses}>
-          <WelcomeSection 
-            setActiveTab={handleSetActiveTab} 
-            openTabs={openTabs} 
-            setOpenTabs={setOpenTabs} 
-          />
-        </div>
-      );
-    }
-*/
   const getTabContent = () => {
     const contentClasses = `flex-1 overflow-y-auto text-themed transition-all duration-300`;
     const paddingClasses = `p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 2xl:p-8 flex-1`;
@@ -557,7 +442,7 @@ resume.pdf`,
 
   return (
     <div id="app-root" className="h-screen bg-vscode-primary text-vscode-primary flex flex-col overflow-hidden theme-transition">
-      <TopBar id="app-top-bar" isDarkTheme={isDarkTheme} setIsDarkTheme={setIsDarkTheme} />
+      <TopBar id="app-top-bar" isDarkTheme={isDarkTheme} setIsDarkTheme={setIsDarkTheme}   onServerClick={handleServerClick}/>
       
       <div id="app-main-container" className="flex flex-1 overflow-hidden">
         <LeftNavigation
@@ -605,13 +490,32 @@ resume.pdf`,
             {getTabContent()}
           </div>
 
-      {isTerminalOpen && (
-          <div id="app-terminal-container" className="fixed inset-x-0 bottom-0 h-80  flex flex-col border-t border-vscode theme-transition z-50 bg-vscode-primary shadow-2xl">
-            <div id="app-terminal-header" className="bg-vscode-secondary border-b border-vscode p-2 flex items-center justify-between theme-transition shadow-md">
-              <div id="app-terminal-title" className="flex items-center gap-2">
-                <span id="app-terminal-label" className="text-vscode-primary text-sm ">Terminal</span>
-              
+ {isTerminalOpen && (
+          <div id="app-terminal-container" className="fixed inset-x-0 bottom-0 h-80 flex flex-col z-50 bg-black shadow-2xl border-t border-gray-600">
+            <div id="app-terminal-header" className="bg-gray-900 px-3 py-2 flex items-center justify-between border-b border-gray-600">
+              {/* macOS-style traffic lights */}
+              <div id="app-terminal-header-left" className="flex items-start justify-between gap-3">
+                {/* Terminal icon */}
+                <div id="app-terminal-icon" className="flex items-start gap-2 justify-between w-5 h-5 text-white">
+                  <span className="text-sm" style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>{'\>_'}</span>
+                <span id="app-terminal-label" className="text-white gap-2 italic uppercase text-sm " style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>Terminal</span>
+                </div>
+                {/* Terminal title */}
+                
               </div>
+              
+              {/* Terminal controls */}
+              <div id="app-terminal-controls" className="flex items-center gap-2">
+                <button className="p-1 hover:bg-gray-700 transition-colors">
+                  <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </button>
+                <button className="p-1 hover:bg-gray-700 transition-colors">
+                  <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                  </svg>
+                </button>
               <button
                 id="app-terminal-close-btn"
                 onClick={() => {
@@ -620,15 +524,19 @@ resume.pdf`,
                     setActiveTab('explorer');
                   }
                 }}
-                className="text-vscode-secondary hover:text-vscode-primary text-xs px-2 py-1 rounded hover:bg-vscode-tertiary transition-colors"
+                className="p-1 hover:bg-red-600 transition-colors"
               >
-                ✕
+                <svg className="w-4 h-4 text-gray-300 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
+              </div>
             </div>
+        
             <Terminal id="app-terminal" />
           </div>
         )}
-        </div>
+             </div>
       </div>
 
       {/* Context Menu */}
