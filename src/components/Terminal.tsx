@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { trackResumeDownload } from '../utils/analytics';
 
 interface TerminalLine {
-  type: 'command' | 'output' | 'error' | 'info';
+  type: 'command' | 'output' | 'error' | 'info' | 'startup';
   content: string;
   timestamp?: Date;
 }
@@ -107,7 +107,7 @@ export function Terminal({ id }: TerminalProps = {}) {
     setHistoryIndex(-1);
 
     // Parse command and arguments
-    const [command, ...args] = trimmedCmd.split(' ');
+    const [command] = trimmedCmd.split(' ');
     const commandLower = command.toLowerCase();
 
     let output: string[] = [];
@@ -243,14 +243,14 @@ export function Terminal({ id }: TerminalProps = {}) {
             id={`terminal-complete-line-${index}`}
             className={`${
               line.type === 'command' 
-                ? 'text-white' 
+                ? 'text-vscode-purple italic' 
                : line.type === 'startup'
                  ? 'text-vscode-indigo italic'
                 : line.type === 'error' 
                   ? 'text-red-300' 
                  : line.type === 'info' 
-                 ? 'text-green-300 italic font-semibold'
-                 : 'text-gray-200'
+                 ? 'text-green-300 font-semibold'
+                 : 'text-sky-200'
                   
             }`}
           >

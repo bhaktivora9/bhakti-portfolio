@@ -513,3 +513,19 @@
 }
 
 .animate-bounce {animation:bounce  2s 10s}
+/* Slow soft bounce animation for terminal icon */
+@keyframes soft-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+.animate-soft-bounce {
+  animation: soft-bounce 2s ease-in-out infinite;
+}

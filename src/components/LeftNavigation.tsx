@@ -163,7 +163,8 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
             <div key={item.id} id={`left-nav-item-${item.id}`} className="relative w-full">
               <button
                 id={`left-nav-button-${item.id}`}
-                className={`w-full h-12 p-0 mb-1 flex items-center justify-center transition-all duration-200 hover:bg-[var(--vscode-bg-tertiary)] hover:text-[var(--vscode-accent)] group ${getItemAnimation(item.id)} ${
+                className={`w-full h-12 p-0 mb-1 flex items-center justify-center transition-all duration-200 hover:bg-[var(--vscode-bg-tertiary)] hover:text-[var(--vscode-accent)] group
+                 ${getItemAnimation(item.id)} ${
                   isActive ? 'border-r-2 border-r-[var(--vscode-accent)] bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)]' : 'text-[var(--vscode-text-secondary)] border-r-2 border-r-transparent'
                 }`}
                 onClick={() => handleItemClick(item.id)}
@@ -171,6 +172,7 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
               >
                 <Icon id={`left-nav-icon-${item.id}`} size={20} className={`transition-all duration-300 ${
                   isActive ? 'text-[var(--vscode-text-primary)]' : 'text-[var(--vscode-text-secondary)] group-hover:text-[var(--vscode-accent)]'
+                } ${item.id === 'terminal' ? 'animate-soft-bounce' : ''
                 }`} />
               </button>
               {hasNotification && (

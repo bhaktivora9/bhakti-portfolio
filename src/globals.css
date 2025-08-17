@@ -1,0 +1,327 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === VSCode Theme Variables === */
+:root {
+  /* Light Theme Variables */
+  --vscode-bg-primary: #ffffff;
+  --vscode-bg-secondary: #f3f3f3;
+  --vscode-bg-tertiary: #e8e8e8;
+  --vscode-bg-quaternary: #f8f8f8;
+  --vscode-bg-panel: #f0f0f0;
+
+  --vscode-text-primary: #333333;
+  --vscode-text-secondary: #666666;
+  --vscode-text-muted: #999999;
+
+  --vscode-border: #d4d4d4;
+  --vscode-accent: #C3504B;
+  --vscode-default-accent:#C3504B;
+  --vscode-accent-hover: #9A413C;
+  --vscode-default-accent-hover: #9A413C;
+
+  --vscode-blue: #0066cc;
+  --vscode-green: #2D8162;
+  --vscode-yellow: #BAA83F;
+  --vscode-red: #880808;
+  --vscode-orange: #BA6A3F;
+  --vscode-violet: #6900D1;
+    --vscode-purple: #615FA0;
+--vscode-teal:#0891b2;
+  --vscode-pink: #EC4899;
+  --vscode-indigo: #6366F1;
+  --vscode-emerald: #10B981;
+  --vscode-amber: #F59E0B;
+  --vscode-rose: #F43F5E;
+  --vscode-sky: #0EA5E9;
+  --vscode-red-shade: #CB6762;
+  --vscode-coral: #FF7F7F;
+  --vscode-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Dark Theme Overrides */
+.dark {
+  --vscode-bg-primary: #1e1e1e;
+  --vscode-bg-secondary: #2d2d30;
+  --vscode-bg-tertiary: #333333;
+  --vscode-bg-panel: #37373d;
+  --vscode-bg-quaternary: #252526;
+  --vscode-text-primary: #cccccc;
+  --vscode-text-secondary: #858585;
+  --vscode-text-muted: #6a6a6a;
+
+  --vscode-border: #3C3C40;
+  --vscode-accent: #D95852;
+  --vscode-accent-hover: #C3504B;
+
+  --vscode-blue: #3F8FBA;
+  --vscode-green: #3F7F60;
+  --vscode-yellow: #ffce00;
+  --vscode-red: #880808;
+  --vscode-orange: #CA8763;
+  --vscode-violet: #C48AFF;
+    --vscode-purple: #615FA0;
+--vscode-teal:#0891b2;
+  --vscode-pink: #F472B6;
+  --vscode-indigo: #818CF8;
+  --vscode-emerald: #34D399;
+  --vscode-amber: #FBBF24;
+  --vscode-rose: #FB7185;
+  --vscode-sky: #38BDF8;
+  --vscode-coral: #FF9999;
+  --vscode-red-shade: #CB6762;
+  --vscode-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+
+/* === Utility Classes === */
+
+/* Backgrounds */
+.bg-vscode-primary       { background-color: var(--vscode-bg-primary); }
+.bg-vscode-secondary     { background-color: var(--vscode-bg-secondary); }
+.bg-vscode-tertiary      { background-color: var(--vscode-bg-tertiary); }
+.bg-vscode-quaternary      { background-color: var(--vscode-bg-quaternary); }
+
+.bg-vscode-panel         { background-color: var(--vscode-bg-panel); }
+
+.bg-vscode-accent        { background-color: var(--vscode-accent); }
+.bg-vscode-blue          { background-color: var(--vscode-blue); }
+.bg-vscode-green         { background-color: var(--vscode-green); }
+.bg-vscode-yellow        { background-color: var(--vscode-yellow); }
+.bg-vscode-red           { background-color: var(--vscode-red); }
+.bg-vscode-red-shade           { background-color: var(--vscode-red-shade); }
+.bg-vscode-orange        { background-color: var(--vscode-orange); }
+.bg-vscode-violet        { background-color: var(--vscode-violet); }
+.bg-vscode-purple        { background-color: var(--vscode-purple); }
+.bg-vscode-teal        { background-color: var(--vscode-teal); }
+.bg-vscode-pink        { background-color: var(--vscode-pink); }
+.bg-vscode-indigo      { background-color: var(--vscode-indigo); }
+.bg-vscode-emerald     { background-color: var(--vscode-emerald); }
+.bg-vscode-amber       { background-color: var(--vscode-amber); }
+.bg-vscode-rose        { background-color: var(--vscode-rose); }
+.bg-vscode-sky         { background-color: var(--vscode-sky); }
+.bg-vscode-coral       { background-color: var(--vscode-coral); }
+.bg-themed               { background-color: var(--vscode-bg-primary); }
+.bg-secondary-themed     { background-color: var(--vscode-bg-secondary); }
+.bg-tertiary-themed      { background-color: var(--vscode-bg-tertiary); }
+
+/* Text Colors */
+.text-vscode-primary     { color: var(--vscode-text-primary); }
+.text-vscode-secondary   { color: var(--vscode-text-secondary); }
+.text-vscode-muted       { color: var(--vscode-text-muted); }
+.text-vscode-accent      { color: var(--vscode-accent); }
+.text-vscode-blue        { color: var(--vscode-blue); }
+.text-vscode-green       { color: var(--vscode-green); }
+.text-vscode-yellow      { color: var(--vscode-yellow); }
+.text-vscode-red         { color: var(--vscode-red); }
+.text-vscode-red-shade         { color: var(--vscode-red-shade); }
+
+.text-vscode-orange      { color: var(--vscode-orange); }
+.text-vscode-purple      { color: var(--vscode-purple); }
+.text-vscode-teal        { color: var(--vscode-teal); }
+.text-vscode-pink        { color: var(--vscode-pink); }
+.text-vscode-indigo      { color: var(--vscode-indigo); }
+.text-vscode-emerald     { color: var(--vscode-emerald); }
+.text-vscode-amber       { color: var(--vscode-amber); }
+.text-vscode-rose        { color: var(--vscode-rose); }
+.text-vscode-sky         { color: var(--vscode-sky); }
+.text-vscode-coral       { color: var(--vscode-coral); }
+.text-primary-themed     { color: var(--vscode-text-primary); }
+.text-secondary-themed   { color: var(--vscode-text-secondary); }
+.text-muted-themed       { color: var(--vscode-text-muted); }
+.text-accent-themed      { color: var(--vscode-accent); }
+
+/* Borders */
+.border-vscode           { border-color: var(--vscode-border); }
+.border-vscode-accent    { border-color: var(--vscode-accent); }
+.border-vscode-blue      { border-color: var(--vscode-blue); }
+.border-vscode-green     { border-color: var(--vscode-green); }
+.border-vscode-yellow    { border-color: var(--vscode-yellow); }
+.border-vscode-red       { border-color: var(--vscode-red); }
+.border-vscode-red-shade       { border-color: var(--vscode-red-shade); }
+.border-vscode-orange    { border-color: var(--vscode-orange); }
+.border-vscode-purple    { border-color: var(--vscode-purple); }
+.border-vscode-teal      { border-color: var(--vscode-teal); }
+.border-vscode-pink      { border-color: var(--vscode-pink); }
+.border-vscode-indigo    { border-color: var(--vscode-indigo); }
+.border-vscode-emerald   { border-color: var(--vscode-emerald); }
+.border-vscode-amber     { border-color: var(--vscode-amber); }
+.border-vscode-rose      { border-color: var(--vscode-rose); }
+.border-vscode-sky       { border-color: var(--vscode-sky); }
+.border-vscode-coral     { border-color: var(--vscode-coral); }
+
+/* Shadows */
+.shadow-vscode {
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+}
+.shadow-vscode-md {
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+.shadow-vscode-lg {
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+/* Dark-mode Shadows */
+.dark .shadow-vscode {
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3), 0 1px 2px 0 rgba(0,0,0,0.2);
+}
+.dark .shadow-vscode-md {
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
+}
+.dark .shadow-vscode-lg {
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -2px rgba(0,0,0,0.25);
+}
+
+/* Typography */
+* {
+  font-family: var(--vscode-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Transitions */
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Wave Animation */
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-wave {
+  animation: wave 2s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+/* Gradient Animation */
+@keyframes gradient-x {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+/* Progress Bar Dot Animation */
+@keyframes progress-dot {
+  0% {
+    opacity: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-progress-dot {
+  opacity: 0;
+  opacity: 0;
+  animation: progress-dot 2s ease-in-out forwards;
+}
+
+.animate-progress-dot {
+  opacity: 0;
+  opacity: 0;
+  animation: progress-dot 2s ease-in-out forwards;
+}
+
+/* Pulse animation that travels through all dots */
+@keyframes pulse-wave {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-wave {
+  animation: pulse-wave 0.8s ease-in-out;
+}
+
+/* Smooth section transitions */
+.main-content-area {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbars but keep functionality */
+.main-content-area::-webkit-scrollbar {
+  display: none;
+}
+
+.main-content-area {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Loading Screen Dot Animation */
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: pulse 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(4) {
+  animation-delay: 0.16s;
+}
+
+.dot:nth-child(5) {
+  animation-delay: 0.32s;
+}
+
+@keyframes pulse {
+  0%, 80%, 100% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  40%, 60% {
+    transform: scale(1.0);
+    opacity: 1;
+  }
+}
