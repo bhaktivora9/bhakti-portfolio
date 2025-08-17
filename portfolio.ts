@@ -29,7 +29,7 @@ export interface Experience {
   roles: {
     title: string;
     period: string;
-    description: string;
+    description: string[];
     technologies: string[];
   }[];
 }
@@ -102,15 +102,16 @@ export const experiences: Experience[] = [
       {
         title: "Backend Developer",
         period: "03/2022 - 09/2024",
-        description: `● Led ORBIT platform development, centralizing data for enhanced Business Intelligence and analytics.
-● Increased database write performance 35x with multithreading.
-● Contributed to Walmart Commerce Platform by scaling e-commerce infrastructure.
-● Designed and developed support for multi-piece shipments.
-● Reduced latency by migrating servers to the same region, speeding up app-database interactions.
-● Used Apache Kafka for secure, scalable inter-service communication.
-● Deployed containerized apps with Docker, orchestrated with Kubernetes for scalability.
-● Developed efficient data layers with Spring DAO, Hibernate, and Maven.
-● Delivered features under Agile, collaborating cross-functionally and using TDD with JUnit.`,
+        description: ["Led ORBIT platform development, centralizing data for enhanced Business Intelligence and analytics.",
+"Increased database write performance 35x with multithreading.",
+"Contributed to Walmart Commerce Platform by scaling e-commerce infrastructure.",
+"Designed and developed support for multi-piece shipments.",
+"Reduced latency by migrating servers to the same region, speeding up app-database interactions.",
+"Used Apache Kafka for secure, scalable inter-service communication.",
+"Deployed containerized apps with Docker, orchestrated with Kubernetes for scalability.",
+"Developed efficient data layers with Spring DAO, Hibernate, and Maven.",
+"Delivered features under Agile, collaborating cross-functionally and using TDD with JUnit."
+],
         technologies: [
           "Apache Kafka",
           "Docker",
@@ -129,18 +130,18 @@ export const experiences: Experience[] = [
     company: "Contentserv Technologies (Now Acquired by Centric Software)",
     location: "Pune, India",
     totalPeriod:"03/2017 - 02/2021",
-    logo: "https://www.contentserv.com/hs-fs/hubfs/Contentserv%20Theme%202024/images/Centric%2BContentserv.png?width=938&height=550&name=Centric%2BContentserv.png",
+    logo: "data:image/png;base64,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",
     link:"https://www.contentserv.com/",
     roles: [
      
       {
         title: "Software Development Engineer I (SDE I)",
         period: "03/2020 - 02/2021",
-        description: `● Developed and deployed microservices-based web services using Spring Boot, encapsulating business logic within Spring Beans.
-● Designed, developed, and maintained RESTful APIs supporting scalable microservices architecture.
-● Added TDD using JUnit and achieved seamless integration with CI builds powered by Gradle.
-● Optimized application performance through meticulous performance tuning.
-● Implemented AWS Lambda for serverless computing to optimize backend workflows and reduce infrastructure costs.`,
+        description: ["Developed and deployed microservices-based web services using Spring Boot, encapsulating business logic within Spring Beans.",
+  "Designed, developed, and maintained RESTful APIs supporting scalable microservices architecture.",
+  "Added TDD using JUnit and achieved seamless integration with CI builds powered by Gradle.",
+  "Optimized application performance through meticulous performance tuning."
+  ,"Implemented AWS Lambda for serverless computing to optimize backend workflows and reduce infrastructure costs."],
         technologies: [
           "Spring Boot",
           "REST API",
@@ -152,10 +153,10 @@ export const experiences: Experience[] = [
       }, {
         title: "Senior Software Engineer",
         period: "03/2018 - 02/2020",
-        description: `● Designed and developed POC for connectors enabling product info export to Magento, Shopify, and Amazon Marketplace.
-● Developed a recommendation engine using ML for personalized product information.
-● Researched ML techniques to optimize contextual product data and upsell strategies.
-● Mentored junior developers on best practices and debugging.`,
+        description: ["Designed and developed POC for connectors enabling product info export to Magento, Shopify, and Amazon Marketplace.",
+"Developed a recommendation engine using ML for personalized product information.",
+"Researched ML techniques to optimize contextual product data and upsell strategies.",
+"Mentored junior developers on best practices and debugging."],
         technologies: [
           "Magento",
           "Shopify",
@@ -168,10 +169,10 @@ export const experiences: Experience[] = [
        {
         title: "Software Engineer",
         period: "03/2017 - 02/2018",
-        description: `● Integrated legacy systems with scalable alternatives for improved flexibility.
-● Implemented distributed image processing using Amazon S3 and Kafka.
-● Enhanced authentication and authorization using LDAP, AD, OAuth 2.0, and SAML.
-● Improved system reliability using Netflix Ribbon for soft load balancing.`,
+        description: ["Integrated legacy systems with scalable alternatives for improved flexibility.",
+"Implemented distributed image processing using Amazon S3 and Kafka.",
+"Enhanced authentication and authorization using LDAP, AD, OAuth 2.0, and SAML.",
+"Improved system reliability using Netflix Ribbon for soft load balancing."],
         technologies: [
           "Amazon S3",
           "Kafka",
@@ -242,35 +243,6 @@ export const flattenedSkills: Skill[] = [
     badgeDark: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
     category: "Programming Languages" 
   },
-  { 
-    name: "JavaScript", 
-    score: 7, 
-    badgeLight: "https://cdn.simpleicons.org/javascript/F7DF1E?viewbox=auto", 
-    badgeDark: "https://cdn.simpleicons.org/javascript/F7DF1E?viewbox=auto",
-    category: "Programming Languages" 
-  },
-  { 
-    name: "PHP", 
-    score: 7, 
-    badgeLight: "https://cdn.simpleicons.org/php/777BB4?viewbox=auto", 
-    badgeDark: "https://cdn.simpleicons.org/php/8892BF?viewbox=auto",
-    category: "Programming Languages" 
-  },
-  { 
-    name: "Node.js", 
-    score: 7, 
-    badgeLight: "https://cdn.simpleicons.org/nodedotjs/339933?viewbox=auto", 
-    badgeDark: "https://cdn.simpleicons.org/nodedotjs/68CC44?viewbox=auto",
-    category: "Programming Languages" 
-  },
-  { 
-    name: "Python", 
-    score: 7, 
-    badgeLight: "https://cdn.simpleicons.org/python/3776AB?viewbox=auto", 
-    badgeDark: "https://cdn.simpleicons.org/python/4B8BBE?viewbox=auto",
-    category: "Programming Languages" 
-  },
-
   // Java Technologies
   { 
     name: "Spring Framework", 
@@ -300,6 +272,37 @@ export const flattenedSkills: Skill[] = [
     badgeDark: "https://cdn.simpleicons.org/springsecurity/68BC45?viewbox=auto",
     category: "Java Technologies" 
   },
+  { 
+    name: "Python", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/python/3776AB?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/python/4B8BBE?viewbox=auto",
+    category: "Programming Languages" 
+  },
+/*
+  
+  { 
+    name: "JavaScript", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/javascript/F7DF1E?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/javascript/F7DF1E?viewbox=auto",
+    category: "Programming Languages" 
+  },
+  { 
+    name: "PHP", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/php/777BB4?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/php/8892BF?viewbox=auto",
+    category: "Programming Languages" 
+  },
+  { 
+    name: "Node.js", 
+    score: 7, 
+    badgeLight: "https://cdn.simpleicons.org/nodedotjs/339933?viewbox=auto", 
+    badgeDark: "https://cdn.simpleicons.org/nodedotjs/68CC44?viewbox=auto",
+    category: "Programming Languages" 
+  },
+  */
 
   // Databases
   { 
