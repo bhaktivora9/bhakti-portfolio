@@ -113,10 +113,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
               />
 {/* Zap Badge */}
 
-      <div id="about-experience-badge" className="absolute -bottom-2 -left-8 sm:-bottom-6 sm:items-center sm:left-6 z-10">
-  <span className={`inline-flex items-center px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-medium shadow-lg justify-center bg-[(--var(vscode-secondary))] text-white/90 backdrop-blur-sm border-dashed border-red-500 border-2`}>
+      <div id="about-experience-badge" className="absolute -bottom-4 -left-8 sm:-bottom-6 sm:items-center sm:left-2 z-10">
+  <span className={`inline-flex items-center px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-medium shadow-lg justify-center bg-[(--var(vscode-secondary))] text-vscode-accent/90 backdrop-blur-sm border-dashed border-red-500 border-2`}>
     <Zap className="h-3 w-3 mr-1.5" />
-    <span className="hidden sm:inline">7+ Years Experience</span>
+    <span className="hidden sm:inline font-semibold">7+ Years Experience</span>
     <span className="sm:hidden">7+ Yrs</span>
   </span>
 </div>
