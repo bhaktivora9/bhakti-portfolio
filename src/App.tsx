@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback ,useRef} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { TopBar } from './components/TopBar';
 import { LeftNavigation } from './components/LeftNavigation';
 import { FileExplorer } from './components/FileExplorer';
@@ -14,20 +14,23 @@ import SkillsSection from './sections/SkillsSection';
 import { ContactSection } from './sections/ContactSection';
 import { Terminal } from './components/Terminal';
 import { ResumeSection } from './sections/ResumeSection';
-import {StatusBar} from './components/StatusBar'
+import { StatusBar } from './components/StatusBar'
 import { Download, Code2 } from 'lucide-react';
 import { 
-  initializeAnalytics,  // Now works with your existing GTM
+  initializeAnalytics,
   trackPageView, 
   trackFileOpen, 
   trackResumeDownload,
+  trackTimeOnPage,
+  trackEvent,
   trackNavigation,
   trackInteractiveElement,
-  trackTimeOnPage
-} from './utils/analytics';import { personalInfo } from './data/portfolio';
+  getAnalyticsDebugInfo,
+  clearStoredUTMParameters
+} from './utils/analytics';
+import { personalInfo } from './data/portfolio';
 
 import './index.css';
-
 
 interface ContextMenuState {
   x: number;
@@ -50,6 +53,35 @@ interface FileStructureItem {
   children?: FileStructureItem[];
 }
 
+// Debug Mode Configuration
+const DEBUG_MODE = true;
+const DEBUG_ANALYTICS = DEBUG_MODE && true;
+const DEBUG_INTERACTIONS = DEBUG_MODE && true;
+const DEBUG_PERFORMANCE = DEBUG_MODE && true;
+
+// Debug Logger
+const debugLog = (category: string, message: string, data?: any) => {
+  if (!DEBUG_MODE) return;
+  
+  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+  /*const style = `
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: bold;
+  `;*/
+  
+  console.groupCollapsed(`%c[${timestamp}] ${category.toUpperCase()}`,  message);
+  if (data) {
+    console.log('Data:', data);
+  }
+  if (DEBUG_ANALYTICS) {
+    console.log('Analytics State:', getAnalyticsDebugInfo());
+  }
+  console.groupEnd();
+};
+
 function App() {
   
   const fileStructure: FileStructureItem[] = [
@@ -68,29 +100,46 @@ function App() {
     }
   ];
 
-  // State declarations
+  // Performance tracking refs
   const startTime = useRef<number>(Date.now());
+  const lastInteractionTime = useRef<number>(Date.now());
+  const interactionCount = useRef<number>(0);
+
+  // State declarations
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('');
   const [openTabs, setOpenTabs] = useState<string[]>([]);
   const [isTerminalOpen, setIsTerminalOpen] = useState<boolean>(false);
-  
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
-  //const [showFloatingForm, setShowFloatingForm] = useState<boolean>(false);
   const [isExplorerCollapsed, setIsExplorerCollapsed] = useState<boolean>(false);
   const [sidebarWidth, setSidebarWidth] = useState<number>(200);
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [leftNavActiveItem, setLeftNavActiveItem] = useState('explorer');
 
   const resumeUrl = `${import.meta.env.BASE_URL}assets/${personalInfo.resume}`;
-
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['bhakti-vora-portfolio']));
 
-
+  // Debug: Track user interactions
+  const trackInteraction = (type: string, details: any = {}) => {
+    if (!DEBUG_INTERACTIONS) return;
+    
+    interactionCount.current++;
+    const timeSinceLastInteraction = Date.now() - lastInteractionTime.current;
+    lastInteractionTime.current = Date.now();
+    
+    debugLog('interaction', `User ${type}`, {
+      interactionNumber: interactionCount.current,
+      timeSinceLastInteraction: `${timeSinceLastInteraction}ms`,
+      ...details
+    });
+  };
 
   const downloadResume = () => {
+    debugLog('download', 'Resume download initiated');
+    trackInteraction('download_resume');
     trackResumeDownload();
+    
     const link = document.createElement('a');
     link.href = resumeUrl;
     link.download = 'Bhakti Vora Resume.pdf';
@@ -98,39 +147,67 @@ function App() {
     link.click();
     document.body.removeChild(link);
     setContextMenu(null);
+    
+    debugLog('download', 'Resume download completed');
   };
 
   const handleFileClick = (item: FileItem) => {
+    debugLog('file', `File clicked: ${item.name}`, { fileType: item.type, hasCommand: !!item.command });
+    trackInteraction('file_click', { fileName: item.name, fileType: item.type });
     trackFileOpen(item.name);
+    
+    // Performance tracking
+    if (DEBUG_PERFORMANCE) {
+      const clickTime = performance.now();
+      requestIdleCallback(() => {
+        const renderTime = performance.now() - clickTime;
+        debugLog('performance', `File render time: ${renderTime.toFixed(2)}ms`);
+      });
+    }
     
     // Set dynamic accent color based on file
     const fileColor = getFileColor(item.name);
     if (fileColor && fileColor !== 'var(--vscode-accent)') {
       document.documentElement.style.setProperty('--vscode-accent', fileColor);
-      document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90'); // Add transparency for hover
+      document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90');
+      debugLog('theme', `Accent color changed to: ${fileColor}`);
     } else {
-      // Reset to default accent color
       document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
       document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
+      debugLog('theme', 'Accent color reset to default');
     }
     
     // Add tab to openTabs if not already open
     if (!openTabs.includes(item.name)) {
-      setOpenTabs(prev => [...prev, item.name]);
+      setOpenTabs(prev => {
+        const newTabs = [...prev, item.name];
+        debugLog('tabs', `Tab opened: ${item.name}`, { totalTabs: newTabs.length, allTabs: newTabs });
+        return newTabs;
+      });
     }
     setActiveTab(item.name);
+    
     if (item.command) {
-      // Terminal commands are now handled by TerminalComplete component
+      debugLog('terminal', `Command associated with file: ${item.command}`);
     }
   };
   
   const handleCloseTab = useCallback((fileName: string) => {
-  const newTabs = openTabs.filter(tab => tab !== fileName);
-  setOpenTabs(newTabs);
+    debugLog('tabs', `Closing tab: ${fileName}`);
+    trackInteraction('close_tab', { fileName });
+    trackEvent('tab_close', { tab_name: fileName });
     
-  if (activeTab === fileName) {
+    const newTabs = openTabs.filter(tab => tab !== fileName);
+    setOpenTabs(newTabs);
+      
+    if (activeTab === fileName) {
       const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1] : '';
       setActiveTab(newActiveTab);
+      
+      debugLog('tabs', `Active tab changed to: ${newActiveTab || 'none'}`, { 
+        previousTab: fileName,
+        remainingTabs: newTabs 
+      });
       
       // Update accent color for new active tab or reset to default
       if (newActiveTab) {
@@ -143,23 +220,26 @@ function App() {
           document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
         }
       } else {
-        // No tabs open, reset to default
         document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
         document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
+        debugLog('theme', 'All tabs closed - accent color reset');
       }
     }
   }, [openTabs, activeTab, setOpenTabs, setActiveTab]);
 
   // Handle server click to close all tabs and go to welcome
   const handleServerClick = () => {
+    debugLog('navigation', 'Server icon clicked - returning to welcome');
+    trackInteraction('server_click');
+    trackNavigation('welcome', activeTab || 'unknown');
+    
     setOpenTabs([]);
     setActiveTab('');
-    // Reset accent color to default
     document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
     document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
   };
-;
-// Helper function to get file color from structure
+
+  // Helper function to get file color from structure
   const getFileColor = (fileName: string): string => {
     for (const folder of fileStructure) {
       if (folder.children) {
@@ -169,37 +249,38 @@ function App() {
         }
       }
     }
-    return 'var(--vscode-accent)'; // fallback color
+    return 'var(--vscode-accent)';
   };
 
   const handleSetActiveTab = useCallback((tab: string) => {
+    debugLog('tabs', `Setting active tab: ${tab}`, { previousTab: activeTab });
+    trackInteraction('switch_tab', { newTab: tab, previousTab: activeTab });
+    trackNavigation(tab, activeTab);
+    
     // Set dynamic accent color based on active tab
     const fileColor = getFileColor(tab);
     if (fileColor && fileColor !== 'var(--vscode-accent)') {
       document.documentElement.style.setProperty('--vscode-accent', fileColor);
       document.documentElement.style.setProperty('--vscode-accent-hover', fileColor + '90');
     } else {
-      // Reset to default accent color
       document.documentElement.style.setProperty('--vscode-accent', 'var(--vscode-default-accent)');
       document.documentElement.style.setProperty('--vscode-accent-hover', 'var(--vscode-default-accent-hover)');
     }
     
     setActiveTab(tab);
-  }, [setActiveTab]);
+  }, [setActiveTab, activeTab]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
     document.documentElement.className = isDarkTheme ? 'dark' : '';
+    debugLog('theme', `Theme changed to: ${isDarkTheme ? 'dark' : 'light'}`);
   }, [isDarkTheme]);
-
-  /*const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-  };*/
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       if (contextMenu && event.target && event.target instanceof Element) {
         if (!event.target.closest('.context-menu')) {
+          debugLog('context', 'Context menu closed by outside click');
           setContextMenu(null);
         }
       }
@@ -209,10 +290,13 @@ function App() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [contextMenu]);
 
-// Handle file opening from terminal
+  // Handle file opening from terminal
   useEffect(() => {
     const handleOpenFile = (event: CustomEvent) => {
       const { fileName } = event.detail;
+      debugLog('terminal', `File open request from terminal: ${fileName}`);
+      trackInteraction('terminal_file_open', { fileName });
+      
       if (!openTabs.includes(fileName)) {
         handleFileClick({ name: fileName, type: 'file' });
       } else {
@@ -228,6 +312,8 @@ function App() {
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).classList.contains('resize-handle')) {
+      debugLog('resize', 'Sidebar resize started');
+      trackInteraction('resize_start');
       setIsResizing(true);
       e.preventDefault();
     }
@@ -241,22 +327,52 @@ function App() {
   }, [isResizing]);
 
   const handleMouseUp = useCallback(() => {
+    if (isResizing) {
+      debugLog('resize', `Sidebar resize completed: ${sidebarWidth}px`);
+      trackInteraction('resize_end', { width: sidebarWidth });
+      trackEvent('sidebar_resize', { final_width: sidebarWidth });
+    }
     setIsResizing(false);
-  }, []);
+  }, [isResizing, sidebarWidth]);
 
-   
-
-  // Initialize analytics when app loads (works with existing GTM)
+  // Initialize analytics when app loads
   useEffect(() => {
+    debugLog('init', 'Application initializing');
+    
     // Small delay to ensure GTM is loaded first
     setTimeout(() => {
       initializeAnalytics();
       trackPageView('Portfolio Home');
+      debugLog('analytics', 'Analytics initialized');
+      
+      if (DEBUG_MODE) {
+        // Add debug utilities to window for console access
+        (window as any).portfolioDebug = {
+          getAnalyticsInfo: getAnalyticsDebugInfo,
+          clearUTM: clearStoredUTMParameters,
+          trackTestEvent: (name: string, data: any) => trackEvent(name, data),
+          logInteractionCount: () => console.log(`Interactions: ${interactionCount.current}`),
+          getPerformanceData: () => ({
+            appLoadTime: Date.now() - startTime.current,
+            interactionCount: interactionCount.current,
+            openTabs: openTabs.length,
+            activeTab
+          })
+        };
+        
+        debugLog('debug', 'Debug utilities added to window.portfolioDebug');
+        console.log('🔧 Debug Mode Active - Use window.portfolioDebug for testing');
+      }
     }, 100);
     
     startTime.current = Date.now();
   }, []);
+
   const toggleFolder = (folderName: string) => {
+    debugLog('explorer', `Folder toggle: ${folderName}`);
+    trackInteraction('folder_toggle', { folderName, wasExpanded: expandedFolders.has(folderName) });
+    trackInteractiveElement('folder', folderName, 'toggle');
+    
     const newExpanded = new Set(expandedFolders);
     if (expandedFolders.has(folderName)) {
       newExpanded.delete(folderName);
@@ -266,23 +382,36 @@ function App() {
     setExpandedFolders(newExpanded);
   };
 
- useEffect(() => {
+  useEffect(() => {
     const handleBeforeUnload = () => {
       const timeSpent = (Date.now() - startTime.current) / 1000;
-      if (timeSpent > 5) { // Only track if user spent more than 5 seconds
+      debugLog('session', `Session ending - time spent: ${timeSpent.toFixed(1)}s, interactions: ${interactionCount.current}`);
+      
+      if (timeSpent > 5) {
         trackTimeOnPage(timeSpent, 'portfolio_home');
+        trackEvent('session_end', {
+          time_spent_seconds: Math.round(timeSpent),
+          total_interactions: interactionCount.current,
+          tabs_opened: openTabs.length,
+          final_active_tab: activeTab
+        });
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
+  }, [openTabs.length, activeTab]);
 
-  // Simple 2s loading delay
+  // Simple 3s loading delay with performance tracking
   useEffect(() => {
+    const loadStartTime = performance.now();
+    
     const loadingTimer = setTimeout(() => {
+      const loadTime = performance.now() - loadStartTime;
+      debugLog('performance', `App load completed in ${loadTime.toFixed(2)}ms`);
+      trackEvent('app_load_complete', { load_time_ms: Math.round(loadTime) });
       setIsLoading(false);
-    }, 3000); // 2 second delay
+    }, 3000);
 
     return () => {
       clearTimeout(loadingTimer);
@@ -302,6 +431,10 @@ function App() {
 
   const handleRightClick = (e: React.MouseEvent, fileName: string) => {
     e.preventDefault();
+    debugLog('context', `Right click on: ${fileName}`, { x: e.clientX, y: e.clientY });
+    trackInteraction('right_click', { fileName, x: e.clientX, y: e.clientY });
+    trackInteractiveElement('file', fileName, 'right_click');
+    
     setContextMenu({
       x: e.clientX,
       y: e.clientY,
@@ -309,32 +442,41 @@ function App() {
     });
   };
 
+  const LoadingScreen = () => {
+    useEffect(() => {
+      debugLog('loading', 'Loading screen displayed');
+      trackEvent('loading_screen_shown');
+    }, []);
 
-    const LoadingScreen = () => (
-  <div className="h-screen bg-black flex flex-col items-center justify-center transition-colors text-center space-y-6">
-  <div className="w-24 h-24 bg-gray-500 rounded-full flex items-center justify-center shadow-2xl">
-    <Code2 size={70} className="text-white" />
-  </div>
-  
-  <p className="text-gray-400 text-sm">
-    Setting up your development environment
-  </p>
-  
-  <div className="space-x-2">
-    <span className="dot bg-sky-400 inline-block"></span>
-    <span className="dot bg-red-400 inline-block"></span>
-    <span className="dot bg-purple-400 inline-block"></span>
-    <span className="dot bg-amber-400 inline-block"></span>
-    <span className="dot bg-green-400 inline-block"></span>
-  </div>
-</div>
-  );
+    return (
+      <div className="h-screen bg-black flex flex-col items-center justify-center transition-colors text-center space-y-6">
+        <div className="w-24 h-24 bg-gray-500 rounded-full flex items-center justify-center shadow-2xl">
+          <Code2 size={70} className="text-white" />
+        </div>
+        
+        <p className="text-gray-400 text-sm">
+          Setting up your development environment
+          {DEBUG_MODE && <span className="block text-xs text-purple-400 mt-2">Debug Mode Active</span>}
+        </p>
+        
+        <div className="space-x-2">
+          <span className="dot bg-sky-400 inline-block"></span>
+          <span className="dot bg-red-400 inline-block"></span>
+          <span className="dot bg-purple-400 inline-block"></span>
+          <span className="dot bg-amber-400 inline-block"></span>
+          <span className="dot bg-green-400 inline-block"></span>
+        </div>
+      </div>
+    );
+  };
+
   const getTabContent = () => {
     const contentClasses = `flex-1 overflow-y-auto text-themed transition-all duration-300`;
     const paddingClasses = `p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 2xl:p-8 flex-1`;
 
     // Show welcome screen if no tabs are open
     if (openTabs.length === 0 || !activeTab) {
+      debugLog('content', 'Rendering welcome section');
       return (
         <div className={contentClasses}>
           <WelcomeSection 
@@ -346,13 +488,14 @@ function App() {
       );
     }
 
+    debugLog('content', `Rendering content for tab: ${activeTab}`);
+
     switch (activeTab) {
       case 'About.java':
         return (
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={50} />
-              {/* Content */}
               <div className={paddingClasses}>
                 <div className="font-mono">
                   <AboutSection setActiveTab={handleSetActiveTab} openTabs={openTabs} setOpenTabs={setOpenTabs} />
@@ -367,7 +510,6 @@ function App() {
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={80} />
-              {/* Content */}
               <div className={paddingClasses}>
                 <div className="font-mono">
                   <WorkSection color={getFileColor('Work.css')} />
@@ -382,7 +524,6 @@ function App() {
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={60} />
-              {/* Content */}
               <div className={paddingClasses}>
                 <div className="font-mono">
                   <ProjectsSection color="var(--vscode-green)" />
@@ -397,9 +538,8 @@ function App() {
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={70} />
-              {/* Content */}
               <div className={paddingClasses}>
-                  <SkillsSection />
+                <SkillsSection />
               </div>
             </div>
           </div>
@@ -410,9 +550,8 @@ function App() {
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={50} />
-              {/* Content */}
               <div className={paddingClasses}>
-                  <ContactSection />
+                <ContactSection />
               </div>
             </div>
           </div>
@@ -423,9 +562,8 @@ function App() {
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={30} />
-              {/* Content */}
               <div className={paddingClasses}>
-                  <EducationSection color={getFileColor('education.yml')} />
+                <EducationSection color={getFileColor('education.yml')} />
               </div>
             </div>
           </div>
@@ -436,7 +574,6 @@ function App() {
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={100} />
-              {/* Content */}
               <div className={paddingClasses}>
                 <ResumeSection color={getFileColor('resume.pdf')}/>
               </div>
@@ -445,11 +582,11 @@ function App() {
         );
 
       default:
+        debugLog('content', `Unknown tab: ${activeTab}, showing welcome`);
         return (
           <div className={contentClasses}>
             <div className="flex">
               <LineNumberGutter lineCount={20} />
-              {/* Content */}
               <div className={paddingClasses}>
                 <WelcomeSection 
                   setActiveTab={handleSetActiveTab} 
@@ -470,7 +607,22 @@ function App() {
 
   return (
     <div id="app-root" className="h-screen bg-vscode-primary text-vscode-primary flex flex-col overflow-hidden theme-transition">
-      <TopBar id="app-top-bar" isDarkTheme={isDarkTheme} setIsDarkTheme={setIsDarkTheme}   onServerClick={handleServerClick}/>
+      {/* Debug Panel (only in debug mode) */}
+      {/*{DEBUG_MODE && (
+        <div className="fixed top-4 right-4 z-50 bg-purple-900 text-white p-2 rounded text-xs opacity-80">
+          <div>🔧 Debug Mode</div>
+          <div>Interactions: {interactionCount.current}</div>
+          <div>Active Tab: {activeTab || 'none'}</div>
+          <div>Open Tabs: {openTabs.length}</div>
+        </div>
+      )}*/}
+      
+      <TopBar 
+        id="app-top-bar" 
+        isDarkTheme={isDarkTheme} 
+        setIsDarkTheme={setIsDarkTheme}   
+        onServerClick={handleServerClick}
+      />
       
       <div id="app-main-container" className="flex flex-1 overflow-hidden">
         <LeftNavigation
@@ -481,7 +633,6 @@ function App() {
           setIsTerminalOpen={setIsTerminalOpen}
           isDarkTheme={isDarkTheme}
           setIsDarkTheme={setIsDarkTheme}
-          /*setShowFloatingForm={setShowFloatingForm}*/
           activeItem={leftNavActiveItem}
           setActiveItem={setLeftNavActiveItem}
         />
@@ -518,44 +669,41 @@ function App() {
             {getTabContent()}
           </div>
 
- {isTerminalOpen && (
-          <div id="app-terminal-container" className="fixed inset-x-0 bottom-0 h-80 flex flex-col z-50 bg-black shadow-2xl border-t border-gray-600">
-            <div id="app-terminal-header" className="bg-gray-900 px-3 py-2 flex items-center justify-between border-b border-gray-600">
-              {/* macOS-style traffic lights */}
-              <div id="app-terminal-header-left" className="flex items-start justify-between gap-3">
-                {/* Terminal icon */}
-                <div id="app-terminal-icon" className="flex items-start gap-2 justify-between w-5 h-5 text-white">
-                  <span className="text-sm" style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>{'\>_'}</span>
-                <span id="app-terminal-label" className="text-white gap-2 italic uppercase text-sm " style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>Terminal</span>
+          {isTerminalOpen && (
+            <div id="app-terminal-container" className="fixed inset-x-0 bottom-0 h-80 flex flex-col z-50 bg-black shadow-2xl border-t border-gray-600">
+              <div id="app-terminal-header" className="bg-gray-900 px-3 py-2 flex items-center justify-between border-b border-gray-600">
+                <div id="app-terminal-header-left" className="flex items-start justify-between gap-3">
+                  <div id="app-terminal-icon" className="flex items-start gap-2 justify-between w-5 h-5 text-white">
+                    <span className="text-sm" style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>{'\>_'}</span>
+                    <span id="app-terminal-label" className="text-white gap-2 italic uppercase text-sm " style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>Terminal</span>
+                  </div>
                 </div>
-                {/* Terminal title */}
                 
+                <div id="app-terminal-controls" className="flex items-center gap-2">
+                  <button
+                    id="app-terminal-close-btn"
+                    onClick={() => {
+                      debugLog('terminal', 'Terminal closed by user');
+                      trackInteraction('terminal_close');
+                      trackInteractiveElement('terminal', 'close_button', 'click');
+                      setIsTerminalOpen(false);
+                      if (activeTab === 'terminal') {
+                        setActiveTab('explorer');
+                      }
+                    }}
+                    className="p-1 hover:bg-red-600 transition-colors"
+                  >
+                    <svg className="w-4 h-4 text-gray-300 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-              
-              {/* Terminal controls */}
-              <div id="app-terminal-controls" className="flex items-center gap-2">
-                
-              <button
-                id="app-terminal-close-btn"
-                onClick={() => {
-                  setIsTerminalOpen(false);
-                  if (activeTab === 'terminal') {
-                    setActiveTab('explorer');
-                  }
-                }}
-                className="p-1 hover:bg-red-600 transition-colors"
-              >
-                <svg className="w-4 h-4 text-gray-300 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              </div>
+          
+              <Terminal id="app-terminal" />
             </div>
-        
-            <Terminal id="app-terminal" />
-          </div>
-        )}
-             </div>
+          )}
+        </div>
       </div>
 
       {/* Context Menu */}

@@ -198,7 +198,7 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
               <button
                 id={`left-nav-bottom-button-${item.id}`}
                 className={`w-full h-12 p-0 mb-1 flex items-center justify-center transition-all duration-200 hover:bg-[var(--vscode-bg-tertiary)] hover:text-[var(--vscode-accent)] group ${getItemAnimation(item.id)} ${
-                  isActive ? 'border-l-2 border-l-blue-500 bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)]' : 'text-[var(--vscode-text-secondary)] border-l-2 border-l-transparent'
+                  isActive ? 'border-r-2 border-vscode-accent bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)]' : 'text-[var(--vscode-text-secondary)] border-r-2 border-r-transparent'
                 }`}
                 onClick={() => handleItemClick(item.id)}
                 title={item.label}

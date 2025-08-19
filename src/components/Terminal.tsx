@@ -98,7 +98,7 @@ export function Terminal({ id }: TerminalProps = {}) {
     const trimmedCmd = cmd.trim();
     if (!trimmedCmd) {
       // Track empty command as error
-      trackTerminalCommand('', false, '');
+      trackTerminalCommand('', false);
       return;
     }
 
@@ -132,7 +132,7 @@ export function Terminal({ id }: TerminalProps = {}) {
       setHistory([]);
       success = true; // ✅ Clear is successful
       // Track and return early for clear
-      trackTerminalCommand(commandLower, success, trimmedCmd);
+      trackTerminalCommand(trimmedCmd, success);
       return;
     }
 
@@ -165,7 +165,7 @@ export function Terminal({ id }: TerminalProps = {}) {
     }
 
     // ✅ FIXED: Track terminal command properly
-    trackTerminalCommand(commandLower, success, trimmedCmd);
+    trackTerminalCommand(trimmedCmd, success);
 
     // ✅ FIXED: Add output with correct type (error = red text)
     output.forEach(line => {

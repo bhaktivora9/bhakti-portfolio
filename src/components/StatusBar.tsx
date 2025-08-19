@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+
 import { GitBranch } from 'lucide-react';
 
 
 
-export const StatusBar: React.FC<StatusBarProps> = ({
-}) => {
+export const StatusBar: React.FC = () => {
+
 
 
   return (

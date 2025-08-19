@@ -1,10 +1,19 @@
-// analytics.ts - Clean and minimal for existing GTM setup
+// analytics.ts - Enhanced version
 
-// Global dataLayer declaration
 declare global {
   interface Window {
     dataLayer: any[];
+    gtag: (command: string, ...args: any[]) => void;
   }
+}
+
+interface UTMParameters {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+  utm_id?: string;
 }
 
 // Simple developer detection
@@ -13,11 +22,51 @@ const isDeveloperMode = (): boolean => {
   return urlParams.get('devmode') === 'true';
 };
 
+// Helper function to parse UTM parameters
+export const parseUTMParameters = (): UTMParameters => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const utmParams: UTMParameters = {};
+
+  const utmKeys: (keyof UTMParameters)[] = [
+    'utm_source',
+    'utm_medium', 
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+    'utm_id'
+  ];
+
+  utmKeys.forEach(key => {
+    const value = urlParams.get(key);
+    if (value) {
+      utmParams[key] = value;
+    }
+  });
+
+  return utmParams;
+};
+
+// Helper function to store/retrieve UTM parameters for session attribution
+export const storeUTMParameters = (): void => {
+  const utmParams = parseUTMParameters();
+  
+  if (Object.keys(utmParams).length > 0) {
+    sessionStorage.setItem('utm_parameters', JSON.stringify(utmParams));
+  }
+};
+
+export const getStoredUTMParameters = (): UTMParameters => {
+  const stored = sessionStorage.getItem('utm_parameters');
+  return stored ? JSON.parse(stored) : {};
+};
+
 // Initialize analytics (GTM already loaded in HTML)
 export const initializeAnalytics = () => {
   if (typeof window === 'undefined') return;
-
   const isDeveloper = isDeveloperMode();
+  
+  // Store UTM parameters on page load
+  storeUTMParameters();
   
   // Add our tracking data to existing GTM dataLayer
   window.dataLayer = window.dataLayer || [];
@@ -26,17 +75,16 @@ export const initializeAnalytics = () => {
     user_type: isDeveloper ? 'developer' : 'visitor',
     is_developer: isDeveloper
   });
-
+  
   if (isDeveloper) {
-    console.log('🔍 Analytics initialized - Developer Mode ON (events filtered)');
-    console.log('💡 To disable: Remove ?devmode=true from URL');
+    console.log('Analytics initialized - Developer Mode ON (events filtered)');
+    console.log('To disable: Remove ?devmode=true from URL');
   }
 };
 
 // Core tracking function
 export const trackEvent = (eventName: string, parameters: Record<string, any> = {}) => {
   if (typeof window === 'undefined' || !window.dataLayer) return;
-
   const isDeveloper = isDeveloperMode();
   
   const eventData = {
@@ -45,22 +93,87 @@ export const trackEvent = (eventName: string, parameters: Record<string, any> = 
     user_type: isDeveloper ? 'developer' : 'visitor',
     is_developer: isDeveloper
   };
-
+  
   window.dataLayer.push(eventData);
-
+  
   if (isDeveloper) {
-    console.log('📊 Event:', eventName, eventData);
+    console.log('Event:', eventName, eventData);
   }
 };
 
-// Essential tracking functions used in your App.tsx
-export const trackPageView = (pageName?: string) => {
-  window.dataLayer.push({
+// Enhanced page view tracking with UTM parameters
+export const trackPageView = (pageName?: string, useSessionUTM: boolean = true) => {
+  if (typeof window === 'undefined' || !window.dataLayer) return;
+  
+  const isDeveloper = isDeveloperMode();
+  
+  // Get current UTM parameters
+  let utmParams = parseUTMParameters();
+  
+  // If no current UTM parameters and useSessionUTM is true, use stored ones
+  if (Object.keys(utmParams).length === 0 && useSessionUTM) {
+    utmParams = getStoredUTMParameters();
+  }
+  
+  // Prepare page view data
+  const pageViewData = {
     event: 'page_view',
     page_title: pageName || document.title,
     page_location: window.location.href,
-    page_path: window.location.pathname
+    page_path: window.location.pathname,
+    page_referrer: document.referrer || undefined,
+    user_type: isDeveloper ? 'developer' : 'visitor',
+    is_developer: isDeveloper,
+    ...utmParams // Spread UTM parameters
+  };
+  
+  // Remove undefined values
+  Object.keys(pageViewData).forEach(key => {
+    if (pageViewData[key as keyof typeof pageViewData] === undefined) {
+      delete pageViewData[key as keyof typeof pageViewData];
+    }
   });
+  
+  window.dataLayer.push(pageViewData);
+  
+  if (isDeveloper) {
+    console.log('Page View:', pageViewData);
+  }
+};
+
+// Alternative: Track page view with gtag (if you prefer gtag over dataLayer)
+export const trackPageViewGtag = (pageName?: string, useSessionUTM: boolean = true) => {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  
+  const isDeveloper = isDeveloperMode();
+  
+  let utmParams = parseUTMParameters();
+  if (Object.keys(utmParams).length === 0 && useSessionUTM) {
+    utmParams = getStoredUTMParameters();
+  }
+  
+  const pageViewData = {
+    page_title: pageName || document.title,
+    page_location: window.location.href,
+    page_path: window.location.pathname,
+    page_referrer: document.referrer || undefined,
+    user_type: isDeveloper ? 'developer' : 'visitor',
+    is_developer: isDeveloper,
+    ...utmParams
+  };
+  
+  // Remove undefined values
+  Object.keys(pageViewData).forEach(key => {
+    if (pageViewData[key as keyof typeof pageViewData] === undefined) {
+      delete pageViewData[key as keyof typeof pageViewData];
+    }
+  });
+  
+  window.gtag('event', 'page_view', pageViewData);
+  
+  if (isDeveloper) {
+    console.log('Page View :', pageViewData);
+  }
 };
 
 export const trackFileOpen = (fileName: string, fileCategory?: string) => {
@@ -101,7 +214,6 @@ export const trackTimeOnPage = (seconds: number, page?: string) => {
   });
 };
 
-// Additional functions used in your components
 export const trackContactClick = (method: string, location?: string) => {
   trackEvent('contact', {
     method: method,
@@ -124,9 +236,22 @@ export const trackTerminalCommand = (command: string, success: boolean = true) =
   });
 };
 
-// Debug function
-export const getAnalyticsDebugInfo = () => ({
-  isDeveloperMode: isDeveloperMode(),
-  dataLayerLength: window.dataLayer?.length || 0,
-  lastEvents: window.dataLayer?.slice(-3) || []
-});
+// Enhanced debug function
+export const getAnalyticsDebugInfo = () => {
+  const currentUTM = parseUTMParameters();
+  const storedUTM = getStoredUTMParameters();
+  
+  return {
+    isDeveloperMode: isDeveloperMode(),
+    dataLayerLength: window.dataLayer?.length || 0,
+    lastEvents: window.dataLayer?.slice(-3) || [],
+    currentUTMParameters: currentUTM,
+    storedUTMParameters: storedUTM,
+    referrer: document.referrer || 'none'
+  };
+};
+
+// Utility function to clear stored UTM parameters (useful for testing)
+export const clearStoredUTMParameters = () => {
+  sessionStorage.removeItem('utm_parameters');
+};
