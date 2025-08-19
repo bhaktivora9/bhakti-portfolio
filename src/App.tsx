@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback ,useRef} from 'react';
 import { TopBar } from './components/TopBar';
 import { LeftNavigation } from './components/LeftNavigation';
 import { FileExplorer } from './components/FileExplorer';
@@ -14,10 +14,17 @@ import SkillsSection from './sections/SkillsSection';
 import { ContactSection } from './sections/ContactSection';
 import { Terminal } from './components/Terminal';
 import { ResumeSection } from './sections/ResumeSection';
-
+import {StatusBar} from './components/StatusBar'
 import { Download, Code2 } from 'lucide-react';
-import { trackPageView, trackFileOpen,  trackResumeDownload } from './utils/analytics';
-import { personalInfo } from './data/portfolio';
+import { 
+  initializeAnalytics,  // Now works with your existing GTM
+  trackPageView, 
+  trackFileOpen, 
+  trackResumeDownload,
+  trackNavigation,
+  trackInteractiveElement,
+  trackTimeOnPage
+} from './utils/analytics';import { personalInfo } from './data/portfolio';
 
 import './index.css';
 
@@ -62,6 +69,7 @@ function App() {
   ];
 
   // State declarations
+  const startTime = useRef<number>(Date.now());
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('');
@@ -236,10 +244,18 @@ function App() {
     setIsResizing(false);
   }, []);
 
-  useEffect(() => {
-    trackPageView('Portfolio Home');
-  }, []);
+   
 
+  // Initialize analytics when app loads (works with existing GTM)
+  useEffect(() => {
+    // Small delay to ensure GTM is loaded first
+    setTimeout(() => {
+      initializeAnalytics();
+      trackPageView('Portfolio Home');
+    }, 100);
+    
+    startTime.current = Date.now();
+  }, []);
   const toggleFolder = (folderName: string) => {
     const newExpanded = new Set(expandedFolders);
     if (expandedFolders.has(folderName)) {
@@ -250,11 +266,23 @@ function App() {
     setExpandedFolders(newExpanded);
   };
 
+ useEffect(() => {
+    const handleBeforeUnload = () => {
+      const timeSpent = (Date.now() - startTime.current) / 1000;
+      if (timeSpent > 5) { // Only track if user spent more than 5 seconds
+        trackTimeOnPage(timeSpent, 'portfolio_home');
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   // Simple 2s loading delay
   useEffect(() => {
     const loadingTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // 2 second delay
+    }, 3000); // 2 second delay
 
     return () => {
       clearTimeout(loadingTimer);
@@ -553,6 +581,7 @@ function App() {
           )}
         </div>
       )}
+      <StatusBar/>
     </div>
   );
 }

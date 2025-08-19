@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { trackResumeDownload } from '../utils/analytics';
+import { trackResumeDownload, trackTerminalCommand } from '../utils/analytics';
 
 interface TerminalLine {
   type: 'command' | 'output' | 'error' | 'info' | 'startup';
@@ -38,7 +38,6 @@ const terminalCommands: { [key: string]: string[] } = {
     '  pwd        - Show current directory',
     '  date       - Show current date',
     '  echo <msg> - Echo a message',
-
     ''
   ],
   about: ['Opening About.java...'],
@@ -67,8 +66,6 @@ const terminalCommands: { [key: string]: string[] } = {
   pwd: ['/home/bhakti/portfolio'],
   date: [new Date().toString(), '']
 };
-
-// File contents for cat command
 
 export function Terminal({ id }: TerminalProps = {}) {
   const [history, setHistory] = useState<TerminalLine[]>([
@@ -99,7 +96,11 @@ export function Terminal({ id }: TerminalProps = {}) {
 
   const executeCommand = (cmd: string) => {
     const trimmedCmd = cmd.trim();
-    if (!trimmedCmd) return;
+    if (!trimmedCmd) {
+      // Track empty command as error
+      trackTerminalCommand('', false, '');
+      return;
+    }
 
     // Add command to history
     setHistory(prev => [...prev, { type: 'command', content: `bhakti.dev@portfolio:~/portfolio$ ${trimmedCmd}` }]);
@@ -111,6 +112,8 @@ export function Terminal({ id }: TerminalProps = {}) {
     const commandLower = command.toLowerCase();
 
     let output: string[] = [];
+    let success = false; // ✅ Track success status
+    let outputType: 'output' | 'error' = 'output'; // ✅ Track output type
     
     // Command to file mapping for opening files
     const commandMap: { [key: string]: string } = {
@@ -127,35 +130,50 @@ export function Terminal({ id }: TerminalProps = {}) {
     
     if (commandLower === 'clear') {
       setHistory([]);
+      success = true; // ✅ Clear is successful
+      // Track and return early for clear
+      trackTerminalCommand(commandLower, success, trimmedCmd);
       return;
     }
 
     if (commandLower.startsWith('echo ')) {
       const message = trimmedCmd.substring(5);
       output = [message, ''];
+      success = true; // ✅ Echo is successful
+      outputType = 'output';
     } else if (commandLower === 'resume') {
       output = terminalCommands[commandLower];
+      success = true; // ✅ Resume command is successful
+      outputType = 'output';
       // Trigger download after showing message
       setTimeout(() => {
         downloadResume();
       }, 500);
     } else if (terminalCommands[commandLower]) {
       output = terminalCommands[commandLower];
+      success = true; // ✅ Valid commands are successful
+      outputType = 'output';
     } else {
+      // ❌ Invalid commands are errors
       output = [
         `Command not found: ${command}`,
         'Type "help" to see available commands.',
         '',
       ];
+      success = false; // ❌ Command failed
+      outputType = 'error'; // ❌ Mark as error type for red text
     }
 
-    // Add output to history
+    // ✅ FIXED: Track terminal command properly
+    trackTerminalCommand(commandLower, success, trimmedCmd);
+
+    // ✅ FIXED: Add output with correct type (error = red text)
     output.forEach(line => {
-      setHistory(prev => [...prev, { type: 'output', content: line }]);
+      setHistory(prev => [...prev, { type: outputType, content: line }]);
     });
 
     // Handle file opening commands (except resume which downloads)
-    if (commandMap[commandLower] && commandLower !== 'resume') {
+    if (commandMap[commandLower] && commandLower !== 'resume' && success) {
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('openFile', { 
           detail: { fileName: commandMap[commandLower] } 
@@ -247,7 +265,7 @@ export function Terminal({ id }: TerminalProps = {}) {
                : line.type === 'startup'
                  ? 'text-vscode-indigo italic'
                 : line.type === 'error' 
-                  ? 'text-red-300' 
+                  ? 'text-red-300' // ✅ Red text for errors
                  : line.type === 'info' 
                  ? 'text-green-300 font-semibold'
                  : 'text-sky-200'
@@ -264,7 +282,7 @@ export function Terminal({ id }: TerminalProps = {}) {
             <span id="terminal-complete-prompt-arrow" className="text-white flex-shrink-0 ml-1 mr-1">{">"}</span>
           </div>
           <input
-            id="terminal-complete-input"
+            id="terminal-input-command"
             ref={inputRef}
             type="text"
             value={currentCommand}
