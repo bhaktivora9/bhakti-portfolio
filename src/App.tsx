@@ -54,11 +54,34 @@ interface FileStructureItem {
 }
 
 // Debug Mode Configuration
-const DEBUG_MODE = true;
-const DEBUG_ANALYTICS = DEBUG_MODE && true;
-const DEBUG_INTERACTIONS = DEBUG_MODE && true;
-const DEBUG_PERFORMANCE = DEBUG_MODE && true;
+const getURLParams = () => new URLSearchParams(window.location.search);
+const DEBUG_MODE = getURLParams().get('devMode') === 'true';
+const DEBUG_ANALYTICS = DEBUG_MODE && (getURLParams().get('analytics') !== 'false');
+const DEBUG_INTERACTIONS = DEBUG_MODE && (getURLParams().get('interactions') !== 'false');
+const DEBUG_PERFORMANCE = DEBUG_MODE && (getURLParams().get('performance') !== 'false');
 
+// Debug Logger
+/*const debugLog = (category: string, message: string, data?: any) => {
+  if (!DEBUG_MODE) return;
+  
+  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+  const style = `
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: bold;
+  `;
+  
+  console.groupCollapsed(`%c[${timestamp}] ${category.toUpperCase()}`, style, message);
+  if (data) {
+    console.log('Data:', data);
+  }
+  if (DEBUG_ANALYTICS) {
+    console.log('Analytics State:', getAnalyticsDebugInfo());
+  }
+  console.groupEnd();
+};*/
 // Debug Logger
 const debugLog = (category: string, message: string, data?: any) => {
   if (!DEBUG_MODE) return;
@@ -408,7 +431,7 @@ function App() {
     
     const loadingTimer = setTimeout(() => {
       const loadTime = performance.now() - loadStartTime;
-      debugLog('performance', `App load completed in ${loadTime.toFixed(2)}ms`);
+      //debugLog('performance', `App load completed in ${loadTime.toFixed(2)}ms`);
       trackEvent('app_load_complete', { load_time_ms: Math.round(loadTime) });
       setIsLoading(false);
     }, 3000);
