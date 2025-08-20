@@ -61,28 +61,6 @@ const DEBUG_INTERACTIONS = DEBUG_MODE && (getURLParams().get('interactions') !==
 const DEBUG_PERFORMANCE = DEBUG_MODE && (getURLParams().get('performance') !== 'false');
 
 // Debug Logger
-/*const debugLog = (category: string, message: string, data?: any) => {
-  if (!DEBUG_MODE) return;
-  
-  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
-  const style = `
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 3px;
-    font-weight: bold;
-  `;
-  
-  console.groupCollapsed(`%c[${timestamp}] ${category.toUpperCase()}`, style, message);
-  if (data) {
-    console.log('Data:', data);
-  }
-  if (DEBUG_ANALYTICS) {
-    console.log('Analytics State:', getAnalyticsDebugInfo());
-  }
-  console.groupEnd();
-};*/
-// Debug Logger
 const debugLog = (category: string, message: string, data?: any) => {
   if (!DEBUG_MODE) return;
   
