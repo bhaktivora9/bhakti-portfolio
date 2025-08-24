@@ -236,7 +236,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             </h3>
             <div id="about-me-content" className="text-[var(--vscode-text-primary)] leading-relaxed text-xs sm:text-sm md:text-base space-y-2 sm:space-y-3 text-left">
               <p id="about-me-paragraph-1">
-                I'm a passionate full-stack developer with 7+ years of experience, hand-on experience in designing, 
+                I'm a passionate full-stack developer with 7+ years of experience, hands-on experience in designing, 
                 developing, and maintaining scalable systems and frameworks. Proficient in taking projects from ideation 
                 to deployment. Skilled in Core Java, Spring Boot, Kubernetes, Kafka, and machine learning techniques, 
                 with a consistent track record of tackling complex engineering challenges and delivering practical solutions.
