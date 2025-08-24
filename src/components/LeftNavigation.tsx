@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import  TerminalIconWithBlink  from '../animations/TerminalIconWithBlink.jsx';
-import { UserLookingAroundAnimation } from '../animations/UserLookingAroundAnimation.jsx';
+// @ts-ignore
+import  TerminalIconWithBlink  from '../animations/TerminalIconWithBlink';
+// @ts-ignore
+import { UserLookingAroundAnimation } from '../animations/UserLookingAroundAnimation';
 import {
   Files,
   Search,
@@ -27,6 +29,7 @@ const bottomItems = [
 ];
 
 interface LeftNavigationProps {
+    id?: string; 
   onItemClick?: (itemId: string) => void;
   isExplorerCollapsed?: boolean;
   setIsExplorerCollapsed?: (collapsed: boolean) => void;
@@ -36,12 +39,13 @@ interface LeftNavigationProps {
   setIsTerminalMinimized?: (minimized: boolean) => void;
   isDarkTheme?: boolean;
   setIsDarkTheme?: (isDark: boolean) => void;
-  setShowFloatingForm?: (show: boolean) => void;
+  /*setShowFloatingForm?: (show: boolean) => void;*/
   activeNavItem?: string;
   setActiveNavItem?: (item: string) => void;
 }
 
 export const LeftNavigation: React.FC<LeftNavigationProps> = ({
+    id,
   onItemClick,
   isExplorerCollapsed,
   setIsExplorerCollapsed,
@@ -51,7 +55,7 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
   setIsTerminalMinimized,
   isDarkTheme,
   setIsDarkTheme,
-  setShowFloatingForm,
+  /*setShowFloatingForm,*/
   activeNavItem: propActiveNavItem,
   setActiveNavItem: propSetActiveNavItem
 }) => {
@@ -74,7 +78,6 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
     type: ''
   });
   const [terminalCursorBlink, setTerminalCursorBlink] = useState<boolean>(false);
-  const userIconAnimation = '';
 
  
 const handleItemClick = (itemId: string) => {
@@ -197,7 +200,8 @@ const handleItemClick = (itemId: string) => {
   };
 
   return (
-    <div id="left-navigation-container" className="relative w-12 bg-[var(--vscode-bg-primary)] h-full flex flex-col border-r border-[var(--vscode-border)] shadow-sm transition-all duration-300">
+     <div 
+      id={id || "left-navigation-container"}  className="relative w-12 bg-[var(--vscode-bg-primary)] h-full flex flex-col border-r border-[var(--vscode-border)] shadow-sm transition-all duration-300">
       {showPopup.show && (
         <div id="left-navigation-popup" className={`fixed top-16 z-50 animate-slide-in-right ${isExplorerCollapsed ? 'left-16' : 'left-64'}`}>
           <div id="left-navigation-popup-content" className={`px-4 py-3 rounded-lg shadow-lg border max-w-xs ${

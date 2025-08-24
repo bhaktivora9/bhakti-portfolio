@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TerminalIconWithBlink from '../animations/TerminalIconWithBlink.jsx';
-import {ChevronRight} from 'lucide-react';
+
 interface NameProps {
   id?: string;
 }

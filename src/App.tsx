@@ -138,11 +138,7 @@ function App() {
     });
   };
 
-const handleTerminalClose = () => {
-    setIsTerminalOpen(false);
-    // Don't automatically change nav item when terminal closes
-    // User might want to keep terminal nav item selected
-  };
+
 
 
   const downloadResume = () => {
@@ -687,21 +683,20 @@ const handleTerminalClose = () => {
       />
       
       <div id="app-main-container" className="flex flex-1 overflow-hidden">
+        
         <LeftNavigation
           id="app-left-navigation"
           isExplorerCollapsed={isExplorerCollapsed}
           setIsExplorerCollapsed={setIsExplorerCollapsed}
           isTerminalOpen={isTerminalOpen}
           setIsTerminalOpen={setIsTerminalOpen}
-          isDarkTheme={isDarkTheme}
-          setIsDarkTheme={setIsDarkTheme}
-          activeItem={leftNavActiveItem}
-          setActiveItem={setLeftNavActiveItem}
           isTerminalMinimized={isTerminalMinimized}
           setIsTerminalMinimized={setIsTerminalMinimized}
-                    activeNavItem={leftNavActiveItem}
+          isDarkTheme={isDarkTheme}
+          setIsDarkTheme={setIsDarkTheme}
+/*          setShowFloatingForm={setShowFloatingForm}
+*/          activeNavItem={leftNavActiveItem}
           setActiveNavItem={setLeftNavActiveItem}
-
         />
 
         <FileExplorer

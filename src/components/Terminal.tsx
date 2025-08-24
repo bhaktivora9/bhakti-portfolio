@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { terminalCommands, fileContents, personalInfo } from '../data/portfolio';
+import { terminalCommands,  personalInfo } from '../data/portfolio';
 
 interface TerminalLine {
   type: 'command' | 'output' | 'error';
