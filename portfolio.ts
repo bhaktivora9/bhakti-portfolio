@@ -76,7 +76,7 @@ export const personalInfo: PersonalInfo = {
   location: "San Francisco, CA",
   profileImage: "Bhakti-Vora-PP.png",
   shortBio: "I'm a passionate full-stack developer with 7+ years of experience. Skilled in Core Java, Spring Boot, Kubernetes, Kafka. Additionally, I hold a Professional Certificate in Machine Learning & Artificial Intelligence from UC Berkeley Executive Education.",
-  bio: "I'm a passionate full-stack developer with 7+ years of experience, hand-on experience in designing, developing, and maintaining scalable systems and frameworks. Proficient in taking projects from ideation to deployment. Skilled in Core Java, Spring Boot, Kubernetes, Kafka,and machine learning techniques, with a consistent track record of tackling complex engineering challenges and delivering practical solutions.Additionally, I hold a Professional Certificate in Machine Learning & Artificial Intelligence from UC Berkeley Executive Education.",
+  bio: "I'm a passionate full-stack developer with 7+ years of experience, hands-on experience in designing, developing, and maintaining scalable systems and frameworks. Proficient in taking projects from ideation to deployment. Skilled in Core Java, Spring Boot, Kubernetes, Kafka,and machine learning techniques, with a consistent track record of tackling complex engineering challenges and delivering practical solutions.Additionally, I hold a Professional Certificate in Machine Learning & Artificial Intelligence from UC Berkeley Executive Education.",
   tagline: "Backend Developer | AI Enthusiast",
   phrases: ['Frontend Developer in making...',
     'Learning about MCP, RAG, LLM',
