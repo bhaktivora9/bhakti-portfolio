@@ -117,7 +117,9 @@ function App() {
   const [sidebarWidth, setSidebarWidth] = useState<number>(200);
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [leftNavActiveItem, setLeftNavActiveItem] = useState('explorer');
-
+  const [isTerminalMinimized, setIsTerminalMinimized] = useState<boolean>(false);
+  const [terminalHeight, setTerminalHeight] = useState<number>(320);
+  const [isTerminalResizing, setIsTerminalResizing] = useState<boolean>(false);
   const resumeUrl = `${import.meta.env.BASE_URL}assets/${personalInfo.resume}`;
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['bhakti-vora-portfolio']));
 
@@ -135,6 +137,13 @@ function App() {
       ...details
     });
   };
+
+const handleTerminalClose = () => {
+    setIsTerminalOpen(false);
+    // Don't automatically change nav item when terminal closes
+    // User might want to keep terminal nav item selected
+  };
+
 
   const downloadResume = () => {
     debugLog('download', 'Resume download initiated');
@@ -310,7 +319,20 @@ function App() {
       window.removeEventListener('openFile', handleOpenFile as EventListener);
     };
   }, [openTabs, handleSetActiveTab]);
-
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    debugLog('resize', 'Sidebar resize started');
+      trackInteraction('resize_start');
+      
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('resize-handle')) {
+      setIsResizing(true);
+      e.preventDefault();
+    }
+    if (target.classList.contains('terminal-resize-handle')) {
+      setIsTerminalResizing(true);
+      e.preventDefault();
+    }
+  }, []);/*
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).classList.contains('resize-handle')) {
       debugLog('resize', 'Sidebar resize started');
@@ -318,23 +340,47 @@ function App() {
       setIsResizing(true);
       e.preventDefault();
     }
-  }, []);
-
+      if ((e.target as HTMLElement).classList.contains('terminal-resize-handle')) {
+      setIsTerminalResizing(true);
+      e.preventDefault();
+    }
+  }, []);*/
+/*
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isResizing) {
       const newWidth = Math.max(200, Math.min(400, e.clientX));
       setSidebarWidth(newWidth);
     }
-  }, [isResizing]);
+        if (isTerminalResizing) {
+      const windowHeight = window.innerHeight;
+      const topBarHeight = 36; // TopBar height
+      const availableHeight = windowHeight - topBarHeight;
+      const mouseY = e.clientY - topBarHeight;
+      const newHeight = Math.max(200, Math.min(600, availableHeight - mouseY));
+      setTerminalHeight(newHeight);
+    }
+  }, [isResizing]);*/
+
+   const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isResizing) {
+      const newWidth = Math.max(200, Math.min(400, e.clientX));
+      setSidebarWidth(newWidth);
+    }
+    if (isTerminalResizing) {
+      const windowHeight = window.innerHeight;
+      const topBarHeight = 36; // TopBar height
+      const availableHeight = windowHeight - topBarHeight;
+      const mouseY = e.clientY - topBarHeight;
+      const newHeight = Math.max(200, Math.min(600, availableHeight - mouseY));
+      setTerminalHeight(newHeight);
+    }
+  }, [isResizing, isTerminalResizing]);
 
   const handleMouseUp = useCallback(() => {
-    if (isResizing) {
-      debugLog('resize', `Sidebar resize completed: ${sidebarWidth}px`);
-      trackInteraction('resize_end', { width: sidebarWidth });
-      trackEvent('sidebar_resize', { final_width: sidebarWidth });
-    }
     setIsResizing(false);
-  }, [isResizing, sidebarWidth]);
+    setIsTerminalResizing(false);
+  }, []);
+
 
   // Initialize analytics when app loads
   useEffect(() => {
@@ -418,17 +464,32 @@ function App() {
       clearTimeout(loadingTimer);
     };
   }, []);
-
+/*
   useEffect(() => {
-    if (isResizing) {
+  if (isResizing) {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }
+}, [isResizing, handleMouseMove, handleMouseUp]);*/
+  useEffect(() => {
+    if (isResizing || isTerminalResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = isResizing ? 'col-resize' : 'ns-resize';
+      document.body.style.userSelect = 'none';
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
       };
     }
-  }, [isResizing, handleMouseMove, handleMouseUp]);
+  }, [isResizing, isTerminalResizing, handleMouseMove, handleMouseUp]);
+
 
   const handleRightClick = (e: React.MouseEvent, fileName: string) => {
     e.preventDefault();
@@ -636,6 +697,11 @@ function App() {
           setIsDarkTheme={setIsDarkTheme}
           activeItem={leftNavActiveItem}
           setActiveItem={setLeftNavActiveItem}
+          isTerminalMinimized={isTerminalMinimized}
+          setIsTerminalMinimized={setIsTerminalMinimized}
+                    activeNavItem={leftNavActiveItem}
+          setActiveNavItem={setLeftNavActiveItem}
+
         />
 
         <FileExplorer
@@ -671,27 +737,46 @@ function App() {
           </div>
 
           {isTerminalOpen && (
-            <div id="app-terminal-container" className="fixed inset-x-0 bottom-0 h-80 flex flex-col z-50 bg-black shadow-2xl border-t border-gray-600">
-              <div id="app-terminal-header" className="bg-gray-900 px-3 py-2 flex items-center justify-between border-b border-gray-600">
+  <div
+            id="app-terminal-container"
+            className={`fixed bottom-0 flex flex-col z-50 bg-vscode-secondary shadow-2xl border-t border-vscode transition-all duration-300 ${
+              isExplorerCollapsed ? 'left-12' : `left-[${sidebarWidth + 48}px]`
+            }`}
+            style={{ 
+              height: `${terminalHeight}px`,
+              right: '0px',
+              left: isExplorerCollapsed ? '48px' : `${sidebarWidth + 48}px`
+            }}
+          >
+    {/* Terminal resize handle */}
+            <div 
+              className={`terminal-resize-handle absolute top-0 left-0 right-0 h-1 cursor-row-resize hover:bg-vscode-accent/50 transition-all duration-200 ${isTerminalResizing ? 'bg-vscode-accent' : 'hover:bg-vscode-accent'}`}
+              onMouseDown={handleMouseDown}
+              title="Drag to resize terminal height"
+            />
+
+                        <div id="app-terminal-header" className="bg-vscode-secondary px-3 py-2 flex items-center justify-between border border-vscode">
                 <div id="app-terminal-header-left" className="flex items-start justify-between gap-3">
-                  <div id="app-terminal-icon" className="flex items-start gap-2 justify-between w-5 h-5 text-white">
+                  <div id="app-terminal-icon" className="flex items-start gap-2 justify-between w-5 h-5 text-vscode-primary">
                     <span className="text-sm" style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>{'\>_'}</span>
-                    <span id="app-terminal-label" className="text-white gap-2 italic uppercase text-sm " style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>Terminal</span>
+                    <span id="app-terminal-label" className="text-vscode-secondary gap-2   text-sm " 
+                      style={{ fontFamily: 'Consolas, "Courier New", monospace' }}>Terminal</span>
                   </div>
                 </div>
                 
                 <div id="app-terminal-controls" className="flex items-center gap-2">
                   <button
                     id="app-terminal-close-btn"
-                    onClick={() => {
-                      debugLog('terminal', 'Terminal closed by user');
-                      trackInteraction('terminal_close');
-                      trackInteractiveElement('terminal', 'close_button', 'click');
-                      setIsTerminalOpen(false);
-                      if (activeTab === 'terminal') {
-                        setActiveTab('explorer');
-                      }
-                    }}
+                       onClick={(e) => {
+                    e.stopPropagation();
+                    setIsTerminalOpen(false);
+                    setIsTerminalMinimized(false);
+                   // Reset active nav item when closing terminal
+                   if (leftNavActiveItem === 'terminal') {
+                     setLeftNavActiveItem('explorer');
+                   }
+                  }}
+               
                     className="p-1 hover:bg-red-600 transition-colors"
                   >
                     <svg className="w-4 h-4 text-gray-300 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

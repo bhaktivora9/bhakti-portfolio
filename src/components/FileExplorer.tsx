@@ -129,12 +129,17 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
         {/* Expanded State */}
         {!isCollapsed && (
           <>
-        <div 
+  {/*      <div 
           id="file-explorer-resize-handle"
           className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover-themed transition-all duration-200 ${isResizing ? 'bg-blue-500 animate-glow' : ''}`}
           onMouseDown={onMouseDown}
         />
-        
+  */}      <div 
+  id="file-explorer-resize-handle"
+  className={`resize-handle absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-vscode-accent-hover transition-all duration-200 ${isResizing ? 'bg-vscode-accent' : 'hover:border-vscode-accent'}`}
+  onMouseDown={onMouseDown}
+  title="Drag to resize explorer width"
+/>
         {/* Explorer Header */}
         <div id="file-explorer-header" className={`px-3 py-2 border-b border-vscode`}>
           <div id="file-explorer-header-content" className="flex items-center justify-between">
