@@ -70,7 +70,8 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
     accounts: 0,
     settings: 0
   });
-
+const [settingsHovered, setSettingsHovered] = useState(false);
+  const [settingsBouncing, setSettingsBouncing] = useState(false);
   const [shakeItem, setShakeItem] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState<{ show: boolean; message: string; type: string }>({
     show: false,
@@ -78,6 +79,7 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
     type: ''
   });
   const [terminalCursorBlink, setTerminalCursorBlink] = useState<boolean>(false);
+  const [settingsAnimating, setSettingsAnimating] = useState(false);
 
  
 const handleItemClick = (itemId: string) => {
@@ -102,26 +104,7 @@ const handleItemClick = (itemId: string) => {
       setTerminalCursorBlink(true);
       setTimeout(() => setTerminalCursorBlink(false), 50);
       break;
-    /* case 'terminal':
-        if (isTerminalOpen && !isTerminalMinimized) {
-          // Terminal is open and visible - minimize it
-          setIsTerminalMinimized?.(true);
-        } else if (isTerminalOpen && isTerminalMinimized) {
-          // Terminal is open but minimized - restore it
-          setIsTerminalMinimized?.(false);
-        } else {
-          // Terminal is closed - open it
-          setIsTerminalOpen?.(true);
-          setIsTerminalMinimized?.(false);
-        }
-        setTerminalCursorBlink(true);
-        setTimeout(() => setTerminalCursorBlink(false), 50);
-        // Reset active nav item when closing terminal completely
-        if (isTerminalOpen && !isTerminalMinimized) {
-          setActiveNavItem('explorer');
-        }
-        break;
-     */ /*case 'message':
+     /*case 'message':
         setShowFloatingForm?.(true);
         break;*/
     case "theme-toggle":
@@ -178,9 +161,12 @@ const handleItemClick = (itemId: string) => {
         3000
       );
       break;
-    case "settings":
-      setShowSettings(!showSettings);
-      break;
+    case 'settings':
+        
+        setSettingsAnimating(true);
+        setTimeout(() => setSettingsAnimating(false), 2000);
+        
+        break;
     case "accounts":
       break;
   }
@@ -288,6 +274,18 @@ const handleItemClick = (itemId: string) => {
                   isActive ? 'border-r-2 border-r-[var(--vscode-accent)] bg-[var(--vscode-bg-tertiary)] text-[var(--vscode-text-primary)]' : 'text-[var(--vscode-text-secondary)] border-r-2 border-r-transparent'
                 }`}
                 onClick={() => handleItemClick(item.id)}
+                onMouseEnter={() => {
+                  if (item.id === 'settings') {
+                    setSettingsHovered(true);
+                    setSettingsAnimating(true);
+                    setTimeout(() => setSettingsAnimating(false), 2000);
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (item.id === 'settings') {
+                    setSettingsHovered(false);
+                  }
+                }}
                 title={item.label}
               >
                 {item.id === 'accounts' ? (
@@ -304,7 +302,7 @@ const handleItemClick = (itemId: string) => {
                   React.createElement(item.icon, {
                     id: `left-nav-bottom-icon-${item.id}`,
                     size: 20,
-                    className: `transition-all duration-200 ${
+                    className: `transition-all duration-200 ${(settingsAnimating || settingsHovered) && item.id === 'settings' ? 'animate-settings-rotation' : ''} ${settingsBouncing && item.id === 'settings' ? 'animate-basketball-bounce' : ''} ${
                       isActive ? 'text-[var(--vscode-text-primary)]' : 'text-[var(--vscode-text-secondary)] group-hover:text-[var(--vscode-accent)]'
                     }`
                   })
