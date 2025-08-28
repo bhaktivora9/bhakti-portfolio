@@ -215,6 +215,14 @@ export const projects: Project[] = [
 /*    demo: "https://ecommerce-demo.bhaktideveloper.dev",
 */    image: "genREADMELOGO.svg?compress=400"
   },
+   {
+    name: "CodeSpaces-Inspired Porfolio Template",
+    description: "GH CodeSpaces-inspired portfolio template with interactive terminal and Google Analytics integration.",
+    technologies: ["ReactJS", "TypeScript","Tailswind CSS", "Google Forms","Google Analytics"],
+    github: "https://github.com/bhaktivora9/codespace-styled-portfolio",
+/*    demo: "https://ecommerce-demo.bhaktideveloper.dev",
+*/    image: "https://github.com/user-attachments/assets/56b5ba74-6c54-4787-9df8-e4dd7cd1244f?auto=compress&w=604&h=604?compress=400"
+  },
   {
     name: "spotClassify",
     description: "Designed a ML pipeline using Spotify API to classify tracks by genre based on features like danceability, energy, and tempo. Applied supervised models to automate labeling and optimize recommendations.",
