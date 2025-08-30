@@ -1,5 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { terminalCommands,  personalInfo } from '../data/portfolio';
+import { 
+  initializeAnalytics,
+   
+  trackResumeDownload,
+  trackTimeOnPage,
+  trackEvent,
+  trackNavigation,
+  trackInteractiveElement,
+  getAnalyticsDebugInfo,
+  clearStoredUTMParameters
+} from '../utils/analytics';
 
 interface TerminalLine {
   type: 'command' | 'output' | 'error';
@@ -30,6 +41,26 @@ const colors = {
     info: '#569CD6',      // Blue for info
   }
 };
+
+  const resumeUrl = `${import.meta.env.BASE_URL}assets/${personalInfo.resume}`;
+
+
+  const downloadResume = () => {
+  //  debugLog('download', 'Resume download initiated');
+    //trackInteraction('download_resume');
+    trackResumeDownload();
+    
+    const link = document.createElement('a');
+    link.href = resumeUrl;
+    link.download = 'Bhakti Vora Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setContextMenu(null);
+    
+ //   debugLog('download', 'Resume download completed');
+  };
+
 
 export function Terminal({ id }: TerminalProps = {}) {
   const [history, setHistory] = useState<TerminalLine[]>([
@@ -98,12 +129,12 @@ export function Terminal({ id }: TerminalProps = {}) {
       return;
     }
 
-    if (commandLower === 'cat') {
+    /*if (commandLower === 'cat') {
       const filename = args[0];
       if (!filename) {
         output = ['\x1b[31mcat: missing file operand\x1b[0m', '\x1b[33mTry "cat [filename]" or "ls" to see available files.\x1b[0m'];
       } 
-    } else if (commandLower === 'resume') {
+    }*/ else if (commandLower === 'resume') {
       output = [
         '\x1b[32mResume download initiated...\x1b[0m',
         `\x1b[36m📄 resume_${personalInfo.name.toLowerCase().replace(' ', '_')}.pdf\x1b[0m`,
@@ -112,6 +143,7 @@ export function Terminal({ id }: TerminalProps = {}) {
         '\x1b[33mthis would trigger an actual file download.\x1b[0m',
         '',
       ];
+      downloadResume();
     } else if (terminalCommands[commandLower as keyof typeof terminalCommands]) {
       output = terminalCommands[commandLower as keyof typeof terminalCommands];
       

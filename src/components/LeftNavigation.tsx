@@ -1,5 +1,3 @@
-// Enhanced version with some improvements
-
 import React, { useState, useCallback } from 'react';
 // @ts-ignore
 import TerminalIconWithBlink from '../animations/TerminalIconWithBlink';
@@ -90,8 +88,8 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
   setIsExplorerCollapsed,
   isTerminalOpen,
   setIsTerminalOpen,
-  isTerminalMinimized,
   setIsTerminalMinimized,
+  isTerminalMinimized,
   isDarkTheme,
   setIsDarkTheme,
   activeNavItem: propActiveNavItem,
@@ -113,6 +111,7 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
   const [uiState, setUiState] = useState({
     settingsHovered: false,
     settingsAnimating: false,
+    settingsBouncing: false, // NEW for bounce/motion
     terminalCursorBlink: false,
     shakeItem: null as string | null,
   });
@@ -133,8 +132,6 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
     setTimeout(hidePopup, duration);
   }, [hidePopup]);
 
-
-
   const triggerAnimation = useCallback((itemId: string, duration = 600) => {
     setUiState(prev => ({ ...prev, shakeItem: itemId }));
     setTimeout(() => {
@@ -144,7 +141,7 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
 
   const handleItemClick = useCallback((itemId: string) => {
     setActiveNavItem(itemId);
-    
+
     switch (itemId) {
       case "explorer":
         setIsExplorerCollapsed?.(!isExplorerCollapsed);
@@ -191,16 +188,15 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
         break;
         
       case 'settings':
-        setUiState(prev => ({ ...prev, settingsAnimating: true }));
+        setUiState(prev => ({ ...prev, settingsBouncing: true }));
         setTimeout(() => {
-          setUiState(prev => ({ ...prev, settingsAnimating: false }));
-        }, 2000);
+          setUiState(prev => ({ ...prev, settingsBouncing: false }));
+        }, 700); // Animation duration, adjust as needed
         break;
         
       case "accounts":
         break;
     }
-    
     onItemClick?.(itemId);
   }, [
     activeNavItem, setActiveNavItem, isExplorerCollapsed, setIsExplorerCollapsed,
@@ -211,15 +207,8 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
   const handleSettingsHover = useCallback((isHovered: boolean) => {
     setUiState(prev => ({ 
       ...prev, 
-      settingsHovered: isHovered,
-      settingsAnimating: isHovered ? true : prev.settingsAnimating
+      settingsHovered: isHovered
     }));
-    
-    if (isHovered) {
-      setTimeout(() => {
-        setUiState(prev => ({ ...prev, settingsAnimating: false }));
-      }, 2000);
-    }
   }, []);
 
   // Memoized calculations
@@ -245,6 +234,25 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
     const isActive = isItemActive(item.id);
     const hasNotification = notifications[item.id as keyof typeof notifications] > 0;
     const animationClass = getItemAnimation(item.id);
+
+    // SETTINGS ICON SPECIAL LOGIC
+    let settingsIconClass = "transition-all duration-200";
+    if (item.id === 'settings') {
+      if (uiState.settingsBouncing) {
+        settingsIconClass += ' animate-settings-bounce-motion text-[var(--vscode-accent)]';
+      } else if (uiState.settingsHovered) {
+        settingsIconClass += ' animate-settings-rotation text-[var(--vscode-accent)]';
+      } else if (isActive) {
+        settingsIconClass += ' text-[var(--vscode-text-primary)]';
+      } else {
+        settingsIconClass += ' text-[var(--vscode-text-secondary)] group-hover:text-[var(--vscode-accent)]';
+      }
+    } else {
+      settingsIconClass +=
+        isActive
+          ? ' text-[var(--vscode-text-primary)]'
+          : ' text-[var(--vscode-text-secondary)] group-hover:text-[var(--vscode-accent)]';
+    }
 
     return (
       <div key={item.id} id={`left-nav-${isBottomItem ? 'bottom-' : ''}item-${item.id}`} className="relative w-full">
@@ -286,11 +294,7 @@ export const LeftNavigation: React.FC<LeftNavigationProps> = ({
           ) : (
             <Icon 
               size={20} 
-              className={`transition-all duration-200 ${
-                (uiState.settingsAnimating || uiState.settingsHovered) && item.id === 'settings' ? 'animate-settings-rotation' : ''
-              } ${
-                isActive ? 'text-[var(--vscode-text-primary)]' : 'text-[var(--vscode-text-secondary)] group-hover:text-[var(--vscode-accent)]'
-              }`} 
+              className={settingsIconClass}
             />
           )}
         </button>

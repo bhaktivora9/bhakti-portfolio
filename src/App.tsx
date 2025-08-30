@@ -55,7 +55,7 @@ interface FileStructureItem {
 
 // Debug Mode Configuration
 const getURLParams = () => new URLSearchParams(window.location.search);
-const DEBUG_MODE = getURLParams().get('devMode') === 'true';
+const DEBUG_MODE = (getURLParams().get('devMode') || getURLParams().get('devmode')) === 'true';
 const DEBUG_ANALYTICS = DEBUG_MODE && (getURLParams().get('analytics') !== 'false');
 const DEBUG_INTERACTIONS = DEBUG_MODE && (getURLParams().get('interactions') !== 'false');
 const DEBUG_PERFORMANCE = DEBUG_MODE && (getURLParams().get('performance') !== 'false');
