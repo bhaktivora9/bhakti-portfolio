@@ -1,16 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
-import { terminalCommands,  personalInfo } from '../data/portfolio';
-import { 
-  initializeAnalytics,
-   
-  trackResumeDownload,
-  trackTimeOnPage,
-  trackEvent,
-  trackNavigation,
-  trackInteractiveElement,
-  getAnalyticsDebugInfo,
-  clearStoredUTMParameters
-} from '../utils/analytics';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { terminalCommands, personalInfo } from '../data/portfolio';
+import { trackResumeDownload, trackPageView } from '../utils/analytics';
 
 interface TerminalLine {
   type: 'command' | 'output' | 'error';
@@ -22,47 +12,81 @@ interface TerminalProps {
   id?: string;
 }
 
-// Terminal color scheme
-const colors = {
-  prompt: {
-    user: '#4EC9B0',      // Teal for username
-    at: '#FFFFFF',        // White for @
-    host: '#569CD6',      // Blue for hostname
-    colon: '#FFFFFF',     // White for :
-    path: '#DCDCAA',      // Yellow for path
-    dollar: '#4EC9B0',    // Teal for $
-  },
-  text: {
-    command: '#FFFFFF',   // White for commands
-    output: '#CCCCCC',    // Light gray for output
-    error: '#F44747',     // Red for errors
-    success: '#4EC9B0',   // Teal for success
-    warning: '#FFCC02',   // Yellow for warnings
-    info: '#569CD6',      // Blue for info
+const getColors = (theme: string) => {
+  if (theme === 'light') {
+    return {
+      prompt: {
+        user: '#209d7a',      
+        at: '#222222',        
+        host: '#2563eb',      
+        colon: '#222222',     
+        path: '#b7791f',      
+        dollar: '#209d7a',    
+      },
+      text: {
+        command: '#2f2f2f',   
+        output: '#444444',    
+        error: '#b91c1c',     
+        success: '#209d7a',   
+        warning: '#ca8a04',   
+        info: '#2563eb',      
+      }
+    };
+  } else {
+    
+    return {
+      prompt: {
+        user: '#4EC9B0',      
+        at: '#FFFFFF',        
+        host: '#569CD6',      
+        colon: '#FFFFFF',     
+        path: '#DCDCAA',      
+        dollar: '#4EC9B0',    
+      },
+      text: {
+        command: '#FFFFFF',   
+        output: '#CCCCCC',    
+        error: '#F44747',     
+        success: '#4EC9B0',   
+        warning: '#FFCC02',   
+        info: '#569CD6',      
+      }
+    };
   }
 };
 
+export function Terminal({ id }: TerminalProps = {}) {
+  
+  const [theme, setTheme] = useState(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.getAttribute('data-theme') || 
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+
+  const colors = useMemo(() => getColors(theme), [theme]);
+
   const resumeUrl = `${import.meta.env.BASE_URL}assets/${personalInfo.resume}`;
 
-
   const downloadResume = () => {
-  //  debugLog('download', 'Resume download initiated');
-    //trackInteraction('download_resume');
     trackResumeDownload();
-    
     const link = document.createElement('a');
     link.href = resumeUrl;
     link.download = 'Bhakti Vora Resume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    setContextMenu(null);
-    
- //   debugLog('download', 'Resume download completed');
   };
 
-
-export function Terminal({ id }: TerminalProps = {}) {
   const [history, setHistory] = useState<TerminalLine[]>([
     { type: 'output', content: `\x1b[36mWelcome to ${personalInfo.name}'s portfolio terminal!\x1b[0m` },
     { type: 'output', content: '\x1b[33mType "help" to see available commands.\x1b[0m' },
@@ -74,7 +98,7 @@ export function Terminal({ id }: TerminalProps = {}) {
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
-  // Parse ANSI color codes
+  
   const parseAnsiColors = (text: string) => {
     const ansiRegex = /\x1b\[(\d+)m/g;
     const parts = [];
@@ -87,18 +111,29 @@ export function Terminal({ id }: TerminalProps = {}) {
       }
       
       const colorCode = match[1];
-      const colorMap: { [key: string]: string } = {
-        '0': '#CCCCCC',   // Reset/normal
-        '31': '#F44747',  // Red
-        '32': '#4EC9B0',  // Green/Teal
-        '33': '#FFCC02',  // Yellow
-        '34': '#569CD6',  // Blue
-        '35': '#C586C0',  // Magenta
-        '36': '#4EC9B0',  // Cyan
-        '37': '#FFFFFF',  // White
-      };
+      const colorMap: { [key: string]: string } = theme === 'light'
+        ? {
+          '0': '#444444',
+          '31': '#b91c1c',
+          '32': '#209d7a',
+          '33': '#ca8a04',
+          '34': '#2563eb',
+          '35': '#9333ea',
+          '36': '#209d7a',
+          '37': '#2f2f2f',
+        }
+        : {
+          '0': '#CCCCCC',
+          '31': '#F44747',
+          '32': '#4EC9B0',
+          '33': '#FFCC02',
+          '34': '#569CD6',
+          '35': '#C586C0',
+          '36': '#4EC9B0',
+          '37': '#FFFFFF',
+        };
       
-      parts.push({ color: colorMap[colorCode] || '#CCCCCC' });
+      parts.push({ color: colorMap[colorCode] || (theme === 'light' ? '#444444' : '#CCCCCC') });
       lastIndex = ansiRegex.lastIndex;
     }
     
@@ -113,12 +148,12 @@ export function Terminal({ id }: TerminalProps = {}) {
     const trimmedCmd = cmd.trim();
     if (!trimmedCmd) return;
 
-    // Add command to history
+    
     setHistory(prev => [...prev, { type: 'command', content: trimmedCmd }]);
     setCommandHistory(prev => [...prev, trimmedCmd]);
     setHistoryIndex(-1);
 
-    // Parse command and arguments
+    
     const [command, ...args] = trimmedCmd.split(' ');
     const commandLower = command.toLowerCase();
 
@@ -129,25 +164,23 @@ export function Terminal({ id }: TerminalProps = {}) {
       return;
     }
 
-    /*if (commandLower === 'cat') {
+    if (commandLower === 'cat') {
       const filename = args[0];
       if (!filename) {
         output = ['\x1b[31mcat: missing file operand\x1b[0m', '\x1b[33mTry "cat [filename]" or "ls" to see available files.\x1b[0m'];
       } 
-    }*/ else if (commandLower === 'resume') {
+    } else if (commandLower === 'resume') {
       output = [
         '\x1b[32mResume download initiated...\x1b[0m',
         `\x1b[36m📄 resume_${personalInfo.name.toLowerCase().replace(' ', '_')}.pdf\x1b[0m`,
         '',
-        '\x1b[33mNote: This is a demo portfolio. In a real implementation,\x1b[0m',
-        '\x1b[33mthis would trigger an actual file download.\x1b[0m',
         '',
       ];
       downloadResume();
     } else if (terminalCommands[commandLower as keyof typeof terminalCommands]) {
       output = terminalCommands[commandLower as keyof typeof terminalCommands];
       
-      // Handle file opening commands
+      
       const commandMap: { [key: string]: string } = {
         'about': 'About.java',
 
@@ -158,11 +191,11 @@ export function Terminal({ id }: TerminalProps = {}) {
         'skills': 'skills.json',
         'contact': 'Contact.html',
         'resume': 'resume.pdf',
-        'home': 'Home.jsx',
       };
 
       if (commandMap[commandLower]) {
-        // Use a timeout to allow the output to be displayed first
+        
+        trackPageView(commandMap[commandLower]);
         setTimeout(() => {
           window.dispatchEvent(new CustomEvent('openFile', { 
             detail: { fileName: commandMap[commandLower] } 
@@ -177,7 +210,7 @@ export function Terminal({ id }: TerminalProps = {}) {
       ];
     }
 
-    // Add output to history
+    
     output.forEach(line => {
       setHistory(prev => [...prev, { type: 'output', content: line }]);
     });
@@ -215,7 +248,7 @@ export function Terminal({ id }: TerminalProps = {}) {
   useEffect(() => {
     if (terminalRef.current) {
       const terminal = terminalRef.current;
-      // Smooth scroll to bottom
+      
       terminal.scrollTo({
         top: terminal.scrollHeight,
         behavior: 'smooth'
@@ -223,14 +256,14 @@ export function Terminal({ id }: TerminalProps = {}) {
     }
   }, [history]);
 
-  // Auto-scroll when new content is added (like a real terminal)
+  
   useEffect(() => {
     if (terminalRef.current) {
       const terminal = terminalRef.current;
       const isScrolledToBottom = terminal.scrollHeight - terminal.clientHeight <= terminal.scrollTop + 1;
       
       if (isScrolledToBottom) {
-        // Only auto-scroll if user is already at the bottom
+        
         setTimeout(() => {
           terminal.scrollTo({
             top: terminal.scrollHeight,

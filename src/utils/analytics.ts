@@ -19,14 +19,13 @@ interface UTMParameters {
 // Simple developer detection
 const isDeveloperMode = (): boolean => {
   const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get('devmode') === 'true';
+  return urlParams.get('devmode') === 'true' || urlParams.get('devMode') === 'true';
 };
 
 // Helper function to parse UTM parameters
 export const parseUTMParameters = (): UTMParameters => {
   const urlParams = new URLSearchParams(window.location.search);
   const utmParams: UTMParameters = {};
-
   const utmKeys: (keyof UTMParameters)[] = [
     'utm_source',
     'utm_medium', 
@@ -35,21 +34,18 @@ export const parseUTMParameters = (): UTMParameters => {
     'utm_content',
     'utm_id'
   ];
-
   utmKeys.forEach(key => {
     const value = urlParams.get(key);
     if (value) {
       utmParams[key] = value;
     }
   });
-
   return utmParams;
 };
 
 // Helper function to store/retrieve UTM parameters for session attribution
 export const storeUTMParameters = (): void => {
   const utmParams = parseUTMParameters();
-  
   if (Object.keys(utmParams).length > 0) {
     sessionStorage.setItem('utm_parameters', JSON.stringify(utmParams));
   }
@@ -64,38 +60,37 @@ export const getStoredUTMParameters = (): UTMParameters => {
 export const initializeAnalytics = () => {
   if (typeof window === 'undefined') return;
   const isDeveloper = isDeveloperMode();
-  
+
   // Store UTM parameters on page load
   storeUTMParameters();
-  
-  // Add our tracking data to existing GTM dataLayer
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    event: 'analytics_initialized',
+
+  // Push initial event
+  trackEvent('analytics_initialized', {
     user_type: isDeveloper ? 'developer' : 'visitor',
     is_developer: isDeveloper
   });
-  
+
   if (isDeveloper) {
     console.log('Analytics initialized - Developer Mode ON (events filtered)');
     console.log('To disable: Remove ?devmode=true from URL');
   }
 };
 
-// Core tracking function
+// Core tracking function - always use gtag (fix!)
 export const trackEvent = (eventName: string, parameters: Record<string, any> = {}) => {
-  if (typeof window === 'undefined' || !window.dataLayer) return;
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+    // fallback: log to console
+    console.warn('Analytics not initialized: window.gtag unavailable');
+    return;
+  }
   const isDeveloper = isDeveloperMode();
-  
   const eventData = {
-    event: eventName,
     ...parameters,
     user_type: isDeveloper ? 'developer' : 'visitor',
-    is_developer: isDeveloper
+    is_developer: isDeveloper,
   };
-  
-  window.dataLayer.push(eventData);
-  
+  window.gtag('event', eventName, eventData);
+
   if (isDeveloper) {
     console.log('Event:', eventName, eventData);
   }
@@ -103,78 +98,46 @@ export const trackEvent = (eventName: string, parameters: Record<string, any> = 
 
 // Enhanced page view tracking with UTM parameters
 export const trackPageView = (pageName?: string, useSessionUTM: boolean = true) => {
-  if (typeof window === 'undefined' || !window.dataLayer) return;
-  
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+    console.warn('Analytics not initialized: window.gtag unavailable');
+    return;
+  }
   const isDeveloper = isDeveloperMode();
-  
+
   // Get current UTM parameters
   let utmParams = parseUTMParameters();
-  
-  // If no current UTM parameters and useSessionUTM is true, use stored ones
   if (Object.keys(utmParams).length === 0 && useSessionUTM) {
     utmParams = getStoredUTMParameters();
   }
-  
+
   // Prepare page view data
   const pageViewData = {
-    event: 'page_view',
     page_title: pageName || document.title,
     page_location: window.location.href,
     page_path: window.location.pathname,
     page_referrer: document.referrer || undefined,
-    user_type: isDeveloper ? 'developer' : 'visitor',
-    is_developer: isDeveloper,
-    ...utmParams // Spread UTM parameters
+    ...utmParams
   };
-  
+
   // Remove undefined values
   Object.keys(pageViewData).forEach(key => {
     if (pageViewData[key as keyof typeof pageViewData] === undefined) {
       delete pageViewData[key as keyof typeof pageViewData];
     }
   });
-  
-  window.dataLayer.push(pageViewData);
-  
+
+  window.gtag('event', 'page_view', {
+    ...pageViewData,
+    user_type: isDeveloper ? 'developer' : 'visitor',
+    is_developer: isDeveloper
+  });
+
   if (isDeveloper) {
     console.log('Page View:', pageViewData);
   }
 };
 
-// Alternative: Track page view with gtag (if you prefer gtag over dataLayer)
-export const trackPageViewGtag = (pageName?: string, useSessionUTM: boolean = true) => {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
-  
-  const isDeveloper = isDeveloperMode();
-  
-  let utmParams = parseUTMParameters();
-  if (Object.keys(utmParams).length === 0 && useSessionUTM) {
-    utmParams = getStoredUTMParameters();
-  }
-  
-  const pageViewData = {
-    page_title: pageName || document.title,
-    page_location: window.location.href,
-    page_path: window.location.pathname,
-    page_referrer: document.referrer || undefined,
-    user_type: isDeveloper ? 'developer' : 'visitor',
-    is_developer: isDeveloper,
-    ...utmParams
-  };
-  
-  // Remove undefined values
-  Object.keys(pageViewData).forEach(key => {
-    if (pageViewData[key as keyof typeof pageViewData] === undefined) {
-      delete pageViewData[key as keyof typeof pageViewData];
-    }
-  });
-  
-  window.gtag('event', 'page_view', pageViewData);
-  
-  if (isDeveloper) {
-    console.log('Page View :', pageViewData);
-  }
-};
+// All other tracking helpers now use gtag-based trackEvent
 
 export const trackFileOpen = (fileName: string, fileCategory?: string) => {
   trackEvent('file_open', {
@@ -240,7 +203,7 @@ export const trackTerminalCommand = (command: string, success: boolean = true) =
 export const getAnalyticsDebugInfo = () => {
   const currentUTM = parseUTMParameters();
   const storedUTM = getStoredUTMParameters();
-  
+
   return {
     isDeveloperMode: isDeveloperMode(),
     dataLayerLength: window.dataLayer?.length || 0,

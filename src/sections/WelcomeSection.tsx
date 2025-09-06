@@ -2,6 +2,8 @@ import React from 'react';
 import {  Code2, Mail, Briefcase, FolderCode } from 'lucide-react';
 import { Name } from '../components/Name'
 import { QuickNavButton } from '../components/QuickNavButton';
+import {trackPageView} from '../utils/analytics';
+
 interface WelcomeSectionProps {
   setActiveTab: (tab: string) => void;
   openTabs: string[];
@@ -14,6 +16,7 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
   setOpenTabs,
 }) => {
   const handleSectionClick = (fileName: string) => {
+    trackPageView(fileName);
     if (!openTabs.includes(fileName)) {
       setOpenTabs(prev => [...prev, fileName]);
     }

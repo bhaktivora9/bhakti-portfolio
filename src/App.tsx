@@ -161,7 +161,7 @@ function App() {
     debugLog('file', `File clicked: ${item.name}`, { fileType: item.type, hasCommand: !!item.command });
     trackInteraction('file_click', { fileName: item.name, fileType: item.type });
     trackFileOpen(item.name);
-    
+    trackPageView(item.name);
     // Performance tracking
     if (DEBUG_PERFORMANCE) {
       const clickTime = performance.now();
