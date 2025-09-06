@@ -50,14 +50,14 @@ export const WorkSection: React.FC<WorkSectionProps> = ({ color }) => {
                 {/* Company Header */}
                 <div id={`work-company-header-${companyIndex}`} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 md:p-6 gap-2 sm:gap-3 md:gap-4">
                   <div id={`work-company-info-${companyIndex}`} className="flex items-center gap-2 sm:gap-3 flex-1">
-                    
+                    <a href = {company.link}  target="_blank">
                       <img 
                         id={`work-company-logo-${companyIndex}`}
                         src={company.logo} 
                         alt={`${company.company} logo`}
                         className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain rounded-md sm:rounded-lg shadow-sm flex-shrink-0"
                       />
-                    
+                    </a>
                     <div id={`work-company-details-${companyIndex}`}>
                       <h3 id={`work-company-name-${companyIndex}`} className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-primary-themed font-sans hover:text-vscode-accent transition-colors duration-300 cursor-pointer">
                         <a 

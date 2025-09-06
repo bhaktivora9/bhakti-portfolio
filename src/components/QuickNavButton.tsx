@@ -1,4 +1,5 @@
 import React from "react";
+import {trackPageView} from '../utils/analytics';
 
 interface QuickNavButtonProps {
   id?: string;
