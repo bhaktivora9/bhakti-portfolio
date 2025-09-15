@@ -95,7 +95,7 @@ export const experiences: Experience[] = [
   {
     company: "Walmart @ Caspex",
     location: "Sunnyvale, USA",
-    totalPeriod: "03/2022 - 09/2024",
+    totalPeriod: "03/2022 - 07/2025",
     link:"https://www.walmart.com/",
     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/archive/b/b1/20250802041144%21Walmart_logo_%282008%29.svg/120px-Walmart_logo_%282008%29.svg.png",
     roles: [
