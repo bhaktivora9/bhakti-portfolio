@@ -101,7 +101,7 @@ export const experiences: Experience[] = [
     roles: [
       {
         title: "Backend Developer",
-        period: "03/2022 - 09/2024",
+        period: "03/2022 - 07/2025",
         description: ["Led ORBIT platform development, centralizing data for enhanced Business Intelligence and analytics.",
 "Increased database write performance 35x with multithreading.",
 "Contributed to Walmart Commerce Platform by scaling e-commerce infrastructure.",
