@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { HashRouter as Router } from 'react-router-dom';
-import { SPALayout } from './components/SPALayout';
 import { TopBar } from './components/TopBar';
 import { LeftNavigation } from './components/LeftNavigation';
 import { FileExplorer } from './components/FileExplorer';
@@ -17,7 +15,7 @@ import { ContactSection } from './sections/ContactSection';
 import { Terminal } from './components/Terminal';
 import { ResumeSection } from './sections/ResumeSection';
 import { StatusBar } from './components/StatusBar'
-import { Download, Code2, Layout, Monitor } from 'lucide-react';
+import { Download, Code2 } from 'lucide-react';
 import { 
   initializeAnalytics,
   trackPageView, 
@@ -111,7 +109,6 @@ function App() {
   // State declarations
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true);
-  const [isSPAMode, setIsSPAMode] = useState<boolean>(true); // Default to SPA mode
   const [activeTab, setActiveTab] = useState<string>('');
   const [openTabs, setOpenTabs] = useState<string[]>([]);
   const [isTerminalOpen, setIsTerminalOpen] = useState<boolean>(false);
@@ -666,42 +663,8 @@ function App() {
     return <LoadingScreen />;
   }
 
-  // If SPA mode is enabled, render the SPA layout
-  if (isSPAMode) {
-    return (
-      <Router>
-        <div className="relative">
-          {/* View Mode Toggle */}
-          <div className="fixed top-4 right-4 z-50">
-            <button
-              onClick={() => setIsSPAMode(!isSPAMode)}
-              className="flex items-center gap-2 px-3 py-2 bg-vscode-accent text-white rounded-md hover:bg-vscode-accent-hover transition-colors"
-              title="Toggle between SPA and File Explorer mode"
-            >
-              <Monitor className="w-4 h-4" />
-              Explorer Mode
-            </button>
-          </div>
-          <SPALayout isDarkTheme={isDarkTheme} />
-        </div>
-      </Router>
-    );
-  }
-
   return (
     <div id="app-root" className="h-screen bg-vscode-primary text-vscode-primary flex flex-col overflow-hidden theme-transition">
-      {/* View Mode Toggle */}
-      <div className="fixed top-4 right-4 z-50">
-        <button
-          onClick={() => setIsSPAMode(!isSPAMode)}
-          className="flex items-center gap-2 px-3 py-2 bg-vscode-accent text-white rounded-md hover:bg-vscode-accent-hover transition-colors"
-          title="Toggle between SPA and File Explorer mode"
-        >
-          <Layout className="w-4 h-4" />
-          SPA Mode
-        </button>
-      </div>
-      
       {/* Debug Panel (only in debug mode) */}
       {/*{DEBUG_MODE && (
         <div className="fixed top-4 right-4 z-50 bg-purple-900 text-white p-2 rounded text-xs opacity-80">
