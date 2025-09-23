@@ -15,6 +15,7 @@ import { ContactSection } from './sections/ContactSection';
 import { Terminal } from './components/Terminal';
 import { ResumeSection } from './sections/ResumeSection';
 import { StatusBar } from './components/StatusBar'
+//import {useScrollSpy} from './utils/useScrollSpy'
 import { Download, Code2 } from 'lucide-react';
 import { 
   initializeAnalytics,
@@ -106,11 +107,16 @@ function App() {
   const lastInteractionTime = useRef<number>(Date.now());
   const interactionCount = useRef<number>(0);
 
+  // Scroll spy for tracking active sections
+  const fileNames = ['About.java', 'Work.css', 'education.yml', 'projects.ts', 'skills.json', 'Contact.html', 'resume.pdf'];
+  const activeScrollSection = useScrollSpy(fileNames, 100);
+
+  
   // State declarations
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('');
-  const [openTabs, setOpenTabs] = useState<string[]>([]);
+  const [openTabs, setOpenTabs] = useState<string[]>(['skills.json','About.java', 'Work.css', 'education.yml', 'projects.ts',  'Contact.html', 'resume.pdf']);
   const [isTerminalOpen, setIsTerminalOpen] = useState<boolean>(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [isExplorerCollapsed, setIsExplorerCollapsed] = useState<boolean>(false);
@@ -137,8 +143,22 @@ function App() {
       ...details
     });
   };
+/*
 
-
+useEffect(() => {
+    if (activeScrollSection && activeScrollSection !== activeTab) {
+      debugLog('scroll-spy', `Active section changed to: ${activeScrollSection}`, { 
+        previousSection: activeTab,
+        scrolledSection: activeScrollSection 
+      });
+      trackEvent('section_scroll', {
+        section: activeScrollSection,
+        previous_section: activeTab,
+        event_category: 'navigation'
+      });
+    }
+  }, [activeScrollSection, activeTab]);
+*/
 
 
   const downloadResume = () => {
@@ -161,7 +181,6 @@ function App() {
     debugLog('file', `File clicked: ${item.name}`, { fileType: item.type, hasCommand: !!item.command });
     trackInteraction('file_click', { fileName: item.name, fileType: item.type });
     trackFileOpen(item.name);
-    trackPageView(item.name);
     // Performance tracking
     if (DEBUG_PERFORMANCE) {
       const clickTime = performance.now();
@@ -261,8 +280,9 @@ function App() {
   const handleSetActiveTab = useCallback((tab: string) => {
     debugLog('tabs', `Setting active tab: ${tab}`, { previousTab: activeTab });
     trackInteraction('switch_tab', { newTab: tab, previousTab: activeTab });
-    trackNavigation(tab, activeTab);
-    
+    //trackNavigation(tab, activeTab);
+    trackPageView(tab);
+
     // Set dynamic accent color based on active tab
     const fileColor = getFileColor(tab);
     if (fileColor && fileColor !== 'var(--vscode-accent)') {
@@ -553,7 +573,6 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={50} />
               <div className={paddingClasses}>
                 <div className="font-mono">
                   <AboutSection setActiveTab={handleSetActiveTab} openTabs={openTabs} setOpenTabs={setOpenTabs} />
@@ -567,7 +586,6 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={80} />
               <div className={paddingClasses}>
                 <div className="font-mono">
                   <WorkSection color={getFileColor('Work.css')} />
@@ -581,7 +599,7 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={60} />
+              
               <div className={paddingClasses}>
                 <div className="font-mono">
                   <ProjectsSection color="var(--vscode-green)" />
@@ -595,7 +613,7 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={70} />
+              
               <div className={paddingClasses}>
                 <SkillsSection />
               </div>
@@ -607,7 +625,7 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={50} />
+              
               <div className={paddingClasses}>
                 <ContactSection />
               </div>
@@ -619,7 +637,7 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={30} />
+              
               <div className={paddingClasses}>
                 <EducationSection color={getFileColor('education.yml')} />
               </div>
@@ -631,7 +649,7 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={100} />
+              <LineNumberGutter lineCount={100}/>
               <div className={paddingClasses}>
                 <ResumeSection color={getFileColor('resume.pdf')}/>
               </div>
@@ -644,7 +662,6 @@ function App() {
         return (
           <div className={contentClasses}>
             <div className="flex">
-              <LineNumberGutter lineCount={20} />
               <div className={paddingClasses}>
                 <WelcomeSection 
                   setActiveTab={handleSetActiveTab} 
@@ -728,6 +745,7 @@ function App() {
           <div id="app-main-content" className={`main-content-area flex-1 ${activeTab ? 'overflow-y-auto' : 'overflow-y-auto'} bg-themed transition-all duration-300 ${
             isTerminalOpen ? 'pb-0' : ''
           }`}>
+
             {getTabContent()}
           </div>
 
