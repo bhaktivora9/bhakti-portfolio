@@ -110,7 +110,7 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('');
-  const [openTabs, setOpenTabs] = useState<string[]>([]);
+  const [openTabs, setOpenTabs] = useState<string[]>([ 'skills.json','About.java', 'Work.css', 'education.yml', 'projects.ts',, 'Contact.html', 'resume.pdf']);
   const [isTerminalOpen, setIsTerminalOpen] = useState<boolean>(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [isExplorerCollapsed, setIsExplorerCollapsed] = useState<boolean>(false);
@@ -261,7 +261,7 @@ function App() {
   const handleSetActiveTab = useCallback((tab: string) => {
     debugLog('tabs', `Setting active tab: ${tab}`, { previousTab: activeTab });
     trackInteraction('switch_tab', { newTab: tab, previousTab: activeTab });
-    trackNavigation(tab, activeTab);
+    trackPageView(tab);
     
     // Set dynamic accent color based on active tab
     const fileColor = getFileColor(tab);
